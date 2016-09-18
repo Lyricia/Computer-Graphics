@@ -116,6 +116,8 @@ GLvoid Keydown(unsigned char key, int x, int y)
 		rw = W_Width / w;
 		rh = W_Height / h;
 		break;
+
+
 	}
 	glutPostRedisplay();
 }
