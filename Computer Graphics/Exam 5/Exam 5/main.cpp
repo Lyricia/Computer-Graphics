@@ -21,15 +21,16 @@ GLvoid Menu(int);
 GLvoid DrawPolygon(GLvoid);
 GLvoid CollideChk(GLvoid);
 
+GLvoid Circle(int, float, float);
+
 struct Point
 {
-	int x;
-	int y;
+	float x;
+	float y;
 	int dir_x;
 	int dir_y;
 	int end;
 };
-
 
 
 int space_x;
@@ -58,6 +59,8 @@ void main(int, char *)
 
 GLvoid init(GLvoid)
 { 
+	srand(unsigned(time(NULL)));
+	
 	space_x = W_Width / 3;
 	space_y = W_Height / 3;
 
@@ -69,9 +72,9 @@ GLvoid init(GLvoid)
 GLvoid RegesterCallBack()
 {
 	glutCreateMenu(Menu);
-	glutAddMenuEntry("White", 1);
-	glutAddMenuEntry("Black", 2);
-	glutAddMenuEntry("Gray", 3);
+	glutAddMenuEntry("Rect", 1);
+	glutAddMenuEntry("Circle", 2);
+	glutAttachMenu(GLUT_RIGHT_BUTTON);
 
 	glutMouseFunc(MouseEvent);
 	glutMotionFunc(MouseMove);
@@ -129,7 +132,7 @@ GLvoid Keydown(unsigned char key, int x, int y)
 
 	case 'u':
 		val_timer -= 10;
-		if (val_timer < 100) val_timer = 100;
+		if (val_timer < 50) val_timer = 50;
 		break;
 
 	case 'd':
@@ -156,7 +159,22 @@ GLvoid MouseEvent(int button, int state, int x, int y)
 	{
 		if (pt_index > 19)	pt_index = 0;
 
-		pt[pt_index] = { x,W_Height - y,10,10,0 };
+		pt[pt_index] = { (float)x,(float)W_Height - y };
+		switch (rand() % 4)
+		{
+		case 0:	
+			pt[pt_index].dir_x = 10; pt[pt_index].dir_y = 10;
+			break;
+		case 1:
+			pt[pt_index].dir_x = 10; pt[pt_index].dir_y = -10;
+			break;
+		case 2:
+			pt[pt_index].dir_x = -10; pt[pt_index].dir_y = 10;
+			break;
+		case 3:
+			pt[pt_index].dir_x = -10; pt[pt_index].dir_y = -10;
+			break;
+		}
 		pt_index++;
 		if (poly_count<19)
 			poly_count++;
@@ -182,10 +200,8 @@ GLvoid DrawPolygon(GLvoid)
 		{
 			glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
 			glBegin(GL_POLYGON);
-			glVertex2i(pt[j].x, pt[j].y);
-			glVertex2i(pt[j].x + 10, pt[j].y);
-			glVertex2i(pt[j].x + 10, pt[j].y + 20);
-			glVertex2i(pt[j].x, pt[j].y + 20);
+			for (int i = 0; i < 360; i++)
+				Circle(j, 20.0, i);
 			glEnd();
 		}
 
@@ -194,7 +210,7 @@ GLvoid DrawPolygon(GLvoid)
 
 GLvoid Timer(int val)
 {
-	convert *= -1;
+	//convert *= -1;
 
 	CollideChk();
 
@@ -238,6 +254,21 @@ GLvoid CollideChk()
 
 GLvoid Menu(int button)
 {
+	switch (button)
+	{
+	case 1:
+		convert = 1;
+		break;
+	case 2:
+		convert = -1;
+		break;
+	}
+	glutPostRedisplay();
+}
 
+GLvoid Circle(int index, float radius, float angle)
+{
+	angle = angle * (3.141592 / 180);
 
+	glVertex2f(cos(angle)*radius + pt[index].x, sin(angle)*radius + pt[index].y);
 }
