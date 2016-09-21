@@ -23,11 +23,14 @@ GLvoid DrawPolygon(GLvoid);
 GLvoid CollideChk(GLvoid);
 
 GLvoid Circle(int, float, float);
+GLvoid RectMove(Point);
 
 struct Point
 {
 	float x;
 	float y;
+	float prev_x;
+	float prev_y;
 	int dir_x;
 	int dir_y;
 	int end;
@@ -43,6 +46,8 @@ int poly_count = 0;
 
 int val_timer = 150;
 int convert = 1;
+
+int moveval = 0;	// 1 move 0 stop
 
 void main(int, char *)
 {
@@ -66,7 +71,7 @@ GLvoid init(GLvoid)
 	space_y = W_Height / 3;
 
 	for (int i = 0; i < 50; i++)
-		pt[i] = { 0,0,0,0,2 };
+		pt[i] = { 0,0,0,0,0,0,2};
 
 }
 
@@ -158,6 +163,16 @@ GLvoid MouseEvent(int button, int state, int x, int y)
 {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
 	{
+		for (int i = 0; i < poly_count; i++)
+		{
+			if (x < pt[i].x + 30 && x>pt[i].x && y > pt[i].y&&y < pt[i].y + 20)
+			{
+				moveval = 1;
+				pt[i].dir_x = 10;
+				break;
+			}
+		}
+
 		if (pt_index > 9)	pt_index = 0;
 		pt[pt_index] = { (float)x,(float)W_Height - y };
 		pt_index++;
@@ -175,10 +190,10 @@ GLvoid DrawPolygon(GLvoid)
 		{
 			glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
 			glBegin(GL_POLYGON);
-			glVertex2i(pt[j].x, pt[j].y);
-			glVertex2i(pt[j].x + 30, pt[j].y);
+			glVertex2i(pt[j].x -30, pt[j].y-20);
+			glVertex2i(pt[j].x + 30, pt[j].y-20);
 			glVertex2i(pt[j].x + 30, pt[j].y + 20);
-			glVertex2i(pt[j].x, pt[j].y + 20);
+			glVertex2i(pt[j].x-30, pt[j].y + 20);
 			glEnd();
 		}
 		else if (convert == -1)
@@ -216,24 +231,26 @@ GLvoid CollideChk()
 		if (pt[i].x < 0)
 		{
 			pt[i].dir_x = 10;
+			pt[i].dir_y = 0;
 		}
 
 		else if (pt[i].y < 0)
 		{
 			pt[i].dir_y = 10;
+			pt[i].dir_x = 0;
 		}
 
 		else if (pt[i].x > W_Width)
 		{
 			pt[i].dir_x = -10;
+			pt[i].dir_y = 0;
 		}
 		else if (pt[i].y > W_Height)
 		{
 			pt[i].dir_y = -10;
+			pt[i].dir_x = 0;
 		}
-
 	}
-
 }
 
 GLvoid Menu(int button)
@@ -255,4 +272,8 @@ GLvoid Circle(int index, float radius, float angle)
 	angle = angle * (3.141592 / 180);
 
 	glVertex2f(cos(angle)*radius + pt[index].x, sin(angle)*radius + pt[index].y);
+}
+
+GLvoid RectMove(Point P)
+{
 }

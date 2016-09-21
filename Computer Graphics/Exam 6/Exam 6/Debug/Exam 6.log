@@ -1,3 +1,3 @@
 ﻿  main.cpp
-  Exam 6.vcxproj -> D:\Computer-Graphics\Computer Graphics\Exam 6\Debug\Exam 6.exe
-  Exam 6.vcxproj -> D:\Computer-Graphics\Computer Graphics\Exam 6\Debug\Exam 6.pdb (Full PDB)
+d:\computer-graphics\computer graphics\exam 6\exam 6\main.cpp : fatal error C1041: 프로그램 데이터베이스 'D:\Computer-Graphics\Computer Graphics\Exam 6\Exam 6\Debug\vc140.idb'을(를) 열 수 없습니다. 여러 CL.EXE에서 동일한 .PDB 파일에 쓰는 경우 /FS를 사용하십시오.
+cl : 명령줄 warning D9028: 최소 다시 빌드에 실패했습니다. 정상 빌드로 되돌립니다.
