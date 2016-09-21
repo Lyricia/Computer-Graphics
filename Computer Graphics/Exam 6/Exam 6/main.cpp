@@ -6,6 +6,16 @@
 #define W_Width		800
 #define W_Height	600
 
+struct Point
+{
+	float x;
+	float y;
+	float prev_x;
+	float prev_y;
+	int dir_x;
+	int dir_y;
+	int dir;
+};
 
 GLvoid RegesterCallBack();
 
@@ -23,19 +33,9 @@ GLvoid DrawPolygon(GLvoid);
 GLvoid CollideChk(GLvoid);
 
 GLvoid Circle(int, float, float);
-GLvoid RectMove(Point);
 
-struct Point
-{
-	float x;
-	float y;
-	float prev_x;
-	float prev_y;
-	int dir_x;
-	int dir_y;
-	int end;
-};
 
+Point RectMove(Point);
 
 int space_x;
 int space_y;
@@ -146,8 +146,6 @@ GLvoid Keydown(unsigned char key, int x, int y)
 		break;
 
 	case 'e':
-		if (pt_index > 0)
-			pt[pt_index - 1].end = 1;
 		break;
 	}
 
@@ -165,16 +163,17 @@ GLvoid MouseEvent(int button, int state, int x, int y)
 	{
 		for (int i = 0; i < poly_count; i++)
 		{
-			if (x < pt[i].x + 30 && x>pt[i].x && y > pt[i].y&&y < pt[i].y + 20)
+			if (x < pt[i].x + 30 && x>pt[i].x - 30 && W_Height - y > pt[i].y - 20 && W_Height - y < pt[i].y + 20)
 			{
-				moveval = 1;
 				pt[i].dir_x = 10;
-				break;
+				moveval = 1;
+				return;
 			}
 		}
 
-		if (pt_index > 9)	pt_index = 0;
-		pt[pt_index] = { (float)x,(float)W_Height - y };
+		if (pt_index > 9)	
+			pt_index = 0;
+		pt[pt_index] = { (float)x,(float)W_Height - y,(float)x,(float)W_Height - y };
 		pt_index++;
 		if (poly_count<9)
 			poly_count++;
@@ -211,10 +210,21 @@ GLvoid Timer(int val)
 {
 	//convert *= -1;
 
-	CollideChk();
+	//CollideChk();
+	if (moveval)
+	{
+		for (int i = 0; i < poly_count; i++)
+		{
+			pt[i].dir = 1;
+			pt[i] = RectMove(pt[i]);
+		}
+	}
+
+
 
 	for (int i = 0; i < poly_count; i++)
 	{
+		pt[i]=RectMove(pt[i]);
 		pt[i].x += pt[i].dir_x;
 		pt[i].y += pt[i].dir_y;
 	}
@@ -274,6 +284,36 @@ GLvoid Circle(int index, float radius, float angle)
 	glVertex2f(cos(angle)*radius + pt[index].x, sin(angle)*radius + pt[index].y);
 }
 
-GLvoid RectMove(Point P)
+Point RectMove(Point P)
 {
+	if (P.x > W_Width)
+	{
+		P.dir_x = 0;
+		P.dir_y = -10;
+		moveval = 2;
+	}
+	if (P.y < 0)
+	{
+		P.dir_x = -10;
+		P.dir_y = 0;
+	}
+	if (P.x < 0)
+	{
+		P.dir_x = 0;
+		P.dir_y = 10;
+	}
+
+	if (P.y > P.prev_y)
+	{
+		P.dir_x = 10;
+		P.dir_y = 0;
+	}
+
+	if (P.x == P.prev_x&&P.y == P.prev_y&&moveval == 2)
+	{
+		P.dir_x = 0;
+		P.dir_y = 0;
+		moveval = 0;
+	}
+	return P;
 }
