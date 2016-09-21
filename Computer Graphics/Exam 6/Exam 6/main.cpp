@@ -5,6 +5,8 @@
 
 #define W_Width		800
 #define W_Height	600
+#define RectSize_X	30
+#define RectSize_Y	20
 
 struct Point
 {
@@ -14,7 +16,7 @@ struct Point
 	float prev_y;
 	int dir_x;
 	int dir_y;
-	int dir;
+	int dir;				// 1 right 2 left 3 up 4 down
 };
 
 GLvoid RegesterCallBack();
@@ -51,6 +53,8 @@ int moveval = 0;	// 1 move 0 stop
 
 void main(int, char *)
 {
+	srand(unsigned(time(NULL)));
+	
 	init();
 
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA);
@@ -65,13 +69,11 @@ void main(int, char *)
 
 GLvoid init(GLvoid)
 {
-	srand(unsigned(time(NULL)));
-
 	space_x = W_Width / 3;
 	space_y = W_Height / 3;
 
 	for (int i = 0; i < 50; i++)
-		pt[i] = { 0,0,0,0,0,0,2};
+		pt[i] = { 0,0,0,0,0,0,2 };
 
 }
 
@@ -138,7 +140,7 @@ GLvoid Keydown(unsigned char key, int x, int y)
 
 	case 'u':
 		val_timer -= 10;
-		if (val_timer < 50) val_timer = 50;
+		if (val_timer < 20) val_timer = 20;
 		break;
 
 	case 'd':
@@ -163,10 +165,10 @@ GLvoid MouseEvent(int button, int state, int x, int y)
 	{
 		for (int i = 0; i < poly_count; i++)
 		{
-			if (x < pt[i].x + 30 && x>pt[i].x - 30 && W_Height - y > pt[i].y - 20 && W_Height - y < pt[i].y + 20)
+			if (x < pt[i].x + RectSize_X && x>pt[i].x - RectSize_X && W_Height - y > pt[i].y - 20 && W_Height - y < pt[i].y + 20)
 			{
-				pt[i].dir_x = 10;
 				moveval = 1;
+				for (int j = 0; j < poly_count; j++) pt[j].dir = 1;
 				return;
 			}
 		}
@@ -174,8 +176,9 @@ GLvoid MouseEvent(int button, int state, int x, int y)
 		if (pt_index > 9)	
 			pt_index = 0;
 		pt[pt_index] = { (float)x,(float)W_Height - y,(float)x,(float)W_Height - y };
+		if (moveval) pt[pt_index].dir = 1;
 		pt_index++;
-		if (poly_count<9)
+		if (poly_count<10)
 			poly_count++;
 	}
 	glutPostRedisplay();
@@ -189,10 +192,10 @@ GLvoid DrawPolygon(GLvoid)
 		{
 			glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
 			glBegin(GL_POLYGON);
-			glVertex2i(pt[j].x -30, pt[j].y-20);
-			glVertex2i(pt[j].x + 30, pt[j].y-20);
-			glVertex2i(pt[j].x + 30, pt[j].y + 20);
-			glVertex2i(pt[j].x-30, pt[j].y + 20);
+			glVertex2i(pt[j].x -RectSize_X, pt[j].y-RectSize_Y);
+			glVertex2i(pt[j].x + RectSize_X, pt[j].y-RectSize_Y);
+			glVertex2i(pt[j].x + RectSize_X, pt[j].y + RectSize_Y);
+			glVertex2i(pt[j].x-RectSize_X, pt[j].y + RectSize_Y);
 			glEnd();
 		}
 		else if (convert == -1)
@@ -211,16 +214,6 @@ GLvoid Timer(int val)
 	//convert *= -1;
 
 	//CollideChk();
-	if (moveval)
-	{
-		for (int i = 0; i < poly_count; i++)
-		{
-			pt[i].dir = 1;
-			pt[i] = RectMove(pt[i]);
-		}
-	}
-
-
 
 	for (int i = 0; i < poly_count; i++)
 	{
@@ -286,34 +279,52 @@ GLvoid Circle(int index, float radius, float angle)
 
 Point RectMove(Point P)
 {
-	if (P.x > W_Width)
+	enum dir { stop = 0, right, left, up, down };
+
+	switch (P.dir)
 	{
-		P.dir_x = 0;
-		P.dir_y = -10;
-		moveval = 2;
+	case right:	//right
+		P.x += 10;
+		if (P.x + RectSize_X > W_Width)
+		{
+			P.x = W_Width - RectSize_X;
+			P.dir = down;
+		}
+		
+		break;
+
+	case left:	//left
+		P.x -= 10;
+		if (P.x - RectSize_X < 0)
+		{
+			P.x = RectSize_X;
+			P.dir = up;
+			moveval = 2;
+		}
+		break;
+
+	case up:	//up
+		P.y += 10;
+		if (P.y + RectSize_Y > P.prev_y)
+		{
+			P.y = P.prev_y;
+			P.dir = right;
+		}
+		break;
+
+	case down:	//down
+		P.y -= 10;
+		if (P.y - RectSize_Y < 0)
+		{
+			P.y = RectSize_Y;
+			P.dir = left;
+		}
+		break;
 	}
-	if (P.y < 0)
+	if (moveval == 2 && P.x > P.prev_x && P.y == P.prev_y)
 	{
-		P.dir_x = -10;
-		P.dir_y = 0;
-	}
-	if (P.x < 0)
-	{
-		P.dir_x = 0;
-		P.dir_y = 10;
+		P.dir = stop;
 	}
 
-	if (P.y > P.prev_y)
-	{
-		P.dir_x = 10;
-		P.dir_y = 0;
-	}
-
-	if (P.x == P.prev_x&&P.y == P.prev_y&&moveval == 2)
-	{
-		P.dir_x = 0;
-		P.dir_y = 0;
-		moveval = 0;
-	}
 	return P;
 }
