@@ -196,6 +196,16 @@ GLvoid DrawPolygon(GLvoid)
 			glVertex2i(pt[j].x - pt[j].Rect_x, pt[j].y + pt[j].Rect_y);
 			glEnd();
 		}
+		if (moveval)
+		{
+			glColor4f(1.0f, 0.0f, 1.0f, 1.0f);
+			glBegin(GL_POLYGON);
+			glVertex2i(targetx - 10, W_Height - targety - 10);
+			glVertex2i(targetx + 10, W_Height - targety - 10);
+			glVertex2i(targetx + 10, W_Height - targety + 10);
+			glVertex2i(targetx - 10, W_Height - targety + 10);
+			glEnd();
+		}
 		else if (convert == -1)
 		{
 			glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
