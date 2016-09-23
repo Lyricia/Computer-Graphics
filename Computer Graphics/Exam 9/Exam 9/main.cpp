@@ -18,6 +18,8 @@ struct Point
 	int dir_y;
 	int live;				// 1 right 2 left 3 up 4 down
 	float rad;
+	float rad_speed;
+	float rad_limit;
 };
 
 GLvoid RegesterCallBack();
@@ -76,7 +78,11 @@ GLvoid init(GLvoid)
 	space_y = W_Height / 3;
 
 	for (int i = 0; i < 50; i++)
-		pt[i] = { 0,0,0,0,0,0,2,20.0 };
+		pt[i] = { 
+		0,0,
+		0,0,
+		0,0,
+		2,0.0, 0 };
 
 }
 
@@ -169,8 +175,9 @@ GLvoid MouseEvent(int button, int state, int x, int y)
 		if (pt_index > 9)
 			pt_index = 0;
 		pt[pt_index] = { (float)x,(float)W_Height - y,(float)x,(float)W_Height - y };
-		pt[pt_index].rad = 40;
-
+		pt[pt_index].rad = 0;
+		pt[pt_index].rad_speed = 1;
+		pt[pt_index].rad_limit = 0;
 
 		pt_index++;
 		if (poly_count<10)
@@ -184,7 +191,7 @@ GLvoid DrawPolygon(GLvoid)
 	for (int index = 0; index < poly_count; index++)
 	{
 		if (convert == 1)
-		{
+		{ 
 			glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
 			glBegin(GL_POLYGON);
 			glVertex2i(pt[index].x - RectSize_X, pt[index].y - RectSize_Y);
@@ -196,10 +203,17 @@ GLvoid DrawPolygon(GLvoid)
 		else if (convert == -1)
 		{
 			glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-			glPointSize(2);
+			glPointSize(3);
 			glBegin(GL_POINTS);
-			for (rad = 0; rad < 360*4; rad += 10)
-				Circle(index, pt[index].rad, rad);
+			//for (rad = 0; rad < 360 * 4; rad += 10)
+			//{
+			// 
+			//}
+			while (pt[index].rad_speed < pt[index].rad_limit) 
+			{
+				Circle(index, pt[index].rad, pt[index].rad_speed);
+				pt[index].rad_speed += 5;
+			}
 			glEnd();
 		}
 	}
@@ -207,10 +221,16 @@ GLvoid DrawPolygon(GLvoid)
 
 GLvoid Timer(int val)
 {
-
+	for (int index = 0; index < poly_count; index++)
+	{
+		pt[index].rad_limit += 5;
+		if (pt[index].rad_limit > 360 * 2)
+			break;
+		pt[index].rad+=0.5;
+	}
 
 	glutPostRedisplay();
-	glutTimerFunc(val_timer, Timer, 1);
+	glutTimerFunc(val_timer, Timer, 1); 
 }
 
 
@@ -262,11 +282,10 @@ GLvoid Circle(int index, float radius, float angle)
 	angle = angle * (3.141592 / 180);
 	float x=0;
 	float y=0;
-	for (int i = 0; i < 360; i += 0.2)
-	{
-		x = (cos(angle)*radius + pt[index].x) + i;
-		y = (sin(angle)*radius + pt[index].y) + i;
-		glVertex2f(x, y);
-	}
+	
+	x = (cos(angle)*radius + pt[index].x);
+	y = (sin(angle)*radius + pt[index].y);
+
+	glVertex2f(x, y);
 }
 
