@@ -8,11 +8,15 @@
 #define RectSize_X	30
 #define RectSize_Y	20
 
+enum dir { clockwise = 0, anticlockwise };
+
 struct Point
 {
 	float x;
 	float y;
 	float radius;
+	float rad_limit;
+	int dir;
 };
 
 GLvoid RegesterCallBack();
@@ -117,7 +121,7 @@ GLvoid Keydown(unsigned char key, int x, int y)
 
 GLvoid MouseMove(int x, int y)
 {
-
+	
 }
 
 GLvoid MouseEvent(int button, int state, int x, int y)
@@ -128,6 +132,7 @@ GLvoid MouseEvent(int button, int state, int x, int y)
 			pt_index = 0;
 		pt[pt_index] = { (float)x,(float)W_Height - y};
 		pt[pt_index].radius = 0;
+		pt[pt_index].dir = dir::anticlockwise;
 
 		pt_index++;
 		if (poly_count<10)
@@ -143,10 +148,23 @@ GLvoid DrawPolygon(GLvoid)
 		glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
 		glLineWidth(2);
 		glPointSize(3);
-		glBegin(GL_POINTS);
-		for (float angle = 0; angle != 360; angle +=5)
+		glBegin(GL_LINE_STRIP);
+		pt[index].radius = 0;
+		if (pt[index].dir == dir::anticlockwise)
 		{
-			Circle(index, pt[index].radius, angle);
+			for (float angle = 0; angle != pt[index].rad_limit; angle += 5)
+			{
+				Circle(index, pt[index].radius, angle);
+				pt[index].radius += 0.2;
+			}
+		}
+		else if (pt[index].dir == dir::clockwise)
+		{
+			for (float angle = 0; angle != pt[index].rad_limit; angle += 5)
+			{
+				Circle(index, -pt[index].radius, angle);
+				pt[index].radius += 0.2;
+			}
 		}
 
 		glEnd();
@@ -157,7 +175,30 @@ GLvoid Timer(int val)
 {
 	for (int index = 0; index < poly_count; index++)
 	{
-			pt[index].radius += 5;
+		if (pt[index].dir == dir::anticlockwise)
+		{
+			pt[index].rad_limit += 10;
+		}
+		else if (pt[index].dir == dir::clockwise)
+		{
+			pt[index].rad_limit -= 10;
+
+		}
+
+
+		if (pt[index].rad_limit > 360 * 5 + 10)
+		{
+			pt[index].dir = dir::clockwise;
+			pt[index].x += 2 * pt[index].radius;
+		}
+		else if (pt[index].rad_limit < 0)
+		{
+			pt[index].dir = dir::anticlockwise;
+			pt[index].rad_limit = 0;
+		}
+
+		if (pt[index].rad_limit == 0)
+			break;
 	}
 
 	glutPostRedisplay();
@@ -174,6 +215,8 @@ GLvoid Circle(int index, float radius, float angle)
 	circlex = (cos(angle)*radius + pt[index].x);
 	circley = (sin(angle)*radius + pt[index].y);
 
-	glVertex2f((cos(angle)*radius + pt[index].x), (sin(angle)*radius + pt[index].y));
+	glVertex2f(circlex, circley);
+	
+
 }
 
