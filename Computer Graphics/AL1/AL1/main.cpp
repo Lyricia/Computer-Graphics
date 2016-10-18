@@ -1,7 +1,7 @@
 #include <iostream>
 #include <time.h>
 #include <windows.h>
-#define number 10000
+#define number 10000000
 
 using namespace std;
 
@@ -11,7 +11,7 @@ int selectionsort(int);
 void heapSort(int arr[], int n);
 void heapify(int arr[], int n, int i);
 
-int arr[number] = { 90, 30, 50, 20, 40, 10, 80, 60, 70 };
+int arr[number] = { 0, };
 // 10, 20, 30, 40, 50, 60, 70, 80, 90
 // 90, 30, 50, 20, 40, 10, 80, 60, 70
 int arrindex = 0;
@@ -22,6 +22,7 @@ int main()
 	int count = 0;
 	double start = 0;
 	double end = 0;
+	double temp = 0;
 
 	int bRun = true;
 	int menu = 0;
@@ -29,7 +30,7 @@ int main()
 	srand((unsigned)time(NULL));
 
 	for (int i = 0; i < number; ++i)
-		arr[i] = rand() % 10000;
+		arr[i] = rand() % 1000000;
 	while (true)
 	{
 		system("cls");
@@ -43,8 +44,8 @@ int main()
 			heapSort(arr, number);
 			end = clock();
 
-			for (int i = 0; i < number; ++i)
-				cout << arr[i] << endl;
+			//for (int i = 0; i < number; ++i)
+			//	cout << arr[i] << endl;
 			cout << "time cast : " << end - start << endl;
 			break;
 
@@ -52,9 +53,9 @@ int main()
 			start = clock();
 			insertsort();
 			end = clock();
-
-			for (int i = 0; i < number; ++i)
-				cout << arr[i] << endl;
+			
+			//for (int i = 0; i < number; ++i)
+			//	cout << arr[i] << endl;
 			cout << "time cast : " << end - start << endl;
 			break;
 
@@ -118,6 +119,8 @@ void insertsort()
 			arr[j + 1] = arr[j];
 		}
 		arr[j + 1] = tmp;
+		if (i % 10000 == 0)
+			cout << i << endl;
 	}
 }
 
