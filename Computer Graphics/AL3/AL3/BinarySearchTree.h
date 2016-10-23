@@ -6,6 +6,11 @@ struct BSTNode
 	int Data;
 	BSTNode *Left;
 	BSTNode *Right;
+	BSTNode *Prev;
+
+	int Left;
+	int Right;
+	int Prev;
 };
 
 class BinarySearchTree

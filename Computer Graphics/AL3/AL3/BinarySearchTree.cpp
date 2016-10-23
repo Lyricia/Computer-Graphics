@@ -6,6 +6,7 @@ BSTNode* BinarySearchTree::BST_CreateNode(int NewData)
 	NewNode->Left = NULL;
 	NewNode->Right = NULL;
 	NewNode->Data = NewData;
+	NewNode->Prev = NULL;
 
 	return NewNode;
 }
