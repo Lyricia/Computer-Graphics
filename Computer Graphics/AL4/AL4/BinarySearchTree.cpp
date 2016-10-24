@@ -98,22 +98,15 @@ void BinarySearchTree::BST_InorderPrintTree(int Parent_Nodeidx)
 	BST_InorderPrintTree(Right(Parent_Nodeidx));
 }
 
-int BinarySearchTree::BST_RemoveNode(int Nodeidx, int Target)
+int BinarySearchTree::BST_RemoveNode(int Nodeidx, int Targetval)
 {
-	int Removed = NULL;
+	int Targetidx = NULL;
 
 	TreeList[Nodeidx].Data;
 	TreeList[Left(Nodeidx)].Data;
 	TreeList[Right(Nodeidx)].Data;
 
-	if (TreeList[Nodeidx].Data == NULL)
-		return NULL;
-
-	if (TreeList[Nodeidx].Data > Target)
-		Removed = BST_RemoveNode(Left(Nodeidx), Target);
-
-	else if (TreeList[Nodeidx].Data < Target)
-		Removed = BST_RemoveNode(Right(Nodeidx), Target);
+	Targetidx = BST_SearchNode(Nodeidx, Targetval);
 
 	else /*  목표 값을 찾은 경우. */
 	{
@@ -135,24 +128,22 @@ int BinarySearchTree::BST_RemoveNode(int Nodeidx, int Target)
 				while (TreeList[Left(Nodeidx)].Data != NULL)
 				{
 					tmp_parent = tmp;
-					tmp = BinarySearchTree::BST_SearchMinNode(tmp);
+					tmp = BST_SearchMinNode(tmp);
 				}
 
 
 				if (TreeList[Left(tmp)].Data == NULL && TreeList[Right(tmp)].Data == NULL)
 					TreeList[Nodeidx].Data = TreeList[tmp].Data;
 
-				else
-				{
 
-				}
+				else
+					BST_ChildMove(Nodeidx);
 			}
 			else					/*  자식이 하나만 있는 경우 */
 			{
-				if (Node->Left != NULL && Node->Right == NULL)
+				if (TreeList[Left(Nodeidx)].Data != NULL && TreeList[Right(Nodeidx)].Data != NULL)
 				{
-					Parent->Left = Node->Left;
-					return Removed;
+					TreeList[(Nodeidx-1)/2].Data = TreeList[];
 				}
 				else if (Node->Right != NULL && Node->Left == NULL)
 				{
@@ -163,6 +154,17 @@ int BinarySearchTree::BST_RemoveNode(int Nodeidx, int Target)
 		}
 	}
 	return Removed;
+}
+
+int BinarySearchTree::BST_ChildMove(int Nodeidx)
+{
+	TreeList[Parent(Nodeidx)].Data = TreeList[Nodeidx].Data;
+	
+	if (TreeList[Left(Nodeidx)].Data != NULL)
+		BST_ChildMove(Left(Nodeidx));
+
+	if (TreeList[Right(Nodeidx)].Data != NULL)
+		BST_ChildMove(Right(Nodeidx));
 }
 
 BinarySearchTree::~BinarySearchTree()

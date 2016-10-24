@@ -28,7 +28,8 @@ public:
 	int BST_SearchNode(int Parent_Nodeidx, int Target);
 	void BST_InorderPrintTree(int Nodeidx);
 	int BST_RemoveNode(int Nodeidx, int Target);
+	int BST_ChildMove(int Nodeidx);
 	inline int Left(int Nodeidx) { return (Nodeidx * 2) + 1; }
 	inline int Right(int Nodeidx) { return (Nodeidx * 2) + 2; }
-	inline int Parent(int Nodeidx) { return (Nodeidx - 1) / 2; }
+	inline int Parent(int Nodeidx) { return (Nodeidx - 2) / 2; }
 };
