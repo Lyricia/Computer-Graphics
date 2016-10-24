@@ -1,60 +1,81 @@
 #include "BinarySearchTree.h"
-
+using namespace std;
 
 int main(void)
 {
-	/*  노드 생성 */
-	//BinarySearchTree BaseTree;
-	//
-	//BSTNode* Tree = BaseTree.BST_CreateNode(123);
-	//BSTNode* Node = NULL;
-	//
-	///*  트리에 노드 추가 */
-	//BaseTree.BST_InsertNode(Tree, BaseTree.BST_CreateNode(50));
-	//BaseTree.BST_InsertNode(Tree, BaseTree.BST_CreateNode(24));
-	//BaseTree.BST_InsertNode(Tree, BaseTree.BST_CreateNode(22));
-	//BaseTree.BST_InsertNode(Tree, BaseTree.BST_CreateNode(9918));
-	//BaseTree.BST_InsertNode(Tree, BaseTree.BST_CreateNode(424));
-	//BaseTree.BST_InsertNode(Tree, BaseTree.BST_CreateNode(17));
-	//BaseTree.BST_InsertNode(Tree, BaseTree.BST_CreateNode(3));
-	//
-	//BaseTree.BST_InsertNode(Tree, BaseTree.BST_CreateNode(98));
-	//BaseTree.BST_InsertNode(Tree, BaseTree.BST_CreateNode(34));
-	//BaseTree.BST_InsertNode(Tree, BaseTree.BST_CreateNode(100));
-	//BaseTree.BST_InsertNode(Tree, BaseTree.BST_CreateNode(80));
-	//
-	//BaseTree.BST_InsertNode(Tree, BaseTree.BST_CreateNode(760));
-	//BaseTree.BST_InsertNode(Tree, BaseTree.BST_CreateNode(317));
-	//BaseTree.BST_InsertNode(Tree, BaseTree.BST_CreateNode(1));
-	//
-	//
-	//Node = BaseTree.BST_SearchNode(Tree, 17);
-	//if (Node != NULL)
-	//	printf("%d \n", Node->Data);
-	//else
-	//	puts("그런 노드 없어요");
-	//
-	///*  트리 출력 */
-	//BaseTree.BST_InorderPrintTree(Tree);
-	//printf("\n");
-	//
-	///*  특정 노드 삭제 */
-	//printf("Removing 22...\n");
-	//Node = BaseTree.BST_RemoveNode(Tree, NULL, 22);
-	//BaseTree.BST_DestroyNode(Node);
-	//BaseTree.BST_InorderPrintTree(Tree);
-	//printf("\n");
-	//
-	///*  새 노드 삽입 */
-	//printf("Inserting 111...\n");
-	//BaseTree.BST_InsertNode(Tree, BaseTree.BST_CreateNode(111));
-	//BaseTree.BST_InorderPrintTree(Tree);
-	//printf("\n");
-	//
-	///*  트리 소멸시키기 */
-	//BaseTree.BST_DestroyTree(Tree);
+	BinarySearchTree Bst;
+	
+	int menu = 0;
+	int targetinput = 0;
 
+	//Bst.BST_CreateRootNode(50);
+	//Bst.BST_InsertNode(0, 24);
+	//Bst.BST_InsertNode(0, 22);
+	//Bst.BST_InsertNode(0, 120);
+	//Bst.BST_InsertNode(0, 17);
+	//Bst.BST_InsertNode(0, 3);
+	//Bst.BST_InsertNode(0, 98);
+	//Bst.BST_InsertNode(0, 34);
+	//Bst.BST_InsertNode(0, 100);
+	//Bst.BST_InsertNode(0, 80);
+	//Bst.BST_InsertNode(0, 45);
+	//Bst.BST_InsertNode(0, 40);
+	//Bst.BST_InsertNode(0, 43);
+	//Bst.BST_InsertNode(0, 36);
+	//
+	//Bst.BST_InorderPrintTree(0);
+	//
+	//cout << endl;
+	//
+	//Bst.BST_RemoveNode(0,22);		//delete node
+	//Bst.BST_RemoveNode(0, 50);		//delete root node
+	//Bst.BST_InsertNode(0, 50);		//insert node
+	//
+	//Bst.BST_InorderPrintTree(0);
 
+	while (1)
+	{
+		system("cls");
 
+		cout << "1. Create\n2. Insert\n3. Delete\n4. Print ALL"<<endl;
+		cin >> menu;
+
+		switch (menu)
+		{
+		case 1:
+			cout << "1. Create\n";
+			cout << "Root Value : ";
+			cin >> targetinput;
+
+			Bst.BST_CreateRootNode(targetinput);
+			break;
+
+		case 2:
+			cout << "2. Insert\n";
+			cout << "Insert Value : ";
+			cin >> targetinput;
+
+			Bst.BST_InsertNode(0, targetinput);
+			break;
+
+		case 3:
+			cout << "3. Delete\n";
+			cout << "Delete Value : ";
+			cin >> targetinput;
+
+			Bst.BST_RemoveNode(0, targetinput);
+			break;
+
+		case 4:
+			Bst.BST_InorderPrintTree(0);
+			cout << endl;
+			break;
+
+		default:
+			cout << "incorrect menu input" << endl;
+			break;
+		}
+		system("pause");
+	}
 	return 0;
 }
