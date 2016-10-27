@@ -72,17 +72,17 @@ int main()
 	}
 }
 
-void heapSort(int arr[], int n)
+void heapSort(int arr[], int Nodeidx)
 {
-	for (int i = n / 2 - 1; i >= 0; i--)
+	for (int Parent = Nodeidx / 2 - 1; Parent >= 0; Parent--)
 	{
-		heapify(arr, n, i);
+		heapify(arr, Nodeidx, Parent);
 	}
 
-	for (int i = n - 1; i >= 0; i--)
+	for (int Parent = Nodeidx - 1; Parent >= 0; Parent--)
 	{
-		swap(arr[0], arr[i]);
-		heapify(arr, i, 0);
+		swap(arr[0], arr[Parent]);
+		heapify(arr, Parent, 0);
 	}
 }
 

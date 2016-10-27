@@ -8,26 +8,26 @@ int main(void)
 	int menu = 0;
 	int targetinput = 0;
 
-	//Bst.BST_CreateRootNode(50);
-	//Bst.BST_InsertNode(0, 24);
-	//Bst.BST_InsertNode(0, 22);
-	//Bst.BST_InsertNode(0, 120);
-	//Bst.BST_InsertNode(0, 17);
-	//Bst.BST_InsertNode(0, 3);
-	//Bst.BST_InsertNode(0, 98);
-	//Bst.BST_InsertNode(0, 34);
-	//Bst.BST_InsertNode(0, 100);
-	//Bst.BST_InsertNode(0, 80);
-	//Bst.BST_InsertNode(0, 45);
-	//Bst.BST_InsertNode(0, 40);
-	//Bst.BST_InsertNode(0, 43);
-	//Bst.BST_InsertNode(0, 36);
-	//
-	//Bst.BST_InorderPrintTree(0);
+	Bst.BST_CreateRootNode(50);
+	Bst.BST_InsertNode(0, 24);
+	Bst.BST_InsertNode(0, 22);
+	Bst.BST_InsertNode(0, 120);
+	Bst.BST_InsertNode(0, 17);
+	Bst.BST_InsertNode(0, 3);
+	Bst.BST_InsertNode(0, 98);
+	Bst.BST_InsertNode(0, 34);
+	Bst.BST_InsertNode(0, 100);
+	Bst.BST_InsertNode(0, 80);
+	Bst.BST_InsertNode(0, 45);
+	Bst.BST_InsertNode(0, 40);
+	Bst.BST_InsertNode(0, 43);
+	Bst.BST_InsertNode(0, 36);
+	
+	Bst.BST_InorderPrintTree(0);
 	//
 	//cout << endl;
 	//
-	//Bst.BST_RemoveNode(0,22);		//delete node
+	//Bst.BST_RemoveNode(0,22);			//delete node
 	//Bst.BST_RemoveNode(0, 50);		//delete root node
 	//Bst.BST_InsertNode(0, 50);		//insert node
 	//
