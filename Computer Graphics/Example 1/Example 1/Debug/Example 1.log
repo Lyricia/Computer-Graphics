@@ -1,2 +1,2 @@
-﻿  main.cpp
-d:\computer-graphics\computer graphics\example 1\example 1\main.cpp : fatal error C1041: 프로그램 데이터베이스 'D:\Computer-Graphics\Computer Graphics\Example 1\Example 1\Debug\vc140.idb'을(를) 열 수 없습니다. 여러 CL.EXE에서 동일한 .PDB 파일에 쓰는 경우 /FS를 사용하십시오.
+﻿  Example 1.vcxproj -> D:\Study\VisualStudio\Projects\Computer Graphics\Example 1\Debug\Example 1.exe
+  Example 1.vcxproj -> D:\Study\VisualStudio\Projects\Computer Graphics\Example 1\Debug\Example 1.pdb (Full PDB)

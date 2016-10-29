@@ -91,15 +91,15 @@ GLvoid drawScene(GLvoid)
 	glLineWidth(5);
 	glBegin(GL_LINES);
 	{
-		glVertex2i(150,				150);
-		glVertex2i(150,				W_Height-150);
-		glVertex2i(W_Width-150,		150);
-		glVertex2i(W_Width-150,		W_Height-150);
-	
-		glVertex2i(150,				150);
-		glVertex2i(W_Width-150,		150);
-		glVertex2i(150,				W_Height - 150);
-		glVertex2i(W_Width-150,		W_Height - 150);
+		glVertex2i(150, 150);
+		glVertex2i(150, W_Height - 150);
+		glVertex2i(W_Width - 150, 150);
+		glVertex2i(W_Width - 150, W_Height - 150);
+
+		glVertex2i(150, 150);
+		glVertex2i(W_Width - 150, 150);
+		glVertex2i(150, W_Height - 150);
+		glVertex2i(W_Width - 150, W_Height - 150);
 	}
 	glEnd();
 
@@ -154,16 +154,16 @@ GLvoid MouseEvent(int button, int state, int x, int y)
 	{
 		if (pt_index > 19)	pt_index = 0;
 
-		pt[pt_index] = { 
+		pt[pt_index] = {
 			(float)x,
 			(float)W_Height - y
 		};
-		
-		if (rand() % 2)	pt[pt_index].dir_x = -(rand()%25);
-		else			pt[pt_index].dir_x = rand()%25;
 
-		if (rand() % 2)	pt[pt_index].dir_y = -(rand()%25);
-		else			pt[pt_index].dir_y = rand()%25;
+		if (rand() % 2)	pt[pt_index].dir_x = -(rand() % 25);
+		else			pt[pt_index].dir_x = rand() % 25;
+
+		if (rand() % 2)	pt[pt_index].dir_y = -(rand() % 25);
+		else			pt[pt_index].dir_y = rand() % 25;
 
 		pt[pt_index].live = 1;
 		pt[pt_index].rad = 20.0;
@@ -179,7 +179,7 @@ GLvoid DrawPolygon(GLvoid)
 {
 	for (int index = 0; index < poly_count; index++)
 	{
-		if (convert == 1&& pt[index].live==1)
+		if (convert == 1 && pt[index].live == 1)
 		{
 			glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
 			glBegin(GL_POLYGON);
@@ -213,11 +213,11 @@ GLvoid Timer(int val)
 		pt[i].x += pt[i].dir_x;
 		pt[i].y += pt[i].dir_y;
 		pt[i].rad += pt[i].rad_dir;
-		
+
 		if (pt[i].rad > 30)
 			pt[i].rad_dir = -5;
 		else if (pt[i].rad < 10)
- 			pt[i].rad_dir = 5;
+			pt[i].rad_dir = 5;
 	}
 
 
@@ -231,7 +231,7 @@ GLvoid CollideChk()
 {
 	for (int i = 0; i < poly_count; i++)
 	{
-		if (pt[i].x - 20 < 150|| pt[i].y - 20 < 150|| pt[i].x + 20 > W_Width - 150|| pt[i].y + 20 > W_Height - 150)
+		if (pt[i].x - 20 < 150 || pt[i].y - 20 < 150 || pt[i].x + 20 > W_Width - 150 || pt[i].y + 20 > W_Height - 150)
 		{
 			pt[i].live = 0;
 			pt[i].rad = 0;
