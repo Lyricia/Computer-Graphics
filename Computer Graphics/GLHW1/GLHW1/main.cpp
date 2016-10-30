@@ -3,7 +3,7 @@
 #include <cmath>
 #include <gl\glut.h>
 
-#define W_Width		500
+#define W_Width		600
 #define W_Height	800
 
 enum Polytype { TRI = 3, RECT, PENTA, HEX };
@@ -17,6 +17,7 @@ typedef struct
 struct Poly
 {
 	int vertexnum; // using Polytype
+	int xpos;
 	int ypos;
 	int dropline;
 	Point vertex[100];
@@ -28,6 +29,8 @@ struct Poly
 
 GLvoid RegesterCallBack();
 
+Point shearing(Point p, int val);
+
 GLvoid drawScene(GLvoid);
 GLvoid LineDraw();
 GLvoid DrawPoly();
@@ -38,6 +41,11 @@ GLvoid Keydown(unsigned char, int, int);
 GLvoid MouseMove(int, int);
 GLvoid MouseEvent(int, int, int, int);
 GLvoid initpoly();
+
+Poly VertexSetting(Poly srtpoly);
+
+Point rotate(Point p, int angle);
+Point scale(Point p, int val);
 
 Point InterSectPoint(Point func_p1, Point func_p2, Point clip_p1, Point clip_p2);
 GLvoid ClippingChk(int index);
@@ -80,6 +88,8 @@ GLvoid RegesterCallBack()
 
 GLvoid initpoly()
 {
+	int srt = 0;
+
 	ClipStdPoly.dropline = 2;
 	ClipStdPoly.vertexnum = RECT;
 	ClipStdPoly.ypos = 50;
@@ -91,12 +101,19 @@ GLvoid initpoly()
 	{
 		poly[i].dropline = 1 + rand() % 5;
 		poly[i].vertexnum = 3 + rand() % 4;
-		poly[i].ypos = 1000;
-		poly[i].scale = rand() % 3;
-		poly[i].shear = rand() % 3;
-		poly[i].rot = rand() % 3;
-		for (int i = 0; i < poly[i].vertexnum; i++)
-			poly[i].vertex[i] = Circle(50 + (poly[i].dropline - 1) * 100, poly[i].ypos, radius, 360 / poly[i].vertexnum * i);
+		poly[i].xpos = 50 + (poly[i].dropline - 1) * 100;
+		poly[i].ypos = 900;
+
+		srt = 0;
+		if(srt == 0)		poly[i].scale = rand() % 5;
+		else if(srt == 1)	poly[i].shear = rand() % 5;
+		else if(srt == 2)	poly[i].rot = rand() % 5;
+		else {};
+
+		for (int j = 0; j < poly[i].vertexnum; j++)
+			poly[i].vertex[j] = Circle(poly[i].xpos, poly[i].ypos, radius, 360 / poly[i].vertexnum * j);
+
+		poly[i] = VertexSetting(poly[i]);
 	}
 
 	cliped.dropline = NULL;
@@ -107,17 +124,57 @@ GLvoid initpoly()
 
 }
 
-GLvoid rotate()
+Poly VertexSetting(Poly srtpoly)
 {
+	float tmp_x = srtpoly.xpos;
+	float tmp_y = srtpoly.ypos;
 
+	for (int i = 0; i < srtpoly.vertexnum; i++)
+	{
+		srtpoly.vertex[i].x = srtpoly.vertex[i].x - tmp_x;
+		srtpoly.vertex[i].y = srtpoly.vertex[i].y - tmp_y;
+	}
+
+	if (srtpoly.rot != 0)
+		for (int i = 0; i < srtpoly.vertexnum; i++)
+			srtpoly.vertex[i] = rotate(srtpoly.vertex[i], 120 * srtpoly.rot);
+	
+	if (srtpoly.scale != 0)
+		for (int i = 0; i < srtpoly.vertexnum; i++)
+			srtpoly.vertex[i] = scale(srtpoly.vertex[i], 0.5 + (0.3 * srtpoly.scale));
+	
+	if (srtpoly.shear != 0)
+		for (int i = 0; i < srtpoly.vertexnum; i++)
+			srtpoly.vertex[i] = shearing(srtpoly.vertex[i], 0.1*srtpoly.shear);
+
+	for (int i = 0; i < srtpoly.vertexnum; i++)
+	{
+		srtpoly.vertex[i].x = srtpoly.vertex[i].x + tmp_x;
+		srtpoly.vertex[i].y = srtpoly.vertex[i].y + tmp_y;
+	}
+
+	return srtpoly;
 }
-GLvoid scale()
-{
 
+Point rotate(Point p, int angle)
+{
+	angle = angle * (3.141592 / 180);
+
+	p.x = cos(angle) * p.x - sin(angle) * p.y;
+	p.y = sin(angle) * p.x + cos(angle) * p.y;
+	return p;
 }
-GLvoid shearing()
+Point scale(Point p, int val)
 {
-
+	p.x = val * p.x;
+	p.y = val * p.y;
+	return p;
+}
+Point shearing(Point p, int val)
+{
+	p.x = p.x + val*p.y;
+	
+	return p;
 }
 
 GLvoid drawScene(GLvoid)
@@ -140,12 +197,12 @@ GLvoid LineDraw()
 	{
 		for (int lineidx = 0; lineidx < 6; lineidx++)
 		{
-			glVertex2i((W_Width / 5) * lineidx, 0);
-			glVertex2i((W_Width / 5) * lineidx, 800);
+			glVertex2i(100 * lineidx, 0);
+			glVertex2i(100 * lineidx, 800);
 		}
 
-		glVertex2i(0, (W_Width / 5));
-		glVertex2i(W_Width, (W_Width / 5));
+		glVertex2i(0, 100);
+		glVertex2i(500, 100);
 	}
 	glEnd();
 }
@@ -239,7 +296,7 @@ GLvoid Timer(int val)
 	static int dropcountidx = 0;
 
 	counter++;
-	if (counter > 50)
+	if (counter > 100)
 	{
 		counter = 0;
 		if (dropcountidx<20)
@@ -260,6 +317,8 @@ GLvoid Timer(int val)
 	{
 		for (int i = 0; i < poly[j].vertexnum; i++)
 			poly[j].vertex[i] = Circle(50 + (poly[j].dropline - 1) * 100, poly[j].ypos, radius, 360 / poly[j].vertexnum * i);
+
+		poly[j] = VertexSetting(poly[j]);
 
 		ClippingChk(j);
 	}
