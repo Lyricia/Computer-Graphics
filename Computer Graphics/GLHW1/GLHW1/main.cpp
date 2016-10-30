@@ -20,6 +20,9 @@ struct Poly
 	int ypos;
 	int dropline;
 	Point vertex[100];
+	int rot;
+	int scale;
+	int shear;
 };
 
 
@@ -37,20 +40,22 @@ GLvoid MouseEvent(int, int, int, int);
 GLvoid initpoly();
 
 Point InterSectPoint(Point func_p1, Point func_p2, Point clip_p1, Point clip_p2);
-GLvoid ClippingChk();
+GLvoid ClippingChk(int index);
 bool ChkVertexin(Point target);
 GLvoid OrderCWVertex();
 Point Circle(float x, float y, float radius, float angle);
 
 
-Poly poly;
+Poly poly[20];
 Poly ClipStdPoly;
 Poly cliped;
 int val_timer = 10;
-float radius = 70.0;
+float radius = 40.0;
 
 void main()
 {
+	srand((unsigned)time(NULL));
+
 	initpoly();
 
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA);
@@ -77,24 +82,41 @@ GLvoid initpoly()
 {
 	ClipStdPoly.dropline = 2;
 	ClipStdPoly.vertexnum = RECT;
-	ClipStdPoly.ypos = 200;
+	ClipStdPoly.ypos = 50;
 
 	for (int i = 0; i < ClipStdPoly.vertexnum; i++)
-		ClipStdPoly.vertex[i] = Circle(50 + (ClipStdPoly.dropline - 1) * 100, ClipStdPoly.ypos, radius, 360 / ClipStdPoly.vertexnum * i);
+		ClipStdPoly.vertex[i] = Circle(50 + (ClipStdPoly.dropline - 1) * 100, ClipStdPoly.ypos, radius, 360 / ClipStdPoly.vertexnum * i + 120);
 
-	 
-	poly.dropline = 2;
-	poly.vertexnum = RECT;
-	poly.ypos = 250;
-
-	for (int i = 0; i < poly.vertexnum; i++)
-		poly.vertex[i] = Circle(50 + (poly.dropline - 1) * 100, poly.ypos, radius, 360 / poly.vertexnum * i);
+	for (int i = 0; i < 20; i++)
+	{
+		poly[i].dropline = 1 + rand() % 5;
+		poly[i].vertexnum = 3 + rand() % 4;
+		poly[i].ypos = 1000;
+		poly[i].scale = rand() % 3;
+		poly[i].shear = rand() % 3;
+		poly[i].rot = rand() % 3;
+		for (int i = 0; i < poly[i].vertexnum; i++)
+			poly[i].vertex[i] = Circle(50 + (poly[i].dropline - 1) * 100, poly[i].ypos, radius, 360 / poly[i].vertexnum * i);
+	}
 
 	cliped.dropline = NULL;
 	cliped.vertexnum = 0;
 	cliped.ypos = NULL;
 	for (int i = 0; i < cliped.vertexnum; i++)
 		cliped.vertex[i] = { 0,0 };
+
+}
+
+GLvoid rotate()
+{
+
+}
+GLvoid scale()
+{
+
+}
+GLvoid shearing()
+{
 
 }
 
@@ -132,10 +154,13 @@ GLvoid LineDraw()
 GLvoid DrawPoly()
 {
 	glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-	glBegin(GL_POLYGON); 
-	for (int i = 0; i < poly.vertexnum; i++)
-		glVertex2i(poly.vertex[i].x, poly.vertex[i].y);
-	glEnd();
+	for (int j = 0; j < 20; j++)
+	{
+		glBegin(GL_POLYGON);
+		for (int i = 0; i < poly[j].vertexnum; i++)
+			glVertex2i(poly[j].vertex[i].x, poly[j].vertex[i].y);
+		glEnd();
+	}
 
 
 	glColor4f(1.0f, 0.5f, 0.0f, 1.0f);
@@ -171,12 +196,24 @@ GLvoid Keydown(unsigned char key, int x, int y)
 		exit(0);
 		break;
 
+	case 'a':
+		if(ClipStdPoly.dropline>1)
+			ClipStdPoly.dropline--;
+		break;
+		
+	case 'd':
+		if (ClipStdPoly.dropline<5)
+			ClipStdPoly.dropline++;
+		break;
+
 	case 'w':
-		poly.ypos += 10;
+		if (ClipStdPoly.vertexnum<6)
+			ClipStdPoly.vertexnum++;
 		break;
 
 	case 's':
-		poly.ypos -= 10;
+		if (ClipStdPoly.vertexnum>3)
+			ClipStdPoly.vertexnum--;
 		break;
 
 	case 'e':
@@ -198,12 +235,34 @@ GLvoid MouseEvent(int button, int state, int x, int y)
 
 GLvoid Timer(int val)
 {
+	static int counter = 0;
+	static int dropcountidx = 0;
+
+	counter++;
+	if (counter > 50)
+	{
+		counter = 0;
+		if (dropcountidx<20)
+			dropcountidx++;
+	}
+
+	for (int i = 0; i < dropcountidx; i++) {
+		if (poly[i].ypos > -150)
+			poly[i].ypos--;
+	}
+
+
 	for (int i = 0; i < ClipStdPoly.vertexnum; i++)
 		ClipStdPoly.vertex[i] = Circle(50 + (ClipStdPoly.dropline - 1) * 100, ClipStdPoly.ypos, radius, 360 / ClipStdPoly.vertexnum * i);
-	for (int i = 0; i < poly.vertexnum; i++)
-		poly.vertex[i] = Circle(50 + (poly.dropline - 1) * 100, poly.ypos, radius, 360 / poly.vertexnum * i);
-	
-	ClippingChk();
+
+
+	for (int j = 0; j < 20; j++)
+	{
+		for (int i = 0; i < poly[j].vertexnum; i++)
+			poly[j].vertex[i] = Circle(50 + (poly[j].dropline - 1) * 100, poly[j].ypos, radius, 360 / poly[j].vertexnum * i);
+
+		ClippingChk(j);
+	}
 
 	glutPostRedisplay();
 	glutTimerFunc(val_timer, Timer, 1);
@@ -236,20 +295,20 @@ Point InterSectPoint(Point func_p1, Point func_p2, Point clip_p1, Point clip_p2)
 }
 
 
-GLvoid ClippingChk()
+GLvoid ClippingChk(int index)
 {
 	Point tmp;
 	cliped.vertexnum = 0;
 	memset(cliped.vertex, NULL, sizeof(cliped.vertex));
 
-	if (poly.ypos < 400)
+	if (poly[index].ypos < 150 && poly[index].dropline == ClipStdPoly.dropline)
 	{
 		//chk line intersection from 0 to end step by step
-		for (int pt_dropidx = 0; pt_dropidx < poly.vertexnum-1; pt_dropidx++)
+		for (int pt_dropidx = 0; pt_dropidx < poly[index].vertexnum-1; pt_dropidx++)
 		{
 			for (int pt_clipidx = 0; pt_clipidx < ClipStdPoly.vertexnum-1; pt_clipidx++)
 			{
-				tmp = InterSectPoint(poly.vertex[pt_dropidx], poly.vertex[pt_dropidx + 1], ClipStdPoly.vertex[pt_clipidx], ClipStdPoly.vertex[pt_clipidx + 1]);
+				tmp = InterSectPoint(poly[index].vertex[pt_dropidx], poly[index].vertex[pt_dropidx + 1], ClipStdPoly.vertex[pt_clipidx], ClipStdPoly.vertex[pt_clipidx + 1]);
 				if (tmp.x != -100)
 				{
 					cliped.vertex[cliped.vertexnum] = tmp;
@@ -259,9 +318,9 @@ GLvoid ClippingChk()
 			}
 		}
 
-		for (int pt_dropidx = 0; pt_dropidx < poly.vertexnum - 1; pt_dropidx++)
+		for (int pt_dropidx = 0; pt_dropidx < poly[index].vertexnum - 1; pt_dropidx++)
 		{
-			tmp = InterSectPoint(poly.vertex[pt_dropidx], poly.vertex[pt_dropidx + 1], ClipStdPoly.vertex[ClipStdPoly.vertexnum - 1], ClipStdPoly.vertex[0]);
+			tmp = InterSectPoint(poly[index].vertex[pt_dropidx], poly[index].vertex[pt_dropidx + 1], ClipStdPoly.vertex[ClipStdPoly.vertexnum - 1], ClipStdPoly.vertex[0]);
 			if (tmp.x != -100)
 			{
 				cliped.vertex[cliped.vertexnum] = tmp;
@@ -272,7 +331,7 @@ GLvoid ClippingChk()
 
 		for (int pt_clipidx = 0; pt_clipidx < ClipStdPoly.vertexnum - 1; pt_clipidx++)
 		{
-			tmp = InterSectPoint(poly.vertex[poly.vertexnum - 1], poly.vertex[0], ClipStdPoly.vertex[pt_clipidx], ClipStdPoly.vertex[pt_clipidx + 1]);
+			tmp = InterSectPoint(poly[index].vertex[poly[index].vertexnum - 1], poly[index].vertex[0], ClipStdPoly.vertex[pt_clipidx], ClipStdPoly.vertex[pt_clipidx + 1]);
 			if (tmp.x != -100)
 			{
 				cliped.vertex[cliped.vertexnum] = tmp;
@@ -280,37 +339,41 @@ GLvoid ClippingChk()
 			}
 			tmp = { -100,-100 };
 		}
-		tmp = InterSectPoint(poly.vertex[poly.vertexnum - 1], poly.vertex[0], ClipStdPoly.vertex[ClipStdPoly.vertexnum - 1], ClipStdPoly.vertex[0]);
+
+		tmp = InterSectPoint(poly[index].vertex[poly[index].vertexnum - 1], poly[index].vertex[0], ClipStdPoly.vertex[ClipStdPoly.vertexnum - 1], ClipStdPoly.vertex[0]);
 		if (tmp.x != -100)
 		{
 			cliped.vertex[cliped.vertexnum] = tmp;
 			cliped.vertexnum++;
 		}
 		tmp = { -100,-100 };
-	}
 
-	for (int i = 0; i < poly.vertexnum; i++)
-	{
-		if (ChkVertexin(poly.vertex[i]))
+		for (int i = 0; i < poly[index].vertexnum; i++)
 		{
-			cliped.vertex[cliped.vertexnum] = poly.vertex[i];
-			cliped.vertexnum++;
+			if (ChkVertexin(poly[index].vertex[i]))
+			{
+				cliped.vertex[cliped.vertexnum] = poly[index].vertex[i];
+				cliped.vertexnum++;
+			}
 		}
 	}
-
 }
 
 bool ChkVertexin(Point target)
 {
-	//InterSectPoint(Point func_p1, Point func_p2, Point clip_p1, Point clip_p2)
 	Point temp;
 	for (int i = 0; i < ClipStdPoly.vertexnum; i++)
 	{
-		temp = InterSectPoint({ 150.0 , 100.0 }, target, ClipStdPoly.vertex[i%ClipStdPoly.vertexnum], ClipStdPoly.vertex[i%ClipStdPoly.vertexnum + 1]);
+		temp = InterSectPoint({ 150.0 , 100.0 }, target, ClipStdPoly.vertex[i], ClipStdPoly.vertex[i+1]);
 		if (temp.x != -100)
 		{
 			return false;
 		}
+	}
+	temp = InterSectPoint({ 150.0 , 100.0 }, target, ClipStdPoly.vertex[0], ClipStdPoly.vertex[ClipStdPoly.vertexnum]);
+	if (temp.x != -100)
+	{
+		return false;
 	}
 	return true;
 }
@@ -326,7 +389,7 @@ Point Circle(float x, float y, float radius, float angle)
 {
 	Point P;
 	angle = angle * (3.141592 / 180);
-
+	
 	P.x = cos(angle)*radius + x;
 	P.y = sin(angle)*radius + y;
 
