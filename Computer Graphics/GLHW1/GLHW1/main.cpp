@@ -47,7 +47,7 @@ Poly VertexSetting(Poly srtpoly);
 Point rotate(Point p, int angle);
 Point scale(Point p, int val);
 
-Point InterSectPoint(Point func_p1, Point func_p2, Point clip_p1, Point clip_p2);
+bool InterSectPoint(const Point func_p1, const Point func_p2, const Point clip_p1, const Point clip_p2, Point &Vertex);
 GLvoid ClippingChk(int index);
 bool ChkVertexin(Point target);
 GLvoid OrderCWVertex();
@@ -110,11 +110,20 @@ GLvoid initpoly()
 		else if(srt == 2)	poly[i].rot = rand() % 5;
 		else {};
 
+		poly[0].dropline = 1;
+		poly[0].vertexnum = 3;
+		poly[0].ypos = 140;
+
 		for (int j = 0; j < poly[i].vertexnum; j++)
 			poly[i].vertex[j] = Circle(poly[i].xpos, poly[i].ypos, radius, 360 / poly[i].vertexnum * j);
 
 		poly[i] = VertexSetting(poly[i]);
 	}
+
+	
+
+
+
 
 	cliped.dropline = NULL;
 	cliped.vertexnum = 0;
@@ -264,13 +273,16 @@ GLvoid Keydown(unsigned char key, int x, int y)
 		break;
 
 	case 'w':
-		if (ClipStdPoly.vertexnum<6)
-			ClipStdPoly.vertexnum++;
+		//if (ClipStdPoly.vertexnum<6)
+		//	ClipStdPoly.vertexnum++;
+		poly[0].ypos += 10;
+
 		break;
 
 	case 's':
-		if (ClipStdPoly.vertexnum>3)
-			ClipStdPoly.vertexnum--;
+		//if (ClipStdPoly.vertexnum>3)
+		//	ClipStdPoly.vertexnum--;
+		poly[0].ypos -= 10;
 		break;
 
 	case 'e':
@@ -295,19 +307,19 @@ GLvoid Timer(int val)
 	static int counter = 0;
 	static int dropcountidx = 0;
 
-	counter++;
-	if (counter > 100)
-	{
-		counter = 0;
-		if (dropcountidx<20)
-			dropcountidx++;
-	}
-
-	for (int i = 0; i < dropcountidx; i++) {
-		if (poly[i].ypos > -150)
-			poly[i].ypos--;
-	}
-
+	//counter++;
+	//if (counter > 100)
+	//{
+	//	counter = 0;
+	//	if (dropcountidx<20)
+	//		dropcountidx++;
+	//}
+	//
+	//for (int i = 0; i < dropcountidx; i++) {
+	//	if (poly[i].ypos > -150)
+	//		poly[i].ypos--;
+	//}
+	//
 
 	for (int i = 0; i < ClipStdPoly.vertexnum; i++)
 		ClipStdPoly.vertex[i] = Circle(50 + (ClipStdPoly.dropline - 1) * 100, ClipStdPoly.ypos, radius, 360 / ClipStdPoly.vertexnum * i);
@@ -327,16 +339,14 @@ GLvoid Timer(int val)
 	glutTimerFunc(val_timer, Timer, 1);
 }
 
-Point InterSectPoint(Point func_p1, Point func_p2, Point clip_p1, Point clip_p2)		// func = dropping polygon edge, clip = clipping area edge
+bool InterSectPoint(const Point func_p1, const Point func_p2, const Point clip_p1, const Point clip_p2, Point &Vertex)		// func = dropping polygon edge, clip = clipping area edge
 {
 	float func;
 	float clip;
 	
-	Point data;
-	data = { -100,-100 };
-
 	float under = (clip_p2.y - clip_p1.y) * (func_p2.x - func_p1.x) - (clip_p2.x - clip_p1.x)*(func_p2.y - func_p1.y);
-	if (under == 0) return data;
+	if (under - 0.0001 < 0 && under + 0.0001 > 0) 
+		return false;
 
 	float upperfunc = (clip_p2.x - clip_p1.x)*(func_p1.y - clip_p1.y) - (clip_p2.y - clip_p1.y)*(func_p1.x - clip_p1.x);
 	float upperclip = (func_p2.x - func_p1.x)*(func_p1.y - clip_p1.y) - (func_p2.y - func_p1.y)*(func_p1.x - clip_p1.x);
@@ -344,19 +354,18 @@ Point InterSectPoint(Point func_p1, Point func_p2, Point clip_p1, Point clip_p2)
 	func = upperfunc / under;
 	clip = upperclip / under;
 
-	if (clip < 0.0 || clip > 1.0 || func < 0.0 || func > 1.0) return data;
-	if (upperfunc == 0 && upperclip == 0) return data;
+	if (clip < 0.0 || clip > 1.0 || func < 0.0 || func > 1.0) return false;
+	if (upperfunc - 0.0001 < 0 && upperfunc + 0.0001 > 0 && upperclip - 0.0001 < 0 && upperclip + 0.0001 >0) return false;
 
-	data.x = func_p1.x + func * (float)(func_p2.x - func_p1.x);
-	data.y = func_p1.y + func * (float)(func_p2.y - func_p1.y);
+ 	Vertex.x = func_p1.x + func * (float)(func_p2.x - func_p1.x);
+	Vertex.y = func_p1.y + func * (float)(func_p2.y - func_p1.y);
 
-	return data;
+	return true;
 }
 
 
 GLvoid ClippingChk(int index)
 {
-	Point tmp;
 	cliped.vertexnum = 0;
 	memset(cliped.vertex, NULL, sizeof(cliped.vertex));
 
@@ -367,46 +376,34 @@ GLvoid ClippingChk(int index)
 		{
 			for (int pt_clipidx = 0; pt_clipidx < ClipStdPoly.vertexnum-1; pt_clipidx++)
 			{
-				tmp = InterSectPoint(poly[index].vertex[pt_dropidx], poly[index].vertex[pt_dropidx + 1], ClipStdPoly.vertex[pt_clipidx], ClipStdPoly.vertex[pt_clipidx + 1]);
-				if (tmp.x != -100)
-				{
-					cliped.vertex[cliped.vertexnum] = tmp;
+				if (InterSectPoint(
+					poly[index].vertex[pt_dropidx], poly[index].vertex[pt_dropidx + 1],
+					ClipStdPoly.vertex[pt_clipidx], ClipStdPoly.vertex[pt_clipidx + 1], cliped.vertex[cliped.vertexnum]))
 					cliped.vertexnum++;
-				}
-				tmp = { -100,-100 };
 			}
 		}
 
 		for (int pt_dropidx = 0; pt_dropidx < poly[index].vertexnum - 1; pt_dropidx++)
 		{
-			tmp = InterSectPoint(poly[index].vertex[pt_dropidx], poly[index].vertex[pt_dropidx + 1], ClipStdPoly.vertex[ClipStdPoly.vertexnum - 1], ClipStdPoly.vertex[0]);
-			if (tmp.x != -100)
-			{
-				cliped.vertex[cliped.vertexnum] = tmp;
+			if (InterSectPoint(
+				poly[index].vertex[pt_dropidx], poly[index].vertex[pt_dropidx + 1],
+				ClipStdPoly.vertex[ClipStdPoly.vertexnum - 1], ClipStdPoly.vertex[0], cliped.vertex[cliped.vertexnum]))
 				cliped.vertexnum++;
-			}
-			tmp = { -100,-100 };
 		}
-
+		
 		for (int pt_clipidx = 0; pt_clipidx < ClipStdPoly.vertexnum - 1; pt_clipidx++)
 		{
-			tmp = InterSectPoint(poly[index].vertex[poly[index].vertexnum - 1], poly[index].vertex[0], ClipStdPoly.vertex[pt_clipidx], ClipStdPoly.vertex[pt_clipidx + 1]);
-			if (tmp.x != -100)
-			{
-				cliped.vertex[cliped.vertexnum] = tmp;
+			if (InterSectPoint(
+				poly[index].vertex[poly[index].vertexnum - 1], poly[index].vertex[0], 
+				ClipStdPoly.vertex[pt_clipidx], ClipStdPoly.vertex[pt_clipidx + 1], cliped.vertex[cliped.vertexnum]))
 				cliped.vertexnum++;
-			}
-			tmp = { -100,-100 };
 		}
-
-		tmp = InterSectPoint(poly[index].vertex[poly[index].vertexnum - 1], poly[index].vertex[0], ClipStdPoly.vertex[ClipStdPoly.vertexnum - 1], ClipStdPoly.vertex[0]);
-		if (tmp.x != -100)
-		{
-			cliped.vertex[cliped.vertexnum] = tmp;
+		
+		if (InterSectPoint(
+			poly[index].vertex[poly[index].vertexnum - 1], poly[index].vertex[0], 
+			ClipStdPoly.vertex[ClipStdPoly.vertexnum - 1], ClipStdPoly.vertex[0], cliped.vertex[cliped.vertexnum]))
 			cliped.vertexnum++;
-		}
-		tmp = { -100,-100 };
-
+		
 		for (int i = 0; i < poly[index].vertexnum; i++)
 		{
 			if (ChkVertexin(poly[index].vertex[i]))
@@ -423,17 +420,12 @@ bool ChkVertexin(Point target)
 	Point temp;
 	for (int i = 0; i < ClipStdPoly.vertexnum; i++)
 	{
-		temp = InterSectPoint({ 150.0 , 100.0 }, target, ClipStdPoly.vertex[i], ClipStdPoly.vertex[i+1]);
-		if (temp.x != -100)
-		{
+		if (InterSectPoint({ 50.0 , 100.0 }, target, ClipStdPoly.vertex[i], ClipStdPoly.vertex[i + 1], temp))
 			return false;
-		}
 	}
-	temp = InterSectPoint({ 150.0 , 100.0 }, target, ClipStdPoly.vertex[0], ClipStdPoly.vertex[ClipStdPoly.vertexnum]);
-	if (temp.x != -100)
-	{
+	if (InterSectPoint({ 50.0 , 100.0 }, target, ClipStdPoly.vertex[0], ClipStdPoly.vertex[ClipStdPoly.vertexnum], temp))
 		return false;
-	}
+
 	return true;
 }
 
