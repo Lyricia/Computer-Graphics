@@ -3,8 +3,8 @@
 #include <cmath>
 #include <gl\glut.h>
 
-#define W_Width		600
-#define W_Height	600
+#define W_Width		500
+#define W_Height	700
 
 enum Polytype { TRI = 3, RECT, PENTA, HEX };
 
@@ -31,34 +31,40 @@ GLvoid RegesterCallBack();
 
 
 GLvoid drawScene(GLvoid);
+GLvoid DrawScoreboard();
 GLvoid LineDraw();
 GLvoid DrawPoly();
 GLvoid Reshape(int w, int h);
 
+GLvoid Keyspecial(int key, int x, int y);
+
 GLvoid Timer(int);
 GLvoid Keydown(unsigned char, int, int);
-GLvoid MouseMove(int, int);
-GLvoid MouseEvent(int, int, int, int);
 GLvoid initpoly();
 
-//Poly VertexSetting(Poly srtpoly);
-//
-//Point shearing(Point p, int val);
-//Point rotate(Point p, int angle);
-//Point scale(Point p, int val);
-//
+Poly VertexSetting(Poly srtpoly);
+
+Point shearing(Point p, double val);
+Point rotate(Point p, int angle);
+Point scale(Point p, double val);
+
 bool InterSectPoint(const Point func_p1, const Point func_p2, const Point clip_p1, const Point clip_p2, Point &Vertex);
 GLvoid ClippingChk(int index);
 bool ChkVertexin(Point chkvertex, Poly stdpoly);
-GLvoid OrderVertex();
+GLvoid VertexOrder(int polyindex);
+float getangle(Point center, Point p_compare);
 Point Circle(float x, float y, float radius, float angle);
 
 
 Poly poly[20];
 Poly ClipStdPoly;
+float polyangle[20];
 static Poly cliped;
-int val_timer = 10;
+int val_timer = 20;
 float radius = 40.0;
+int Score = 0;
+bool isRunning = false;
+bool isScoring = false;
 
 void main()
 {
@@ -67,33 +73,35 @@ void main()
 	initpoly();
 
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA);
-	glutInitWindowPosition(100, 100);
+	glutInitWindowPosition(100, 200);
 	glutInitWindowSize(W_Width, W_Height);
 	glutCreateWindow("Test");
 
 	RegesterCallBack();
-
+	
 	glutMainLoop();
 }
 
 GLvoid RegesterCallBack()
 {
 	glutTimerFunc(val_timer, Timer, 1);
-	glutMouseFunc(MouseEvent);
-	glutMotionFunc(MouseMove);
 	glutKeyboardFunc(Keydown);
+	glutSpecialFunc(Keyspecial);
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
+
 }
 
 GLvoid initpoly()
 {
 	int srt = 0;
 
-	ClipStdPoly.dropline = 1;
+	Score = 0;
+
+	ClipStdPoly.dropline = 3;
 	ClipStdPoly.vertexnum = 5;
 	ClipStdPoly.xpos = 50 + (ClipStdPoly.dropline - 1) * 100;
-	ClipStdPoly.ypos = 50;
+	ClipStdPoly.ypos = 150;
 
 	for (int i = 0; i < ClipStdPoly.vertexnum; i++)
 		ClipStdPoly.vertex[i] = Circle(50 + (ClipStdPoly.dropline - 1) * 100, ClipStdPoly.ypos, radius, 360 / ClipStdPoly.vertexnum * i + 120);
@@ -103,86 +111,85 @@ GLvoid initpoly()
 		poly[i].dropline = 1 + rand() % 5;
 		poly[i].vertexnum = 3 + rand() % 4;
 		poly[i].xpos = 50 + (poly[i].dropline - 1) * 100;
-		poly[i].ypos = 700;
+		poly[i].ypos = 800;
 
-		srt = 5;
-		if(srt == 0)		poly[i].scale = rand() % 5;
-		else if(srt == 1)	poly[i].shear = rand() % 5;
-		else if(srt == 2)	poly[i].rot = rand() % 5;
+		srt = rand() % 4;
+		//srt = 2;
+		if (srt == 0)		poly[i].scale = rand() % 5;
+		else if (srt == 1)	poly[i].shear = rand() % 5;
+		else if (srt == 2)	poly[i].rot = rand() % 3;
 		else {};
 
-		poly[0].dropline = 1;
-		poly[0].vertexnum = 6;
-		poly[i].xpos = 50 + (poly[i].dropline - 1) * 100;
-		poly[0].ypos = 140;
+		//poly[0].dropline = 1;
+		//poly[0].vertexnum = 3;
+		//poly[i].xpos = 50 + (poly[i].dropline - 1) * 100;
+		//poly[0].ypos = 99;
 
 		for (int j = 0; j < poly[i].vertexnum; j++)
 			poly[i].vertex[j] = Circle(poly[i].xpos, poly[i].ypos, radius, 360 / poly[i].vertexnum * j);
 
-		//poly[i] = VertexSetting(poly[i]);
+		poly[i] = VertexSetting(poly[i]);
 	}
 
-	
 	cliped.dropline = NULL;
 	cliped.vertexnum = 0;
 	cliped.ypos = NULL;
 	for (int i = 0; i < cliped.vertexnum; i++)
 		cliped.vertex[i] = { 0,0 };
+}
+Poly VertexSetting(Poly srtpoly)
+{
+	float tmp_x = srtpoly.xpos;
+	float tmp_y = srtpoly.ypos;
 
+	for (int i = 0; i < srtpoly.vertexnum; i++)
+	{
+		srtpoly.vertex[i].x = srtpoly.vertex[i].x - tmp_x;
+		srtpoly.vertex[i].y = srtpoly.vertex[i].y - tmp_y;
+	}
+
+	if (srtpoly.rot != 0)
+		for (int i = 0; i < srtpoly.vertexnum; i++)
+			srtpoly.vertex[i] = rotate(srtpoly.vertex[i], 120 * srtpoly.rot);
+	
+	if (srtpoly.scale != 0)
+		for (int i = 0; i < srtpoly.vertexnum; i++)
+			srtpoly.vertex[i] = scale(srtpoly.vertex[i], 1 + (0.2 * srtpoly.scale));
+	
+	if (srtpoly.shear != 0)
+		for (int i = 0; i < srtpoly.vertexnum; i++)
+			srtpoly.vertex[i] = shearing(srtpoly.vertex[i], 0.3*srtpoly.shear);
+
+	for (int i = 0; i < srtpoly.vertexnum; i++)
+	{
+		srtpoly.vertex[i].x = srtpoly.vertex[i].x + tmp_x;
+		srtpoly.vertex[i].y = srtpoly.vertex[i].y + tmp_y;
+	}
+
+	return srtpoly;
 }
 
-//Poly VertexSetting(Poly srtpoly)
-//{
-//	float tmp_x = srtpoly.xpos;
-//	float tmp_y = srtpoly.ypos;
-//
-//	for (int i = 0; i < srtpoly.vertexnum; i++)
-//	{
-//		srtpoly.vertex[i].x = srtpoly.vertex[i].x - tmp_x;
-//		srtpoly.vertex[i].y = srtpoly.vertex[i].y - tmp_y;
-//	}
-//
-//	if (srtpoly.rot != 0)
-//		for (int i = 0; i < srtpoly.vertexnum; i++)
-//			srtpoly.vertex[i] = rotate(srtpoly.vertex[i], 120 * srtpoly.rot);
-//	
-//	if (srtpoly.scale != 0)
-//		for (int i = 0; i < srtpoly.vertexnum; i++)
-//			srtpoly.vertex[i] = scale(srtpoly.vertex[i], 0.5 + (0.3 * srtpoly.scale));
-//	
-//	if (srtpoly.shear != 0)
-//		for (int i = 0; i < srtpoly.vertexnum; i++)
-//			srtpoly.vertex[i] = shearing(srtpoly.vertex[i], 0.1*srtpoly.shear);
-//
-//	for (int i = 0; i < srtpoly.vertexnum; i++)
-//	{
-//		srtpoly.vertex[i].x = srtpoly.vertex[i].x + tmp_x;
-//		srtpoly.vertex[i].y = srtpoly.vertex[i].y + tmp_y;
-//	}
-//
-//	return srtpoly;
-//}
-//
-//Point rotate(Point p, int angle)
-//{
-//	angle = angle * (3.141592 / 180);
-//
-//	p.x = cos(angle) * p.x - sin(angle) * p.y;
-//	p.y = sin(angle) * p.x + cos(angle) * p.y;
-//	return p;
-//}
-//Point scale(Point p, int val)
-//{
-//	p.x = val * p.x;
-//	p.y = val * p.y;
-//	return p;
-//}
-//Point shearing(Point p, int val)
-//{
-//	p.x = p.x + val*p.y;
-//	
-//	return p;
-//}
+Point rotate(Point p, int angle)
+{
+	angle = angle * (3.141592 / 180);
+
+	p.x = cos(angle) * p.x - sin(angle) * p.y;
+	p.y = sin(angle) * p.x + cos(angle) * p.y;
+	return p;
+}
+Point scale(Point p, double val)
+{
+	p.x = val * p.x;
+	p.y = val * p.y;
+	return p;
+}
+Point shearing(Point p, double val)
+{
+	p.x = p.x + val*p.y;
+	
+	return p;
+}
+
 
 GLvoid drawScene(GLvoid)
 {
@@ -193,7 +200,63 @@ GLvoid drawScene(GLvoid)
 
 	DrawPoly();
 
+	DrawScoreboard();
 	glFlush();
+}
+
+GLvoid DrawScoreboard()
+{	//scoreboard basement
+	glColor4f(1.0f, 1.0f, 0.0f, 1.0f);
+	glLineWidth(2);
+	glBegin(GL_POLYGON);
+	{
+		glVertex2i(0, 100);
+		glVertex2i(500, 100);
+		glVertex2i(500, 0);
+		glVertex2i(0, 0);
+	}
+	glEnd();
+
+
+	glColor4f(1.0f, 1.0f, 0.0f, 1.0f);
+	glLineWidth(2);
+	glBegin(GL_POLYGON); //guide lines
+	{
+		glVertex2i(0, 100);
+		glVertex2i(500, 100);
+		glVertex2i(500, 0);
+		glVertex2i(0, 0);
+	}
+	glEnd();
+
+	glColor4f(1.0f, 0.5f, 1.0f, 1.0f);
+	glLineWidth(2);
+	glBegin(GL_POLYGON); //guide lines
+	{
+		glVertex2i(100, 75);
+		glVertex2i(100 + 50 * Score, 75);
+		glVertex2i(100 + 50 * Score, 25);
+		glVertex2i(100, 25);
+	}
+	glEnd();
+
+	glColor4f(1.0f, 0.5f, 1.0f, 1.0f);
+	glLineWidth(2);
+	glBegin(GL_LINES); //guide lines
+	{
+		for (int i = 0; i < 7; i++)
+		{
+			glVertex2i(100 + 50 * i, 75);
+			glVertex2i(100 + 50 * i, 25);
+		}
+		glVertex2i(100, 75);
+		glVertex2i(400, 75);
+		glVertex2i(100, 25);
+		glVertex2i(400, 25);
+	}
+	glEnd();
+
+
 }
 
 GLvoid LineDraw()
@@ -208,8 +271,10 @@ GLvoid LineDraw()
 			glVertex2i(100 * lineidx, 800);
 		}
 
-		glVertex2i(0, 100);
-		glVertex2i(500, 100);
+		glVertex2i(0, 200);
+		glVertex2i(500, 200);
+		glVertex2i(0, 450);
+		glVertex2i(500, 450);
 	}
 	glEnd();
 }
@@ -250,6 +315,37 @@ GLvoid Reshape(int w, int h)
 	glOrtho(0.0, W_Width, 0.0, W_Height, -1.0, 1.0);
 }
 
+GLvoid Keyspecial(int key, int x, int y)
+{
+	switch (key)
+	{
+	case GLUT_KEY_RIGHT:
+		if (ClipStdPoly.dropline<5)
+			ClipStdPoly.dropline++;
+		ClipStdPoly.xpos = 50 + (ClipStdPoly.dropline - 1) * 100;
+		break;
+	case GLUT_KEY_LEFT:
+		if (ClipStdPoly.dropline>1)
+			ClipStdPoly.dropline--;
+		ClipStdPoly.xpos = 50 + (ClipStdPoly.dropline - 1) * 100;
+		break;
+
+	case GLUT_KEY_UP:
+		if (ClipStdPoly.vertexnum<6)
+			ClipStdPoly.vertexnum++;
+		//poly[0].ypos += 1;
+		//std::cout << poly[0].ypos <<' ' << (ClipStdPoly.ypos + poly[0].ypos) / 2 << std::endl;
+		break;
+
+	case GLUT_KEY_DOWN:
+		if (ClipStdPoly.vertexnum>3)
+			ClipStdPoly.vertexnum--;
+		//poly[0].ypos -= 1;
+		//std::cout << poly[0].ypos << ' ' << (ClipStdPoly.ypos + poly[0].ypos) / 2 << std::endl;
+		break;
+
+	}
+}
 
 GLvoid Keydown(unsigned char key, int x, int y)
 {
@@ -258,28 +354,55 @@ GLvoid Keydown(unsigned char key, int x, int y)
 	case 'q':
 		exit(0);
 		break;
-
-	case 'a':
-		if(ClipStdPoly.dropline>1)
-			ClipStdPoly.dropline--;
-		break;
 		
-	case 'd':
-		if (ClipStdPoly.dropline<5)
-			ClipStdPoly.dropline++;
+	case 32:	//space bar
+		isScoring = true;
 		break;
 
-	case 'w':
-		//if (ClipStdPoly.vertexnum<6)
-		//	ClipStdPoly.vertexnum++;
-		poly[0].ypos += 10;
-
+	case 'a':				//shearing+
+		ClipStdPoly.shear = (ClipStdPoly.shear + 1) % 5;
+		break;
+	case 'A':				//shearing-
+		if (ClipStdPoly.shear > 0)
+			ClipStdPoly.shear = (ClipStdPoly.shear - 1) % 5;
 		break;
 
-	case 's':
-		//if (ClipStdPoly.vertexnum>3)
-		//	ClipStdPoly.vertexnum--;
-		poly[0].ypos -= 10;
+	case 'd':				//rotate+
+		ClipStdPoly.rot = (ClipStdPoly.rot + 1) % 3;
+		break;
+	case 'D':				//rotate-
+		if (ClipStdPoly.rot > 0)
+			ClipStdPoly.rot = (ClipStdPoly.rot - 1) % 3;
+		break;
+
+	case 's':				//scale+
+		ClipStdPoly.scale = (ClipStdPoly.scale + 1) % 5;
+		break;
+	case 'S':				//scale-
+		if (ClipStdPoly.scale > 0)
+			ClipStdPoly.scale = (ClipStdPoly.scale - 1) % 5;
+		break;
+
+	case 'r':
+		ClipStdPoly.shear = 0;
+		ClipStdPoly.rot = 0;
+		ClipStdPoly.scale = 0;
+		break;
+
+	case 'p':
+		system("cls");
+		if (isRunning)
+		{
+			std::cout << "Game Paused\nPress P to Start!" << std::endl;
+			isRunning = false;
+		}
+		else if (!isRunning) 
+			isRunning = true;
+		break;
+
+	case 'O':
+	case 'o':
+		initpoly();
 		break;
 
 	case 'e':
@@ -288,50 +411,90 @@ GLvoid Keydown(unsigned char key, int x, int y)
 	glutPostRedisplay();
 }
 
-GLvoid MouseMove(int x, int y)
+GLvoid getscore(int idx)
 {
-
+	if (poly[idx].dropline == ClipStdPoly.dropline)
+		if (poly[idx].ypos > ClipStdPoly.ypos - 50 && poly[idx].ypos < ClipStdPoly.ypos + 50)
+			if (poly[idx].scale == ClipStdPoly.scale && poly[idx].rot == ClipStdPoly.rot && poly[idx].shear == ClipStdPoly.shear)
+			{
+				Score++;
+				poly[idx].ypos = -100;
+			}
 }
 
-GLvoid MouseEvent(int button, int state, int x, int y)
-{
-	glutPostRedisplay();
-}
 
 
 GLvoid Timer(int val)
 {
-	static int counter = 0;
-	static int dropcountidx = 0;
+	int counter = 0;
+	int dropcountidx = 1;
 	int shouldclipidx = 0;
-	//counter++;
-	//if (counter > 100)
-	//{
-	//	counter = 0;
-	//	if (dropcountidx<20)
-	//		dropcountidx++;
-	//}
-	//
-	//for (int i = 0; i < dropcountidx; i++) {
-	//	if (poly[i].ypos > -150)
-	//		poly[i].ypos--;
-	//}
-	//
 
-	for (int i = 0; i < ClipStdPoly.vertexnum; i++)
-		ClipStdPoly.vertex[i] = Circle(50 + (ClipStdPoly.dropline - 1) * 100, ClipStdPoly.ypos, radius, 360 / ClipStdPoly.vertexnum * i);
-
-
-	for (int j = 0; j < 20; j++)
+	if (isRunning)
 	{
-		for (int i = 0; i < poly[j].vertexnum; i++)
-			poly[j].vertex[i] = Circle(50 + (poly[j].dropline - 1) * 100, poly[j].ypos, radius, 360 / poly[j].vertexnum * i);
+		counter++;
+		if (counter > 300)
+		{
+			counter = 0;
+			if (dropcountidx < 20)
+				dropcountidx++;
+		}
+		if (dropcountidx < 5 || dropcountidx > 13)
+		{
+			for (int i = 0; i < dropcountidx; i++) 
+			{
+				if (poly[i].ypos > -100)
+					poly[i].ypos--;
+			}
+		}
+		else
+		{
+			for (int i = 0; i < dropcountidx; i++)
+			{
+				if (poly[i].ypos > -100)
+					poly[i].ypos -= 2;
+			}
+		}
 
-		//poly[j] = VertexSetting(poly[j]);
-		if (poly[j].ypos < 150)
-			shouldclipidx = j;
+
+		for (int i = 0; i < ClipStdPoly.vertexnum; i++)
+			ClipStdPoly.vertex[i] = Circle(50 + (ClipStdPoly.dropline - 1) * 100, ClipStdPoly.ypos, radius, 360 / ClipStdPoly.vertexnum * i);
+
+		ClipStdPoly = VertexSetting(ClipStdPoly);
+
+		for (int j = 0; j < 20; j++)
+		{
+			for (int i = 0; i < poly[j].vertexnum; i++)
+				poly[j].vertex[i] = Circle(50 + (poly[j].dropline - 1) * 100, poly[j].ypos, radius, 360 / poly[j].vertexnum * i);
+			poly[j] = VertexSetting(poly[j]);
+
+			if (poly[j].ypos < 250)
+				shouldclipidx = j;
+		
+			if (poly[j].ypos == 450)
+			{
+				system("cls");
+				std::cout << "Poly size :" << poly[j].vertexnum << std::endl;
+				std::cout << "Rotate size :" << poly[j].rot << std::endl;
+				std::cout << "Scale size :" << poly[j].scale << std::endl;
+				std::cout << "Shear size :" << poly[j].shear << std::endl;
+			}
+		}
+		
+		ClippingChk(shouldclipidx);
+		
+		if (isScoring)
+		{
+			getscore(shouldclipidx);
+			isScoring = false;
+		}
+		if (Score == 6)
+		{
+			isRunning = false;
+			std::cout << "you win" << std::endl;
+			std::cout << "Press O to restart" << std::endl;
+		}
 	}
-	ClippingChk(shouldclipidx);
 
 	glutPostRedisplay();
 	glutTimerFunc(val_timer, Timer, 1);
@@ -367,7 +530,7 @@ GLvoid ClippingChk(int index)
 	cliped.vertexnum = 0;
 	memset(cliped.vertex, NULL, sizeof(cliped.vertex));
 
-	if (poly[index].ypos < 150 && poly[index].dropline == ClipStdPoly.dropline)
+	if (poly[index].ypos < 250 && poly[index].dropline == ClipStdPoly.dropline)
 	{
 		//chk line intersection from 0 to end step by step
 		for (int pt_dropidx = 0; pt_dropidx < poly[index].vertexnum-1; pt_dropidx++)
@@ -419,6 +582,8 @@ GLvoid ClippingChk(int index)
 				cliped.vertexnum++;
 			}
 		}
+
+		VertexOrder(index);
 	}
 }
 
@@ -437,17 +602,42 @@ bool ChkVertexin(Point chkvertex, Poly stdpoly)
 	return true;
 }
 
-GLvoid VertexOrder()
+GLvoid VertexOrder(int polyindex)
 {
+	Point tmp_center;
+	float tmp_angle;
+	memset(polyangle, NULL, sizeof(polyangle));
+
 	cliped.xpos = ClipStdPoly.xpos;
+	tmp_center.y = (ClipStdPoly.ypos + poly[polyindex].ypos) / 2;
+	tmp_center.x = cliped.xpos;
 
 	for (int i = 0; i < cliped.vertexnum; i++)
+		polyangle[i] = getangle(tmp_center, cliped.vertex[i]);
+
+	for (int i = cliped.vertexnum; i > 1; i--)
 	{
+		for (int j = 0; j < i - 1; j++)
+		{
+			if (polyangle[j] > polyangle[j + 1])
+			{
+				tmp_angle = polyangle[j];
+				polyangle[j] = polyangle[j + 1];
+				polyangle[j + 1] = tmp_angle;
 
+				tmp_center = cliped.vertex[j];
+				cliped.vertex[j] = cliped.vertex[j + 1];
+				cliped.vertex[j + 1] = tmp_center;
+			}
+		}
 	}
-
+	
 }
 
+float getangle(Point center, Point p_compare)
+{
+	return atan2(p_compare.y - center.y, p_compare.x - center.x) * 180 / 3.1415926535;
+}
 
 Point Circle(float x, float y, float radius, float angle)
 {
