@@ -238,7 +238,7 @@ GLvoid CollideChk()
 		}
 	}
 
-}
+} 
 
 GLvoid Menu(int button)
 {

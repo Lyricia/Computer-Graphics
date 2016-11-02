@@ -5,6 +5,15 @@
 
 #define W_Width		800
 #define W_Height	600
+#define RAD(angle)	angle*(3.141592 / 180)
+
+struct Vertex
+{
+	float x;
+	float y;
+	float z;
+};
+
 
 GLvoid RegesterCallBack();
 
@@ -19,14 +28,16 @@ GLvoid init(GLvoid);
 
 GLvoid DrawPolygon(GLvoid);
 
-GLvoid Circle(int, float, float);
+GLvoid Circle(Vertex V, float, float);
 
+Vertex tmp = { 0,300,0 };
+int scale = 50;
 
 void main(int, char *)
 {
 	init();
 
-	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(100, 100);
 	glutInitWindowSize(W_Width, W_Height);
 	glutCreateWindow("Test");
@@ -54,10 +65,55 @@ GLvoid RegesterCallBack()
 
 GLvoid drawScene(GLvoid)
 {
-	DrawPolygon();
+	tmp.x = 0;
+	glClear(GL_COLOR_BUFFER_BIT); 
+	glMatrixMode(GL_MODELVIEW);
+	glPointSize(1);
+	glBegin(GL_LINE_STRIP);
 
-	glFlush();
+	for (int i = 0; tmp.x<800; i++, tmp.x +=0.2)
+	{
+		glColor3f((tmp.x / 800) * 1.0, 0.0, (1 - (tmp.x / 800)) * 1.0);	//color gradation
+		Circle(tmp, scale, i);											// spring  tmp.x = 200 tmp += 0.2
+		//glVertex3f(tmp.x, sin(RAD(i)) * 100 + tmp.y, 0);				// sin
+		//glVertex3f(tmp.x, cos(RAD(i)) * 100 + tmp.y, 0);				// cos
+
+	}
+	glEnd();
+	glutSwapBuffers();
 }
+
+GLvoid DrawLine()
+{
+
+
+
+
+}
+GLvoid DrawPolygon(GLvoid)
+{
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glColor3f(1.0, 0.0, 0.0); // 빨강색
+	glutSolidCube(0.3);
+	glPushMatrix();
+	{
+		glRotatef(30.0, 0.0, 0.0, 1.0);
+		glTranslatef(0.5, 0.0, 0.0);
+		glColor3f(0.0, 1.0, 0.0); // 초록색
+		glutSolidCube(0.3);
+		glPushMatrix();
+		{
+			glRotatef(45.0, 0.0, 0.0, 1.0);
+			glTranslatef(0.3, 0.0, 0.0);
+			glColor3f(1.0, 0.0, 1.0); // 보라색
+			glutSolidCube(0.1);
+		}
+		glPopMatrix();
+	}
+	glPopMatrix();
+}
+
 
 GLvoid Reshape(int w, int h)
 {
@@ -73,7 +129,25 @@ GLvoid Keydown(unsigned char key, int x, int y)
 	case 'q':
 		exit(0);
 		break;
+
+	case 'r':
+		init();
+		break;
+
+	case 'u':
+		break;
+
+	case 'd':
+		scale += 10;
+		break;
+	case 's':
+		scale -= 10;
+		break;
+
+	case 'e':
+		break;
 	}
+
 	glutPostRedisplay();
 }
 
@@ -87,37 +161,18 @@ GLvoid MouseEvent(int button, int state, int x, int y)
 	glutPostRedisplay();
 }
 
-GLvoid DrawPolygon(GLvoid)
-{
-	int temp;
 
-	glClear(GL_COLOR_BUFFER_BIT);
-	glColor3f(0.0, 1.0, 1.0);
-
-	glPushMatrix();
-	{
-		glBegin(GL_POINT);
-		glPointSize(2);
-		for (temp = 0; temp < 360; temp++)
-		{
-			glVertex3f(0.01*temp - 2, sin(3.1415927 / 180 * temp), 0);
-		}
-		glEnd();
-	}
-	glPopMatrix();
-	//glutSwapBuffers();
-}
 
 GLvoid Timer(int val)
 {
-	
+
 	glutPostRedisplay();
 	glutTimerFunc(10, Timer, 1);
 }
 
-GLvoid Circle(int index, float radius, float angle)
+GLvoid Circle(Vertex V, float radius, float angle)
 {
 	angle = angle * (3.141592 / 180);
 
-	//glVertex2f(cos(angle)*radius + pt[index].x, sin(angle)*radius + pt[index].y);
+	glVertex3f(cos(angle)*radius + V.x, sin(angle)*radius + V.y, 0);
 }
