@@ -1,4 +1,0 @@
-﻿  main.cpp
-d:\study\visualstudio\projects\computer graphics\exam 10\exam 10\main.cpp(223): warning C4172: 지역 변수 또는 임시: P의 주소를 반환하고 있습니다.
-  Exam 10.vcxproj -> D:\Study\VisualStudio\Projects\Computer Graphics\Exam 10\Debug\Exam 10.exe
-  Exam 10.vcxproj -> D:\Study\VisualStudio\Projects\Computer Graphics\Exam 10\Debug\Exam 10.pdb (Full PDB)
