@@ -1,6 +1,5 @@
 #include "GLFramework.h"
 
-
 namespace {		//익명 프레임워크
 	CGLFramework framework;
 }

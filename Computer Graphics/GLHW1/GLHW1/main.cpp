@@ -24,6 +24,7 @@ struct Poly
 	int rot;
 	int scale;
 	int shear;
+	bool power;
 };
 
 
@@ -45,7 +46,7 @@ GLvoid initpoly();
 Poly VertexSetting(Poly srtpoly);
 
 Point shearing(Point p, double val);
-Point rotate(Point p, int angle);
+Point rotate(Point p, double angle);
 Point scale(Point p, double val);
 
 bool InterSectPoint(const Point func_p1, const Point func_p2, const Point clip_p1, const Point clip_p2, Point &Vertex);
@@ -65,6 +66,7 @@ float radius = 40.0;
 int Score = 0;
 bool isRunning = false;
 bool isScoring = false;
+int speedupstart = 10;
 
 void main()
 {
@@ -112,12 +114,12 @@ GLvoid initpoly()
 		poly[i].vertexnum = 3 + rand() % 4;
 		poly[i].xpos = 50 + (poly[i].dropline - 1) * 100;
 		poly[i].ypos = 800;
-
+		
 		srt = rand() % 4;
 		//srt = 2;
 		if (srt == 0)		poly[i].scale = rand() % 5;
 		else if (srt == 1)	poly[i].shear = rand() % 5;
-		else if (srt == 2)	poly[i].rot = rand() % 3;
+		else if (srt == 2)	poly[i].rot = rand() % 4;
 		else {};
 
 		//poly[0].dropline = 1;
@@ -131,11 +133,17 @@ GLvoid initpoly()
 		poly[i] = VertexSetting(poly[i]);
 	}
 
+	poly[0].power = true;
+
+
 	cliped.dropline = NULL;
 	cliped.vertexnum = 0;
 	cliped.ypos = NULL;
 	for (int i = 0; i < cliped.vertexnum; i++)
 		cliped.vertex[i] = { 0,0 };
+	speedupstart = 5 + rand() % 8;
+
+	std::cout << "Game Paused\nPress P to Start!" << std::endl;
 }
 Poly VertexSetting(Poly srtpoly)
 {
@@ -150,7 +158,7 @@ Poly VertexSetting(Poly srtpoly)
 
 	if (srtpoly.rot != 0)
 		for (int i = 0; i < srtpoly.vertexnum; i++)
-			srtpoly.vertex[i] = rotate(srtpoly.vertex[i], 120 * srtpoly.rot);
+			srtpoly.vertex[i] = rotate(srtpoly.vertex[i], 45.0 * srtpoly.rot);
 	
 	if (srtpoly.scale != 0)
 		for (int i = 0; i < srtpoly.vertexnum; i++)
@@ -169,12 +177,14 @@ Poly VertexSetting(Poly srtpoly)
 	return srtpoly;
 }
 
-Point rotate(Point p, int angle)
+Point rotate(Point p, double angle)
 {
 	angle = angle * (3.141592 / 180);
 
-	p.x = cos(angle) * p.x - sin(angle) * p.y;
-	p.y = sin(angle) * p.x + cos(angle) * p.y;
+	Point tmp = p;
+
+	p.x = cos(angle) * tmp.x - sin(angle) * tmp.y;
+	p.y = sin(angle) * tmp.x + cos(angle) * tmp.y;
 	return p;
 }
 Point scale(Point p, double val)
@@ -282,9 +292,11 @@ GLvoid LineDraw()
 
 GLvoid DrawPoly()
 {
-	glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
 	for (int j = 0; j < 20; j++)
 	{
+		glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+		if(poly[j].power)
+			glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
 		glBegin(GL_POLYGON);
 		for (int i = 0; i < poly[j].vertexnum; i++)
 			glVertex2i(poly[j].vertex[i].x, poly[j].vertex[i].y);
@@ -349,54 +361,94 @@ GLvoid Keyspecial(int key, int x, int y)
 
 GLvoid Keydown(unsigned char key, int x, int y)
 {
+	if (isRunning)
+	{
+		switch (key)
+		{
+		case 32:	//space bar
+			isScoring = true;
+			break;
+
+		case 'a':				//shearing+
+			ClipStdPoly.shear = (ClipStdPoly.shear + 1) % 5;
+			break;
+		case 'A':				//shearing-
+			if (ClipStdPoly.shear > 0)
+				ClipStdPoly.shear = (ClipStdPoly.shear - 1) % 5;
+			break;
+
+		case 'd':				//rotate+
+			ClipStdPoly.rot = (ClipStdPoly.rot + 1) % 4;
+			break;
+		case 'D':				//rotate-
+			if (ClipStdPoly.rot > 0)
+				ClipStdPoly.rot = (ClipStdPoly.rot - 1) % 4;
+			break;
+
+		case 's':				//scale+
+			ClipStdPoly.scale = (ClipStdPoly.scale + 1) % 5;
+			break;
+		case 'S':				//scale-
+			if (ClipStdPoly.scale > 0)
+				ClipStdPoly.scale = (ClipStdPoly.scale - 1) % 5;
+			break;
+
+		case 'r':
+			ClipStdPoly.shear = 0;
+			ClipStdPoly.rot = 0;
+			ClipStdPoly.scale = 0;
+			break;
+		}
+	}
 	switch (key)
 	{
 	case 'q':
 		exit(0);
 		break;
-		
-	case 32:	//space bar
-		isScoring = true;
-		break;
 
-	case 'a':				//shearing+
-		ClipStdPoly.shear = (ClipStdPoly.shear + 1) % 5;
-		break;
-	case 'A':				//shearing-
-		if (ClipStdPoly.shear > 0)
-			ClipStdPoly.shear = (ClipStdPoly.shear - 1) % 5;
-		break;
-
-	case 'd':				//rotate+
-		ClipStdPoly.rot = (ClipStdPoly.rot + 1) % 3;
-		break;
-	case 'D':				//rotate-
-		if (ClipStdPoly.rot > 0)
-			ClipStdPoly.rot = (ClipStdPoly.rot - 1) % 3;
-		break;
-
-	case 's':				//scale+
-		ClipStdPoly.scale = (ClipStdPoly.scale + 1) % 5;
-		break;
-	case 'S':				//scale-
-		if (ClipStdPoly.scale > 0)
-			ClipStdPoly.scale = (ClipStdPoly.scale - 1) % 5;
-		break;
-
-	case 'r':
-		ClipStdPoly.shear = 0;
-		ClipStdPoly.rot = 0;
-		ClipStdPoly.scale = 0;
-		break;
+		//case 32:	//space bar
+		//	isScoring = true;
+		//	break;
+		//
+		//case 'a':				//shearing+
+		//	ClipStdPoly.shear = (ClipStdPoly.shear + 1) % 5;
+		//	break;
+		//case 'A':				//shearing-
+		//	if (ClipStdPoly.shear > 0)
+		//		ClipStdPoly.shear = (ClipStdPoly.shear - 1) % 5;
+		//	break;
+		//
+		//case 'd':				//rotate+
+		//	ClipStdPoly.rot = (ClipStdPoly.rot + 1) % 3;
+		//	break;
+		//case 'D':				//rotate-
+		//	if (ClipStdPoly.rot > 0)
+		//		ClipStdPoly.rot = (ClipStdPoly.rot - 1) % 3;
+		//	break;
+		//
+		//case 's':				//scale+
+		//	ClipStdPoly.scale = (ClipStdPoly.scale + 1) % 5;
+		//	break;
+		//case 'S':				//scale-
+		//	if (ClipStdPoly.scale > 0)
+		//		ClipStdPoly.scale = (ClipStdPoly.scale - 1) % 5;
+		//	break;
+		//
+		//case 'r':
+		//	ClipStdPoly.shear = 0;
+		//	ClipStdPoly.rot = 0;
+		//	ClipStdPoly.scale = 0;
+		//	break;
 
 	case 'p':
+	case 'P':
 		system("cls");
 		if (isRunning)
 		{
 			std::cout << "Game Paused\nPress P to Start!" << std::endl;
 			isRunning = false;
 		}
-		else if (!isRunning) 
+		else if (!isRunning)
 			isRunning = true;
 		break;
 
@@ -408,43 +460,63 @@ GLvoid Keydown(unsigned char key, int x, int y)
 	case 'e':
 		break;
 	}
+
 	glutPostRedisplay();
 }
 
 GLvoid getscore(int idx)
 {
 	if (poly[idx].dropline == ClipStdPoly.dropline)
+	{
+		if (poly[idx].power)
+		{
+			Score++;
+			poly[idx].ypos = -100;
+			return;
+		}
+		
 		if (poly[idx].ypos > ClipStdPoly.ypos - 50 && poly[idx].ypos < ClipStdPoly.ypos + 50)
+		{
 			if (poly[idx].scale == ClipStdPoly.scale && poly[idx].rot == ClipStdPoly.rot && poly[idx].shear == ClipStdPoly.shear)
 			{
 				Score++;
 				poly[idx].ypos = -100;
+				return; 
 			}
+		}
+	}
 }
 
 
 
 GLvoid Timer(int val)
 {
-	int counter = 0;
-	int dropcountidx = 1;
+	static int counter = 0;
+	static int dropcountidx = 1;
+	static int counterlimit = 400;
+	
 	int shouldclipidx = 0;
 
 	if (isRunning)
 	{
 		counter++;
-		if (counter > 300)
+		if (counter > counterlimit)
 		{
 			counter = 0;
 			if (dropcountidx < 20)
 				dropcountidx++;
+			if (dropcountidx == speedupstart)
+			{
+				counterlimit = 250;
+			}
+			std::cout << dropcountidx << std::endl;
 		}
-		if (dropcountidx < 5 || dropcountidx > 13)
+		if (dropcountidx < speedupstart)
 		{
-			for (int i = 0; i < dropcountidx; i++) 
+			for (int i = 0; i < dropcountidx; i++)
 			{
 				if (poly[i].ypos > -100)
-					poly[i].ypos--;
+					poly[i].ypos -= 1.5;
 			}
 		}
 		else
@@ -452,7 +524,7 @@ GLvoid Timer(int val)
 			for (int i = 0; i < dropcountidx; i++)
 			{
 				if (poly[i].ypos > -100)
-					poly[i].ypos -= 2;
+					poly[i].ypos -= 4;
 			}
 		}
 
@@ -471,7 +543,7 @@ GLvoid Timer(int val)
 			if (poly[j].ypos < 250)
 				shouldclipidx = j;
 		
-			if (poly[j].ypos == 450)
+			if (poly[j].ypos < 450 && poly[j].ypos > 440)
 			{
 				system("cls");
 				std::cout << "Poly size :" << poly[j].vertexnum << std::endl;
@@ -491,7 +563,14 @@ GLvoid Timer(int val)
 		if (Score == 6)
 		{
 			isRunning = false;
-			std::cout << "you win" << std::endl;
+			std::cout << "You win" << std::endl;
+			std::cout << "Press O to restart" << std::endl;
+		}
+
+		if (poly[19].ypos < 50)
+		{
+			isRunning = false;
+			std::cout << "You Lose" << std::endl;
 			std::cout << "Press O to restart" << std::endl;
 		}
 	}
