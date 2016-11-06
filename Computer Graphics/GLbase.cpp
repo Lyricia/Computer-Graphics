@@ -6,6 +6,13 @@
 #define W_Width		800
 #define W_Height	600
 
+struct Vertex
+{
+	float x;
+	float y;
+	float z;
+};
+
 GLvoid RegesterCallBack();
 
 GLvoid drawScene(GLvoid);
@@ -17,10 +24,9 @@ GLvoid MouseMove(int, int);
 GLvoid MouseEvent(int, int, int, int);
 GLvoid init(GLvoid);
 
+
 GLvoid DrawPolygon(GLvoid);
-
-GLvoid Circle(int, float, float);
-
+GLvoid Circle(Vertex P, float radius, float angle);
 
 void main(int, char *)
 {
@@ -113,9 +119,9 @@ GLvoid Timer(int val)
 	glutTimerFunc(10, Timer, 1);
 }
 
-GLvoid Circle(int index, float radius, float angle)
+GLvoid Circle(Vertex P, float radius, float angle)
 {
 	angle = angle * (3.141592 / 180);
 
-	glVertex2f(cos(angle)*radius + pt[index].x, sin(angle)*radius + pt[index].y);
+	glVertex2f(cos(angle)*radius + P.x, sin(angle)*radius + P.y);
 }
