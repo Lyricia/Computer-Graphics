@@ -26,6 +26,8 @@ GLvoid MouseEvent(int, int, int, int);
 GLvoid init(GLvoid);
 
 
+
+GLvoid DrawSpace();
 GLvoid DrawPolygon(GLvoid);
 GLvoid Circle(Vertex P, float radius, float angle);
 
@@ -33,7 +35,7 @@ void main(int, char *)
 {
 	init();
 
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitWindowPosition(100, 100);
 	glutInitWindowSize(W_Width, W_Height);
 	glutCreateWindow("Test");
@@ -56,15 +58,16 @@ GLvoid RegesterCallBack()
 	glutKeyboardFunc(Keydown);
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
-	glutTimerFunc(10, Timer, 1);
+	//glutTimerFunc(10, Timer, 1);
 }
 
 GLvoid drawScene(GLvoid)
 {
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 
-	DrawPolygon();
+	//glTranslatef(0,-50, 0);
+	DrawSpace();
 
 	glutSwapBuffers();
 }
@@ -74,9 +77,18 @@ GLvoid DrawLines()
 
 }
 
+GLvoid DrawSpace()
+{
+	glColor3f(1.0, 1.0, 0);
+	glPushMatrix();
+	glScalef(1, 0.01, 1);
+	glutSolidCube(200);
+	glPopMatrix();
+}
+
 GLvoid DrawPolygon(GLvoid)
 {
-
+	glutWireCube(100);
 }
 
 GLvoid Reshape(int w, int h)
@@ -84,8 +96,16 @@ GLvoid Reshape(int w, int h)
 	glViewport(0, 0, w, h);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(-W_Width / 2, W_Width / 2, -W_Height / 2, W_Height / 2, -W_Depth / 2, W_Depth / 2);
+
+	gluPerspective(60.0, 1.0, 1.0, 1000.0);
+	glTranslatef(0.0, 0.0, -300.0);
+
 	glMatrixMode(GL_MODELVIEW);
+
+	gluLookAt(
+		0.0, 0.5, 0.0,			// eye
+		0.0, 0.0, 1.0,			// center
+		0.0, 1.0, 0.0);			// up
 }
 
 

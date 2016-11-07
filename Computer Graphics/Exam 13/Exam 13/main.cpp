@@ -26,8 +26,15 @@ GLvoid MouseEvent(int, int, int, int);
 GLvoid init(GLvoid);
 
 
+GLvoid DrawLines();
 GLvoid DrawPolygon(GLvoid);
 GLvoid Circle(Vertex P, float radius, float angle);
+
+Vertex v_Model;
+
+int m_x;
+int xdir;
+int m_y;
 
 void main(int, char *)
 {
@@ -46,7 +53,9 @@ void main(int, char *)
 GLvoid init(GLvoid)
 {
 	srand(unsigned(time(NULL)));
-
+	m_x = 0;
+	m_y = 100;
+	xdir = 1;
 }
 
 GLvoid RegesterCallBack()
@@ -56,7 +65,7 @@ GLvoid RegesterCallBack()
 	glutKeyboardFunc(Keydown);
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
-	glutTimerFunc(10, Timer, 1);
+	glutTimerFunc(50, Timer, 1);
 }
 
 GLvoid drawScene(GLvoid)
@@ -64,19 +73,53 @@ GLvoid drawScene(GLvoid)
 	glClear(GL_COLOR_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 
-	DrawPolygon();
+	glRotatef(1, 0, 1, 0);
+	DrawLines();
+	glPushMatrix();
+	{
+		glRotatef(90, 0, 1, 0);
+		DrawLines();
+	}
+	glPopMatrix();
+
+	glPushMatrix();
+	{
+		glTranslatef(m_x, m_y, 0);
+		DrawPolygon();
+	}
+	glPopMatrix();
+
+	glPushMatrix();
+	{
+		glTranslatef(0, m_y, m_x);
+		glRotatef(90, 0, 1, 0);
+		DrawPolygon();
+	}
+	glPopMatrix();
+
+	glPopMatrix();
 
 	glutSwapBuffers();
 }
 
 GLvoid DrawLines()
 {
-
+	glColor3f(1.f, 0.f, 0.f);
+	glBegin(GL_LINE_STRIP);
+	glVertex3f(0.f, 100.f, 0.0f);
+	glVertex3f(100.f, -100.f, 0.0f);
+	glVertex3f(-100.f, -100.f, 0.0f);
+	glVertex3f(0.f, 100.f, 0.0f);
+	glEnd();
 }
 
 GLvoid DrawPolygon(GLvoid)
 {
-
+	glColor3f(1.f, 1.f, 0.f);
+	glBegin(GL_POLYGON);
+	for (int i = 0; i < 3; i++)
+		Circle(v_Model, 30, 90 + (120 * i));
+	glEnd();
 }
 
 GLvoid Reshape(int w, int h)
@@ -127,6 +170,27 @@ GLvoid MouseEvent(int button, int state, int x, int y)
 
 GLvoid Timer(int val)
 {
+	if (xdir == 1)
+	{
+		if (m_x > 0)
+			m_y -= 2;
+		else if (m_x < 0)
+			m_y += 2;
+		m_x += xdir;
+		if (m_x == 100)
+		{
+			xdir = -1;
+		}
+	}
+	else if (xdir == -1)
+	{
+		m_x += xdir;
+		if (m_x == -100)
+		{
+			xdir = 1;
+		}
+	}
+	
 
 	glutPostRedisplay();
 	glutTimerFunc(10, Timer, 1);
