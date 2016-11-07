@@ -162,7 +162,7 @@ GLvoid drawScene(GLvoid)
 				{
 					glColor3f(1.0, 1.0, 0.0);
 					glTranslatef(50.0, 0.0, 0.0);
-					glutSolidCube(20);
+					glutWireCube(20);
 				}
 				glEnd();
 				tmp.x = -400;
@@ -180,17 +180,11 @@ GLvoid drawScene(GLvoid)
 
 GLvoid DrawLine()
 {
-
-
-
-
 }
 
 GLvoid DrawPolygon(GLvoid)
 {
-
 }
-
 
 GLvoid Reshape(int w, int h)
 {
@@ -200,7 +194,6 @@ GLvoid Reshape(int w, int h)
 	glOrtho(-W_Width / 2, W_Width / 2, -W_Height / 2, W_Height / 2, -400, 400);
 	glMatrixMode(GL_MODELVIEW);
 }
-
 
 GLvoid Keydown(unsigned char key, int x, int y)
 {

@@ -26,8 +26,8 @@ GLvoid MouseMove(int, int);
 GLvoid MouseEvent(int, int, int, int);
 GLvoid init(GLvoid);
 
-GLvoid DrawLines();
 GLvoid Circle(Vertex P, float radius, float angle);
+GLvoid DrawLines();
 GLvoid DrawPolygon(GLvoid);
 
 int TimerVal = 10;

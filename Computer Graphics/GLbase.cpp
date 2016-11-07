@@ -5,6 +5,7 @@
 
 #define W_Width		800
 #define W_Height	600
+#define W_Depth		800
 
 struct Vertex
 {
@@ -32,7 +33,7 @@ void main(int, char *)
 {
 	init();
 
-	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(100, 100);
 	glutInitWindowSize(W_Width, W_Height);
 	glutCreateWindow("Test");
@@ -60,15 +61,31 @@ GLvoid RegesterCallBack()
 
 GLvoid drawScene(GLvoid)
 {
+	glClear(GL_COLOR_BUFFER_BIT);
+	glMatrixMode(GL_MODELVIEW);
+
 	DrawPolygon();
 
-	glFlush();
+	glutSwapBuffers();
+}
+
+GLvoid DrawLines()
+{
+
+}
+
+GLvoid DrawPolygon(GLvoid)
+{
+
 }
 
 GLvoid Reshape(int w, int h)
 {
 	glViewport(0, 0, w, h);
-	glOrtho(0.0, W_Width, 0.0, W_Height, -1.0, 1.0);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(-W_Width / 2, W_Width / 2, -W_Height / 2, W_Height / 2, -W_Depth / 2, W_Depth / 2);
+	glMatrixMode(GL_MODELVIEW);
 }
 
 
@@ -107,14 +124,10 @@ GLvoid MouseEvent(int button, int state, int x, int y)
 	glutPostRedisplay();
 }
 
-GLvoid DrawPolygon(GLvoid)
-{
-
-}
 
 GLvoid Timer(int val)
 {
-	
+
 	glutPostRedisplay();
 	glutTimerFunc(10, Timer, 1);
 }
