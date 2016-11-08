@@ -25,18 +25,11 @@ GLvoid MouseMove(int, int);
 GLvoid MouseEvent(int, int, int, int);
 GLvoid init(GLvoid);
 
+
 GLvoid DrawLines();
 GLvoid DrawSpace();
-GLvoid DrawPolygon(int sel);
+GLvoid DrawPolygon(GLvoid);
 GLvoid Circle(Vertex P, float radius, float angle);
-
-enum poly { SPHERE, CUBE, CONE, TEAPOT };
-
-int angle1; 
-int angle2;
-int angle_a;
-int polysel;
-bool f_x, f_y, f_z;
 
 void main(int, char *)
 {
@@ -55,13 +48,7 @@ void main(int, char *)
 GLvoid init(GLvoid)
 {
 	srand(unsigned(time(NULL)));
-	f_x = false;
-	f_y = true;
-	f_z = false;
-	angle1 = 0;
-	angle2 = 0;
-	angle_a = 0;
-	polysel = poly::CUBE;
+
 }
 
 GLvoid RegesterCallBack()
@@ -78,38 +65,16 @@ GLvoid drawScene(GLvoid)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
-	DrawLines();
-	//glTranslatef(0,-50, 0);
 
-	glPushMatrix();
-	{
-		glRotatef(angle_a, f_x, f_y, f_z);
-		DrawSpace();
-		glPushMatrix();
-		{
-			glTranslatef(50.f, 50.f, 0.f);
-			glRotatef(angle1, f_x, f_y, f_z);
-			glScalef(1.f, 2.f, 1.f);
-			DrawPolygon(1);
-		}
-		glPopMatrix();
-		glPushMatrix();
-		{
-			glTranslatef(-50.f, 50.f, 0.f);
-			glRotatef(angle2, f_x, f_y, f_z);
-			glScalef(2.f, 1.f, 1.f);
-			DrawPolygon(2);
-		}
-		glPopMatrix();
-	}
-	glPopMatrix();
+	//DrawSpace();
+	DrawPolygon();
 
 	glutSwapBuffers();
 }
 
 GLvoid DrawLines()
 {
-	glColor3f(1.f, 1.f, 1.f );
+	glColor3f(1.f, 1.f, 1.f);
 	glBegin(GL_LINES);
 	glVertex3f(-W_Width, 0.0, 0.0);
 	glVertex3f(W_Width, 0.0, 0.0);
@@ -130,37 +95,9 @@ GLvoid DrawSpace()
 	glutSolidCube(200);
 	glPopMatrix();
 }
-
-GLvoid DrawPolygon(int sel)
+GLvoid DrawPolygon(GLvoid)
 {
-	glColor3f(1.f, 0.f, 0.f);
-	switch (polysel)
-	{
-	case poly::CUBE:
-		if (sel == 1)
-			glutSolidCube(50);
-		else if (sel == 2)
-			glutWireCube(50);
-		break;
-	case poly::SPHERE:
-		if (sel == 1)
-			glutSolidSphere(20, 10,10);
-		else if (sel == 2)
-			glutWireSphere(20, 10, 10);
-		break;
-	case poly::CONE:
-		if (sel == 1)
-			glutSolidCone(20, 50, 10, 10);
-		else if (sel == 2)
-			glutWireCone(20, 50, 10, 10);
-		break;
-	case poly::TEAPOT:
-		if (sel == 1)
-			glutSolidTeapot(20);
-		else if (sel == 2)
-			glutWireTeapot(20);
-		break;
-	}
+
 }
 
 GLvoid Reshape(int w, int h)
@@ -193,53 +130,13 @@ GLvoid Keydown(unsigned char key, int x, int y)
 		init();
 		break;
 
-	case '1':	polysel = poly::CUBE;		break;
-	case '2':	polysel = poly::SPHERE;		break;
-	case '3':	polysel = poly::CONE;		break;
-	case '4':	polysel = poly::TEAPOT;		break;
-
-	case 's':
-		angle1 += 10;
+	case 'u':
 		break;
 
 	case 'd':
-		angle2 += 10;
 		break;
 
-	case 'z':
-		angle_a += 5;
-		f_x = true;
-		f_y = false;
-		f_z = false;
-		break;
-	case 'x':
-		angle_a += 5;
-		f_x = false;
-		f_y = true;
-		f_z = false;
-		break;
-	case 'c':
-		angle_a += 5;
-		f_x = false;
-		f_y = false;
-		f_z = true;
-		break;
-
-	case 'Z':
-		if (!f_x)	f_x = true;
-		else f_x = false;
-		break;
-	case 'X':
-		if (!f_y)	f_y = true;
-		else f_y = false;
-		break;
-	case 'C':
-		if (!f_z)	f_z = true;
-		else f_z = false;
-		break;
-	case 'v':
-		if (f_x || f_y || f_z)
-			angle_a += 5;
+	case 'e':
 		break;
 	}
 
