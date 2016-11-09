@@ -90,66 +90,67 @@ GLvoid drawScene(GLvoid)
 				glPopMatrix();
 			}
 			glPopMatrix();
-			/*
-			glPushMatrix();				//-30
-			{
-				glRotatef(-30, 0, 0, 1);
-				glRotatef(angle, 0, 1, 0);
-				glRotatef(90, 1, 0, 0);
-				DrawLines(120);
-				glColor3f(1.0, 1.0, 0);
-				//glutWireSphere(40, 10, 10);
-				glPushMatrix();
-				{
-					glTranslatef(-120, 0, 0);
-					//glRotatef(90, 1, 0, 0);
-					glColor3f(1.0, 0.0, 1.0);
-					glutWireSphere(15, 10, 10);
-					glPushMatrix();
-					{
-						glRotatef(angle2, 0, 0, 1);
-						glTranslatef(40, 0, 0);
-						glColor3f(1.0, 1.0, 0.0);
-						glutWireSphere(5, 10, 10);
-					}
-					glPopMatrix();
-				}
-				glPopMatrix();
-			}
-			glPopMatrix();
 
-			glPushMatrix();				//center
-			{
-				glRotatef(angle, 0, 1, 0);
-				glRotatef(90, 1, 0, 0);
-				DrawLines(120);
-				glColor3f(1.0, 1.0, 0);
-				//glutWireSphere(40, 10, 10);
-				glPushMatrix();
-				{
-					glTranslatef(120, 0, 0);
-					DrawLines(40);
-					glColor3f(1.0, 0.0, 1.0);
-					glutWireSphere(15, 10, 10);
-					glPushMatrix();
-					{
-						glRotatef(angle2, 0, 0, 1);
-						glTranslatef(40, 0, 0);
-						glColor3f(1.0, 1.0, 0.0);
-						glutWireSphere(5, 10, 10);
-					}
-					glPopMatrix();
-				}
-				glPopMatrix();
-			}
-			glPopMatrix();
-			*/
+			glRotated(30, 0, 0, 1);
+	//		glPushMatrix();				//-30
+	//		{
+	//			glRotatef(-30, 0, 0, 1);
+	//			glRotatef(angle, 0, 1, 0);
+	//			glRotatef(90, 1, 0, 0);
+	//			DrawLines(120);
+	//			glColor3f(1.0, 1.0, 0);
+	//			//glutWireSphere(40, 10, 10);
+	//			glPushMatrix();
+	//			{
+	//				glTranslatef(-120, 0, 0);
+	//				//glRotatef(90, 1, 0, 0);
+	//				glColor3f(1.0, 0.0, 1.0);
+	//				DrawLines(40);
+	//				glutWireSphere(15, 10, 10);
+	//				glPushMatrix();
+	//				{
+	//					glRotatef(angle2, 0, 0, 1);
+	//					glTranslatef(40, 0, 0);
+	//					glColor3f(1.0, 1.0, 0.0);
+	//					glutWireSphere(5, 10, 10);
+	//				}
+	//				glPopMatrix();
+	//			}
+	//			glPopMatrix();
+	//		}
+	//		glPopMatrix();
+	//
+	//		glPushMatrix();				//center
+	//		{
+	//			glRotatef(angle, 0, 1, 0);
+	//			glRotatef(90, 1, 0, 0);
+	//			DrawLines(120);
+	//			glColor3f(1.0, 1.0, 0);
+	//			//glutWireSphere(40, 10, 10);
+	//			glPushMatrix();
+	//			{
+	//				glTranslatef(120, 0, 0);
+	//				DrawLines(40);
+	//				glColor3f(1.0, 0.0, 1.0);
+	//				glutWireSphere(15, 10, 10);
+	//				glPushMatrix();
+	//				{
+	//					glRotatef(angle2, 0, 0, 1);
+	//					glTranslatef(40, 0, 0);
+	//					glColor3f(1.0, 1.0, 0.0);
+	//					glutWireSphere(5, 10, 10);
+	//				}
+	//				glPopMatrix();
+	//			}
+	//			glPopMatrix();
+	//		}
+	//		glPopMatrix();
 
 			glPushMatrix();				// +30
 			{
 				glRotatef(30, 0, 0, 1);
-				glRotatef(angle, 0, 1, 0);
-				glRotatef(90, 1, 0, 0);
+				glRotatef(angle, 1, 0, 0);
+				glRotatef(90, 0, 1, 0);
 				DrawLines(120);
 				glColor3f(1.0, 1.0, 0);
 				glPushMatrix();
@@ -226,7 +227,7 @@ GLvoid Reshape(int w, int h)
 	glMatrixMode(GL_MODELVIEW);
 
 	gluLookAt(
-		camera_x, camera_y, camera_z,			// eye
+		camera_x, 0.8, camera_z,			// eye
 		0.0, 0.0, 1.0,							// center
 		0.0, 1.0, 0.0);							// up
 }
