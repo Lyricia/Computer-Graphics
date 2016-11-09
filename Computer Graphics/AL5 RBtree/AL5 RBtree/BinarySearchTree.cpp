@@ -11,20 +11,6 @@ BSTNode* BinarySearchTree::BST_CreateNode(int NewData)
 	return NewNode;
 }
 
-BSTNode* BinarySearchTree::grandparent(BSTNode* n)
-{
-	if ((n != NULL) && (n->Parent != NULL))
-		return n->Parent->Parent;
-	else
-		return NULL;
-}
-
-BSTNode* uncle(BSTNode* n)
-{
-	BSTNode* g = BinarySearchTree::grandparent(n);
-
-}
-
 void BinarySearchTree::BST_DestroyNode(BSTNode* Node)
 {
 	free(Node);
@@ -65,6 +51,75 @@ void BinarySearchTree::BST_InsertNode(BSTNode* Tree, BSTNode *Child)
 			BST_InsertNode(Tree->Left, Child);
 	}
 }
+
+void insert_case1(struct BSTNode* n)
+{
+	if (n->Parent == NULL)
+		n->color = BLACK;
+	else insert_case2(n);
+}
+
+void insert_case2(struct BSTNode * n)
+{
+	if (n->Parent->color == BLACK)
+		return;
+	else insert_case3(n);
+}
+
+void insert_case3(struct BSTNode * n)
+{
+	BSTNode * u = uncle(n), *g;
+	if ((u != NULL) && (u->color == RED))
+	{
+		n->Parent->color = BLACK;
+		u->color = BLACK;
+		g = grandparent(n);
+		g->color = RED;
+		insert_case1(g);
+	}
+	else
+		insert_case4(n);
+}
+
+void insert_case4(BSTNode * n)
+{
+	BSTNode * g = grandparent(n);
+
+	if ((n == n->Parent->Right) && (n->Parent == g->Left))
+	{
+		rotate_left(n->Parent);
+		n = n->Left;
+	}
+	else if ((n == n->Parent->Left) && (n->Parent == g->Right))
+	{
+		rotate_right(n->Parent);
+		n = n->Right;
+	}
+	insert_case5(n);
+}
+
+void insert_case5(BSTNode * n)
+{
+	BSTNode* g = grandparent(n);
+	n->Parent->color = BLACK;
+	g->color = RED;
+	if (n == n->Parent->Left)
+		rotate_right(g);
+	else
+		rotate_left(g);
+}
+
+void rotate_right(BSTNode * n)
+{
+
+}
+
+void rotate_left(BSTNode *n)
+{
+
+}
+
+
 
 
 void BinarySearchTree::BST_DestroyTree(BSTNode* Tree)
