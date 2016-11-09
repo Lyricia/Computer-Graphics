@@ -1,4 +1,0 @@
-﻿  main.cpp
-main.obj : warning LNK4075: '/EDITANDCONTINUE'이(가) '/OPT:LBR' 사양으로 인해 무시됩니다.
-  Exam 5.vcxproj -> D:\Computer-Graphics\Computer Graphics\Exam 5\Debug\Exam 5.exe
-  Exam 5.vcxproj -> D:\Computer-Graphics\Computer Graphics\Exam 5\Debug\Exam 5.pdb (Full PDB)

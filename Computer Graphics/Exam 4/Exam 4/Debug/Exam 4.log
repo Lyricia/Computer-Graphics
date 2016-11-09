@@ -1,2 +1,0 @@
-﻿  main.cpp
-d:\computer-graphics\computer graphics\exam 4\exam 4\main.cpp : fatal error C1041: 프로그램 데이터베이스 'D:\Computer-Graphics\Computer Graphics\Exam 4\Exam 4\Debug\vc140.idb'을(를) 열 수 없습니다. 여러 CL.EXE에서 동일한 .PDB 파일에 쓰는 경우 /FS를 사용하십시오.
