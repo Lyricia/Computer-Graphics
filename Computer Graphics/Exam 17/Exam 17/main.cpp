@@ -88,22 +88,26 @@ GLvoid drawScene(GLvoid)
 		glScalef(1, 0.5, 0.8);
 		glColor3f(1.0, 0.0, 0);
 		glutSolidCube(80);
+
+		glTranslatef(0, 40, 0);
+		DrawLines();
+
 		glPushMatrix();
 		{
-			glTranslatef(0, 30, 0);
-			DrawLines();
 			glRotatef(middleanglex, 1, 0, 0);
 			glRotatef(middleangley, 0, 1, 0);
-			glTranslatef(0, 50, 0);
+			glTranslatef(0, 25, 0);
 			glScalef(0.5, 1.5, 1);
 			glColor3f(0.0, 0.0, 1);
 			glutSolidCube(50);
+			glTranslatef(0, 25, 0);
+			DrawLines();
 			glPushMatrix();
 			{
-				glTranslatef(0, 30, 0);
 				glRotatef(topanglex, 1, 0, 0);
 				glRotatef(topanglez, 0, 0, 1);
-				glScalef(0.5, 0.5, 0.5);
+				glTranslatef(0, 25, 0);
+				glScalef(0.5, 1.0, 0.5);
 				glColor3f(1.0, 0.0, 1.0);
 				glutSolidCube(50);
 			}

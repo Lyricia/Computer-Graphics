@@ -1,18 +1,12 @@
-#include<iostream>
-#include<time.h>
+#include <iostream>
+#include <time.h>
+#include "Orbit.h"
 
-#include<gl\glut.h>
+#include <gl\glut.h>
 
 #define W_Width		800
 #define W_Height	600
 #define W_Depth		800
-
-struct Vertex
-{
-	float x;
-	float y;
-	float z;
-};
 
 GLvoid RegesterCallBack();
 
@@ -25,18 +19,19 @@ GLvoid MouseMove(int, int);
 GLvoid MouseEvent(int, int, int, int);
 GLvoid init(GLvoid);
 
-
-GLvoid DrawLines(int rad);
+GLvoid DrawLines();
 GLvoid DrawSpace();
 GLvoid DrawPolygon(GLvoid);
-GLvoid Circle(Vertex P, float radius, float angle);
 
 int angle = 0;
 int angle2 = 0;
+int angle3 = 0;
 
 float camera_x;
 float camera_y;
 float camera_z;
+
+COrbit Orbit;
 
 void main(int, char *)
 {
@@ -67,138 +62,77 @@ GLvoid RegesterCallBack()
 	glutKeyboardFunc(Keydown);
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
-	glutTimerFunc(10, Timer, 1);
+	//glutTimerFunc(10, Timer, 1);
 }
 
 GLvoid drawScene(GLvoid)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
-
+	
 	glPushMatrix();
 	{
+		glColor3f(1, 1, 1);
+		glRotatef(45, 0, 0, 1);
+		Orbit.DrawOrbit(120);
 		glPushMatrix();
 		{
-			glPushMatrix();
-			{
-				glRotatef(angle, 0, 1, 0);
-				glPushMatrix();
-				{
-					glRotatef(90, 1, 0, 0);
-					glutWireSphere(40, 10, 10);
-				}
-				glPopMatrix();
-			}
-			glPopMatrix();
-
-			glRotated(30, 0, 0, 1);
-	//		glPushMatrix();				//-30
-	//		{
-	//			glRotatef(-30, 0, 0, 1);
-	//			glRotatef(angle, 0, 1, 0);
-	//			glRotatef(90, 1, 0, 0);
-	//			DrawLines(120);
-	//			glColor3f(1.0, 1.0, 0);
-	//			//glutWireSphere(40, 10, 10);
-	//			glPushMatrix();
-	//			{
-	//				glTranslatef(-120, 0, 0);
-	//				//glRotatef(90, 1, 0, 0);
-	//				glColor3f(1.0, 0.0, 1.0);
-	//				DrawLines(40);
-	//				glutWireSphere(15, 10, 10);
-	//				glPushMatrix();
-	//				{
-	//					glRotatef(angle2, 0, 0, 1);
-	//					glTranslatef(40, 0, 0);
-	//					glColor3f(1.0, 1.0, 0.0);
-	//					glutWireSphere(5, 10, 10);
-	//				}
-	//				glPopMatrix();
-	//			}
-	//			glPopMatrix();
-	//		}
-	//		glPopMatrix();
-	//
-	//		glPushMatrix();				//center
-	//		{
-	//			glRotatef(angle, 0, 1, 0);
-	//			glRotatef(90, 1, 0, 0);
-	//			DrawLines(120);
-	//			glColor3f(1.0, 1.0, 0);
-	//			//glutWireSphere(40, 10, 10);
-	//			glPushMatrix();
-	//			{
-	//				glTranslatef(120, 0, 0);
-	//				DrawLines(40);
-	//				glColor3f(1.0, 0.0, 1.0);
-	//				glutWireSphere(15, 10, 10);
-	//				glPushMatrix();
-	//				{
-	//					glRotatef(angle2, 0, 0, 1);
-	//					glTranslatef(40, 0, 0);
-	//					glColor3f(1.0, 1.0, 0.0);
-	//					glutWireSphere(5, 10, 10);
-	//				}
-	//				glPopMatrix();
-	//			}
-	//			glPopMatrix();
-	//		}
-	//		glPopMatrix();
-
-			glPushMatrix();				// +30
-			{
-				glRotatef(30, 0, 0, 1);
-				glRotatef(angle, 1, 0, 0);
-				glRotatef(90, 0, 1, 0);
-				DrawLines(120);
-				glColor3f(1.0, 1.0, 0);
-				glPushMatrix();
-				{
-					glTranslatef(0, 120, 0);
-					DrawLines(40);
-					glColor3f(1.0, 0.0, 1.0);
-					glutWireSphere(15, 10, 10);
-					glPushMatrix();
-					{
-						glRotatef(angle2, 0, 0, 1);
-						glTranslatef(40, 0, 0);
-						glColor3f(1.0, 1.0, 0.0);
-						glutWireSphere(5, 10, 10);
-					}
-					glPopMatrix();
-				}
-				glPopMatrix();
-			}
-			glPopMatrix();
-			glColor3f(1.0, 1.0, 1.0);
+			Orbit.DrawPlanet(40, 30, angle,-45);
+			glRotatef(-45, 0, 0, 1);
+			Orbit.DrawOrbit(90);
+			Orbit.DrawPlanet(30, 10, angle,0);
 		}
 		glPopMatrix();
 	}
 	glPopMatrix();
+
+	glPushMatrix();
+	{
+		glColor3f(1, 1, 1);
+		glRotatef(-45, 0, 0, 1);
+		Orbit.DrawOrbit(120);
+		glPushMatrix();
+		{
+			Orbit.DrawPlanet(40, 30, angle2, 45);
+			glRotatef(45, 0, 0, 1);
+			Orbit.DrawOrbit(90);
+			Orbit.DrawPlanet(30, 10, angle2, 0);
+		}
+		glPopMatrix();
+	}
+	glPopMatrix();
+
+	glPushMatrix();
+	{
+		glColor3f(1, 1, 1);
+		Orbit.DrawOrbit(120);
+		glPushMatrix();
+		{
+			Orbit.DrawPlanet(40, 30, angle3,0 );
+			Orbit.DrawOrbit(90);
+			Orbit.DrawPlanet(30, 10, angle3, 0);
+		}
+		glPopMatrix();
+	}
+	glPopMatrix();
+
 	glutSwapBuffers();
 }
 
-GLvoid DrawLines(int rad)
+GLvoid DrawLines()
 {
-	//glColor3f(1.f, 0.f, 0.f);			// x axis 
-	//glBegin(GL_LINES);
-	//glVertex3f(-W_Width, 0.0, 0.0);
-	//glVertex3f(W_Width, 0.0, 0.0);
-	//
-	//glColor3f(0.f, 1.f, 0.f);			// y axis
-	//glVertex3f(0.0, -W_Height, 0.0);
-	//glVertex3f(0.0, W_Height, 0.0);
-	//
-	//glColor3f(0.f, 0.f, 1.f);			// z axis
-	//glVertex3f(0.0, 0.0, -W_Depth);
-	//glVertex3f(0.0, 0.0, W_Depth);
-	//glEnd();
-
-	glBegin(GL_POINTS);
-	for (int i = 0; i < 360; i++) {
-		Circle({ 0,0,0 }, rad, i);
-	}
+	glColor3f(1.f, 0.f, 0.f);			// x axis 
+	glBegin(GL_LINES);
+	glVertex3f(-W_Width, 0.0, 0.0);
+	glVertex3f(W_Width, 0.0, 0.0);
+	
+	glColor3f(0.f, 1.f, 0.f);			// y axis
+	glVertex3f(0.0, -W_Height, 0.0);
+	glVertex3f(0.0, W_Height, 0.0);
+	
+	glColor3f(0.f, 0.f, 1.f);			// z axis
+	glVertex3f(0.0, 0.0, -W_Depth);
+	glVertex3f(0.0, 0.0, W_Depth);
 	glEnd();
 }
 
@@ -212,7 +146,7 @@ GLvoid DrawSpace()
 }
 GLvoid DrawPolygon(GLvoid)
 {
-	
+	glColor3f(1, 0, 0);
 }
 
 GLvoid Reshape(int w, int h)
@@ -227,7 +161,7 @@ GLvoid Reshape(int w, int h)
 	glMatrixMode(GL_MODELVIEW);
 
 	gluLookAt(
-		camera_x, 0.8, camera_z,			// eye
+		camera_x, 0.5, camera_z,			// eye
 		0.0, 0.0, 1.0,							// center
 		0.0, 1.0, 0.0);							// up
 }
@@ -254,8 +188,9 @@ GLvoid Keydown(unsigned char key, int x, int y)
 		break;
 
 	case 'd':
-		angle++;
-		angle2 -= 1;
+		angle += 10;
+		angle2 += 3;
+		angle3 += 5;
 		break;
 
 	case 'e':
@@ -282,11 +217,4 @@ GLvoid Timer(int val)
 	//angle2 -= 1;
 	glutPostRedisplay();
 	glutTimerFunc(10, Timer, 1);
-}
-
-GLvoid Circle(Vertex P, float radius, float _angle)
-{
-	_angle = _angle * (3.141592 / 180);
-
-	glVertex2f(cos(_angle)*radius + P.x, sin(_angle)*radius + P.y);
 }

@@ -89,15 +89,18 @@ GLvoid drawScene(GLvoid)
 		glTranslated(move_x, move_y, move_z);
 		glPushMatrix();
 		{
-			glPushMatrix();
-			{
-				glRotatef(anglez, 1, 0, 0);
-				glRotatef(anglex, 0, 0, 1);
-				glRotatef(angley, 0, 1, 0);
-				glColor3f(1, 0, 0);
-				glutWireSphere(30, 10, 10);
-			}
-			glPopMatrix();
+			glTranslatef(0, -30, -vertical);
+			glTranslated(-move_x, -move_y, -move_z);
+
+			glRotatef(anglex, 1, 0, 0);
+			glRotatef(angley, 0, 1, 0);
+			glRotatef(anglez, 0, 0, 1);
+
+			glTranslatef(0, -30, -vertical);
+			glTranslated(move_x, move_y, move_z);
+			DrawLines();
+			glColor3f(1, 0, 0);
+			glutWireSphere(30, 10, 10);
 		}
 		glPopMatrix();
 	}
@@ -146,7 +149,7 @@ GLvoid Reshape(int w, int h)
 	glMatrixMode(GL_MODELVIEW);
 
 	gluLookAt(
-		0.0, 2, 0.0,			// eye
+		0.0, 0.5, 0.0,			// eye
 		0.0, 0.0, 1.0,			// center
 		0.0, 1.0, 0.0);			// up
 }
@@ -172,7 +175,7 @@ GLvoid Keydown(unsigned char key, int x, int y)
 		break;
 
 	case 'w':
-		anglez += 10;
+		anglex += 10;
 		if (move_z <100)
 			move_z += 2 * PI * 30 * 10 / 360;
 		f_x = true;
@@ -181,7 +184,7 @@ GLvoid Keydown(unsigned char key, int x, int y)
 		break;
 
 	case 's':
-		anglez -= 10;
+		anglex -= 10;
 		if (move_z>-100)
 			move_z -= 2 * PI * 30 * 10 / 360;
 		f_x = true;
@@ -190,7 +193,7 @@ GLvoid Keydown(unsigned char key, int x, int y)
 		break;
 
 	case 'a':
-		anglex += 10;
+		anglez -= 10;
 		if (move_x < 100)
 			move_x += 2 * PI * 30 * 10 / 360;
 		f_x = false;
@@ -199,7 +202,7 @@ GLvoid Keydown(unsigned char key, int x, int y)
 		break;
 
 	case 'd':
-		anglex -= 10;
+		anglez += 10;
 		if (move_x>-100)
 			move_x -= 2 * PI * 30 * 10 / 360;
 		f_x = false;
