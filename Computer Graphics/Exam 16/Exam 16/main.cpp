@@ -1,6 +1,7 @@
 #include<iostream>
 #include<time.h>
 
+#include "Ball.h"
 #include<gl\glut.h>
 
 #define W_Width		800
@@ -37,6 +38,8 @@ double move_x, move_y, move_z;
 bool f_x, f_y, f_z;
 int vertical;
 
+CBall ball;
+
 void main(int, char *)
 {
 	init();
@@ -65,6 +68,8 @@ GLvoid init(GLvoid)
 	f_y = false;
 	f_z = false;
 	vertical = 0;
+
+	ball.setcolor(255, 0, 0);
 }
 
 GLvoid RegesterCallBack()
@@ -83,26 +88,10 @@ GLvoid drawScene(GLvoid)
 	glMatrixMode(GL_MODELVIEW);
 
 	DrawSpace();
+
 	glPushMatrix();
 	{
-		glTranslatef(0, 30, vertical);
-		glTranslated(move_x, move_y, move_z);
-		glPushMatrix();
-		{
-			glTranslatef(0, -30, -vertical);
-			glTranslated(-move_x, -move_y, -move_z);
-
-			glRotatef(anglex, 1, 0, 0);
-			glRotatef(angley, 0, 1, 0);
-			glRotatef(anglez, 0, 0, 1);
-
-			glTranslatef(0, -30, -vertical);
-			glTranslated(move_x, move_y, move_z);
-			DrawLines();
-			glColor3f(1, 0, 0);
-			glutWireSphere(30, 10, 10);
-		}
-		glPopMatrix();
+		ball.Render(50);
 	}
 	glPopMatrix();
 
@@ -175,12 +164,6 @@ GLvoid Keydown(unsigned char key, int x, int y)
 		break;
 
 	case 'w':
-		anglex += 10;
-		if (move_z <100)
-			move_z += 2 * PI * 30 * 10 / 360;
-		f_x = true;
-		f_y = false;
-		f_z = false;
 		break;
 
 	case 's':

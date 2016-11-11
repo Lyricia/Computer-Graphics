@@ -1,14 +1,12 @@
 #pragma once
+#include "Scene.h"
 
-class CGLFramework;
-
-
-
-class CScene
+class CMainGameScene :
+	public CScene
 {
 public:
-	CScene();
-	virtual ~CScene();
+	CMainGameScene();
+	virtual ~CMainGameScene();
 
 public:
 	virtual void Update();
@@ -20,13 +18,8 @@ public:
 								, int tag
 	);
 
-	bool MatchTag(const int tag) const { return { tag == m_iTag }; }
+private:
 
-protected:
-
-
-	CGLFramework*	m_pMasterFramework;
-	int				m_iTag;	
-
+	Point2f			m_ptPos			{100,100}	;
 };
 

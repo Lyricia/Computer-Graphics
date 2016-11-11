@@ -1,8 +1,13 @@
-#include <cassert>
-#include <gl/glut.h>
+#include "stdafx.h"
 #include "GLFramework.h"
-#include <iostream>
+#include "TitleScene.h"
+#include "MainGameScene.h"
 
+
+CGLFramework::~CGLFramework()
+{
+	for (auto p : m_arrScene) if (p) delete p;
+}
 
 GLvoid CGLFramework::Initialize(GLvoid)
 {
@@ -10,6 +15,7 @@ GLvoid CGLFramework::Initialize(GLvoid)
 	glutInitWindowPosition(m_ptWindowPos.x, m_ptWindowPos.y);
 	glutInitWindowSize(m_ptWindowSize.x, m_ptWindowSize.y);
 	glutCreateWindow(m_szTile);
+
 }
 
 GLvoid CGLFramework::Reshape(int w, int h)
@@ -20,66 +26,51 @@ GLvoid CGLFramework::Reshape(int w, int h)
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
+	gluPerspective(60.0, float(w) / float(h), 1.0, 10000);
+	gluLookAt(
+		0, 0, -1,
+		0, 0, 0,
+		0, 1, 0
+	);
 
-	glOrtho(0.0, w, 0.0, h, -1.0, 1.0);
+	glOrtho(0, w, h, 0, -1, 1);
+	glMatrixMode(GL_MODELVIEW);
 }
 
 GLvoid CGLFramework::drawScene(GLvoid)
 {
-	glClearColor(1.f, 1.f, 0.0, 1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+	m_pCurrentScene->Render();
 
 	glutSwapBuffers();
 }
 
 GLvoid CGLFramework::Timer(int val)
 {
+	m_pCurrentScene->Update();
+
 	glutPostRedisplay();
 	glutTimerFunc(m_iFPS, m_pfTimer, val);
 }
 
-enum {
-	RBUTTONDOWN = ((GLUT_RIGHT_BUTTON << 8) + GLUT_DOWN),
-	RBUTTONUP = ((GLUT_RIGHT_BUTTON << 8) + GLUT_UP),
-	LBUTTONDOWN = ((GLUT_LEFT_BUTTON << 8) + GLUT_DOWN),
-	LBUTTONUP = ((GLUT_LEFT_BUTTON << 8) + GLUT_UP),
-};
-
-GLvoid CGLFramework::KeyInput(unsigned char key, int x, int y)
-{	
-	
-	switch (key)
-	{
-	case 'q':
-		//exit(0);
-		break;
-	}
-}
-
-GLvoid CGLFramework::MouseInput(int button, int state, int x, int y)
+GLvoid CGLFramework::Mouse(int button, int state, int x, int y)
 {
-	switch ((button << 8) + state)
-	{
-	case LBUTTONDOWN:
-		break;
-	case RBUTTONDOWN:
-		break;
-	case LBUTTONUP:
-		break;
-	case RBUTTONUP:
-		break;
-	}
+	m_pCurrentScene->Mouse(button, state, x, y);
 }
 
 GLvoid CGLFramework::Run()
 {
-	assert((m_pfDrawScene && m_pfReshape && m_pfTimer && m_pfKeyInput)
+	assert((m_pfDrawScene && m_pfReshape && m_pfTimer && m_pfMouse)
 		&& "No callback function has been set!");
-
+	glClearColor(0.5, 0.5, 0.8, 1);
+	
+	glutMouseFunc(m_pfMouse);
 	glutDisplayFunc(m_pfDrawScene);
 	glutReshapeFunc(m_pfReshape);
 	glutTimerFunc(m_iFPS, m_pfTimer, 1);
-	glutKeyboardFunc(m_pfKeyInput);
+
+	BuildScene<CTitleScene>();
 
 	glutMainLoop();
 }

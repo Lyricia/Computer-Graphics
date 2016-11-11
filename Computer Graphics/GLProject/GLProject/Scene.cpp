@@ -1,35 +1,48 @@
-#include <iostream>
-#include <gl/glut.h>
+#include "stdafx.h"
 #include "GLFramework.h"
 #include "Scene.h"
+
 
 CScene::CScene()
 {
 }
+
+
 CScene::~CScene()
 {
 }
 
-void CScene::RenderScene()
+void CScene::Update()
 {
 }
 
-void CScene::UpdateScene()
+
+void CScene::Render()
 {
 }
 
-void CScene::BuildScene(CGLFramework * pFramework, int tag)
+void CScene::Reshape()
 {
-	m_pMasterFramework = pFramework;
-	m_iTag = tag;
 }
 
-void CScene::KeyInput(unsigned char key, int x, int y)
+void CScene::Mouse(int button, int state, int x, int y)
 {
-	switch (key)
+	switch (GetMouseState(button, state))
 	{
-	case 'q':
-		exit(0);
+	case GLKeyStateCombine::LBUTTONDOWN:
 		break;
+	case GLKeyStateCombine::RBUTTONDOWN:
+		break;
+	case GLKeyStateCombine::LBUTTONUP:
+		break;
+	case GLKeyStateCombine::RBUTTONUP:
+		break;
+
 	}
+}
+
+void CScene::BuildScene(CGLFramework * pframework, int tag)
+{
+	m_pMasterFramework = pframework;
+	m_iTag = tag;
 }
