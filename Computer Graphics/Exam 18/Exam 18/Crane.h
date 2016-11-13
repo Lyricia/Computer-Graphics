@@ -13,8 +13,10 @@ private:
 	int middleangley;
 	int topanglex;
 	int topanglez;
+	int zdir;
 
 public:
+	int xdir;
 	void moveCrane(float speed);
 	void moveBottom(int angle, bool isX, bool isY, bool isZ);
 	void moveMiddle(int angle, bool isX, bool isY, bool isZ);

@@ -24,6 +24,11 @@ public:
 	unsigned char blue;
 
 	void applycolor() { glColor3f(red / 255, green / 255, blue / 255); }
+	void setcolor(unsigned char _red, unsigned char _green, unsigned char _blue) {
+		red = _red;
+		green = _green;
+		blue = _blue;
+	}
 };
 
 class CVertex

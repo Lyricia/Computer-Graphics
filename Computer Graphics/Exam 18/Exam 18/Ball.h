@@ -8,8 +8,8 @@ public:
 	~CBall();
 
 private:
-	float m_radius;
 	float m_Matrix[16];
+	
 
 public:
 	void Render(float scale);
@@ -21,3 +21,4 @@ public:
 		Vertex.color.blue = blue;
 	}
 };
+

@@ -8,6 +8,9 @@ CCrane::CCrane()
 	middleangley = 0;
 	topanglex = 0;
 	topanglez = 0;
+	m_scale = 40;
+	xdir = 1;
+	zdir = 1;
 }
 
 
@@ -17,11 +20,11 @@ CCrane::~CCrane()
 
 void CCrane::moveCrane(float speed)
 {
-	Vertex.x += speed;
-	if (Vertex.x > 100)
-		Vertex.x = 100;
-	else if (Vertex.x < -100)
-		Vertex.x = -100;
+	if (Vertex.x > 100)			xdir = -1;
+	else if (Vertex.x < -100)	xdir = 1;
+
+	if (xdir == 1)			Vertex.x += speed;
+	else if (xdir == -1)	Vertex.x -= speed;
 }
 
 void CCrane::moveBottom(int angle, bool isX, bool isY, bool isZ)
@@ -43,36 +46,41 @@ void CCrane::moveTop(int angle, bool isX, bool isY, bool isZ)
 
 void CCrane::Render()
 {
-	glPushMatrix();
+	//glPushMatrix();
 	{
-		glTranslatef(0, 20, 0);
-		glTranslatef(Vertex.x, 0, 0);
-		glRotatef(bottomangle, 0, 1, 0);
-		glScalef(1, 0.5, 0.8);
-		glColor3f(1.0, 0.0, 0);
-		glutSolidCube(80);
-		glTranslatef(0, 40, 0);
+		initBB();
+		DrawBB();
+		glTranslatef(Vertex.x, 20, 0);
 		glPushMatrix();
 		{
-			glRotatef(middleanglex, 1, 0, 0);
-			glRotatef(middleangley, 0, 1, 0);
-			glTranslatef(0, 25, 0);
-			glScalef(0.5, 1.5, 1);
-			glColor3f(0.0, 0.0, 1);
-			glutSolidCube(50);
-			glTranslatef(0, 25, 0);
+			glRotatef(bottomangle, 0, 1, 0);
+			glScalef(1, 0.5, 1);
+			glColor3f(1.0, 0.0, 0);
+			glutSolidCube(80);
+			glTranslatef(0, 40, 0);
 			glPushMatrix();
 			{
-				glRotatef(topanglex, 1, 0, 0);
-				glRotatef(topanglez, 0, 0, 1);
+				glRotatef(middleanglex, 1, 0, 0);
+				glRotatef(middleangley, 0, 1, 0);
 				glTranslatef(0, 25, 0);
-				glScalef(0.5, 1.0, 0.5);
-				glColor3f(1.0, 0.0, 1.0);
+				glScalef(0.5, 1.5, 1);
+				glColor3f(0.0, 0.0, 1);
 				glutSolidCube(50);
+				glTranslatef(0, 25, 0);
+				glPushMatrix();
+				{
+					glRotatef(topanglex, 1, 0, 0);
+					glRotatef(topanglez, 0, 0, 1);
+					glTranslatef(0, 25, 0);
+					glScalef(0.5, 1.0, 0.5);
+					glColor3f(1.0, 0.0, 1.0);
+					glutSolidCube(50);
+				}
+				glPopMatrix();
 			}
 			glPopMatrix();
 		}
 		glPopMatrix();
 	}
-	glPopMatrix();
+	//glPopMatrix();
 }

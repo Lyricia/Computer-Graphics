@@ -1,9 +1,7 @@
 #include <iostream>
 #include <time.h>
 #include <gl\glut.h>
-
-#include "Ball.h"
-#include "Crane.h"
+#include "ObjectTree.h"
 
 #define W_Width		800
 #define W_Height	600
@@ -34,16 +32,11 @@ GLvoid DrawSpace();
 GLvoid DrawPolygon(GLvoid);
 GLvoid Circle(Vertex P, float radius, float angle);
 
-void adjustment();
+float cameraz;
+float camerax;
 
-CBall ball;
-CBall wheel[4];
-CCrane crane;
-
-float cranespeed;
-
-float camera;
-int angle_y;
+CObjectTree RectTree;
+CObjectTree SphereTree;
 
 void main(int, char *)
 {
@@ -56,9 +49,6 @@ void main(int, char *)
 
 	RegesterCallBack();
 
-	for (int i = 0; i < 4; i++)
-		wheel[i].setcolor(0, 255, 255);
-
 	glutMainLoop();
 }
 
@@ -66,12 +56,7 @@ GLvoid init(GLvoid)
 {
 	srand(unsigned(time(NULL)));
 	
-	ball.Render(20);
-	ball.setcolor(255, 0, 255);
-	ball.Move(180, true, false, false);
-	//crane.moveCrane(50);
-	cranespeed = 1;
-	camera = -300;
+	cameraz = -300;
 }
 
 GLvoid RegesterCallBack()
@@ -92,9 +77,9 @@ GLvoid drawScene(GLvoid)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(60.0, 1.0, 1.0, 10000);
-	glTranslatef(0.0, 0.0, camera);
+	glTranslatef(0.0, 0.0, cameraz);
 	gluLookAt(
-		0, 1, 0,
+		0, camerax, 0,
 		0, 0, 1,
 		0, 1, 0
 	);
@@ -103,38 +88,9 @@ GLvoid drawScene(GLvoid)
 
 	glPushMatrix();
 	{
-		glRotatef(angle_y, 0, 1, 0);
-		glPushMatrix();
-		{
-			DrawSpace();
-			glPushMatrix();
-			{
-				glTranslatef(0, 20, 0);
-				ball.Render(20);
-				glPopMatrix();
-			}
-			glPopMatrix();
-			glPushMatrix();
-			{
-				glPushMatrix();
-				glTranslatef(30, 0, -25);
-				wheel[0].Render(20);
-				glTranslatef(0, 0, 50);
-				wheel[1].Render(20);
-				glTranslatef(-60, 0, 0);
-				wheel[2].Render(20);
-				glTranslatef(0, 0, -50);
-				wheel[3].Render(20);
-				glPopMatrix();
-
-				glPushMatrix();
-				glTranslatef(0, 20, 0);
-				crane.Render();
-				glPopMatrix();
-			}
-			glPopMatrix();
-		}
-		glPopMatrix();
+		DrawSpace();
+		//RectTree.RectTreeRender();
+		SphereTree.SphereTreeRender();
 	}
 	glPopMatrix();
 
@@ -199,39 +155,21 @@ GLvoid Keydown(unsigned char key, int x, int y)
 		init();
 		break;
 
-	case 'w':
-		ball.Move(10, true, false, false);
+	case 't':
+		camerax += 0.1;
 		break;
-
-	case 's':
-		ball.Move(-10, true, false, false);
-		break;
-
-	case 'a':
-		ball.Move(-10, false, false, true);
-		break;
-
-	case 'd':
-		ball.Move(10, false, false, true);
-		break;
-
-	case 'y':
-		angle_y += 5;
-		break;
-
-	case 'e':
-		crane.moveBottom(10, false, true, false);
+	case 'g':
+		camerax -= 0.1;
 		break;
 
 	case 'r':
-		camera += 10;
+		cameraz += 10;
 		break;
 	case 'f':
-		camera -= 10;
+		cameraz -= 10;
 		break;
 	}
-	adjustment();
-
+	
 	glutPostRedisplay();
 }
 
@@ -248,14 +186,7 @@ GLvoid MouseEvent(int button, int state, int x, int y)
 
 GLvoid Timer(int val)
 {
-	if(crane.isCollide(ball.GetBB()))
-		std::cout << "collide" << std::endl;
-	else 
-	{ 
-		crane.moveCrane(cranespeed); 
-		for (int i = 0; i < 4; i++)
-			wheel[i].Move(-cranespeed * 3 * crane.xdir, false, false, true);
-	}
+	RectTree.rotateRect(1);
 
 	glutPostRedisplay();
 	glutTimerFunc(10, Timer, 1);
@@ -266,38 +197,4 @@ GLvoid Circle(Vertex P, float radius, float angle)
 	angle = angle * (3.141592 / 180);
 
 	glVertex2f(cos(angle)*radius + P.x, sin(angle)*radius + P.y);
-}
-
-void adjustment()
-{
-	float p_left	= ball.GetBB()[BBPOS::LEFTTOP].x;
-	float p_right	= ball.GetBB()[BBPOS::RIGHTBOTTOM].x;
-	float p_top		= ball.GetBB()[BBPOS::LEFTTOP].z;
-	float p_bottom	= ball.GetBB()[BBPOS::RIGHTBOTTOM].z;
-	float q_left	= crane.GetBB() [BBPOS::LEFTTOP].x;
-	float q_right	= crane.GetBB() [BBPOS::RIGHTBOTTOM].x;
-	float q_top		= crane.GetBB() [BBPOS::LEFTTOP].z;
-	float q_bottom	= crane.GetBB() [BBPOS::RIGHTBOTTOM].z;
-
-	if (ball.isCollide(crane.GetBB()))
-	{                               
-		cranespeed = 0;
-		if ((p_right > q_left) && (p_left < q_right))
-		{
-			if (p_bottom > crane.Vertex.z)
-				ball.Vertex.z += 2 * PI * ball.m_scale * 10 / 360;
-			else if (p_top < crane.Vertex.z)
-				ball.Vertex.z -= 2 * PI * ball.m_scale * 10 / 360;
-		}
-
-		if ((p_bottom < q_top) && (p_top > q_bottom))
-		{
-			if (p_left > crane.Vertex.x)
-				ball.Vertex.x += 2 * PI * ball.m_scale * 10 / 360;
-			else if (p_right < crane.Vertex.x)
-				ball.Vertex.x -= 2 * PI * ball.m_scale * 10 / 360;
-		}
-	}
-	else
-		cranespeed = 1;
 }
