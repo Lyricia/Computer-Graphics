@@ -28,9 +28,9 @@ void CBall::Render(float scale)
 
 void CBall::SetRotate(float pitch, float yaw, float roll)
 {
-	angle.pitch = pitch;
-	angle.roll = roll;
-	angle.yaw = yaw;
+	Angle.pitch = pitch;
+	Angle.roll = roll;
+	Angle.yaw = yaw;
 }
 
 void CBall::Move(float Speed, bool isMovex, bool isMovey, bool isMovez)
@@ -49,7 +49,7 @@ void CBall::Move(float Speed, bool isMovex, bool isMovey, bool isMovez)
 
 	if (isMovex)
 	{
-		angle.pitch += Speed;
+		Angle.pitch += Speed;
 		if (Vertex.z < 100 && Vertex.z > -100)
 			Vertex.z += 2 * PI * m_radius * Speed / 360;
 		if (Vertex.z > 100) Vertex.z = 99.9;
@@ -57,7 +57,7 @@ void CBall::Move(float Speed, bool isMovex, bool isMovey, bool isMovez)
 	}
 	if (isMovez)
 	{
-		angle.roll += Speed;
+		Angle.roll += Speed;
 		if (Vertex.x < 100 && Vertex.x > -100)
 			Vertex.x -= 2 * PI * m_radius * Speed / 360;
 		if (Vertex.x > 100) Vertex.x = 99.9;

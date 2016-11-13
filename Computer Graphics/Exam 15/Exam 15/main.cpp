@@ -69,7 +69,7 @@ GLvoid drawScene(GLvoid)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
-	
+
 	glPushMatrix();
 	{
 		glColor3f(1, 1, 1);
@@ -77,10 +77,10 @@ GLvoid drawScene(GLvoid)
 		Orbit.DrawOrbit(120);
 		glPushMatrix();
 		{
-			Orbit.DrawPlanet(40, 30, angle,-45);
+			Orbit.DrawPlanet(40, 30, angle, -45);
 			glRotatef(-45, 0, 0, 1);
 			Orbit.DrawOrbit(90);
-			Orbit.DrawPlanet(30, 10, angle,0);
+			Orbit.DrawPlanet(30, 10, angle, 0);
 		}
 		glPopMatrix();
 	}
@@ -108,7 +108,7 @@ GLvoid drawScene(GLvoid)
 		Orbit.DrawOrbit(120);
 		glPushMatrix();
 		{
-			Orbit.DrawPlanet(40, 30, angle3,0 );
+			Orbit.DrawPlanet(40, 30, angle3, 0);
 			Orbit.DrawOrbit(90);
 			Orbit.DrawPlanet(30, 10, angle3, 0);
 		}

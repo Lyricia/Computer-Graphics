@@ -1,8 +1,8 @@
-#include<iostream>
-#include<time.h>
+#include <iostream>
+#include <time.h>
+#include <gl\glut.h>
 
-#include<gl\glut.h>
-
+#include "Ball.h"
 #include "Crane.h"
 
 #define W_Width		800
@@ -33,14 +33,11 @@ GLvoid DrawSpace();
 GLvoid DrawPolygon(GLvoid);
 GLvoid Circle(Vertex P, float radius, float angle);
 
-int xpos;
-int bottomangle;
-int middleanglex;
-int middleangley;
-int topanglex;
-int topanglez;
+CBall ball;
+CCrane crane;
 
-CCrane Crane;
+float cranespeed;
+CVertex V;
 
 void main(int, char *)
 {
@@ -59,12 +56,9 @@ void main(int, char *)
 GLvoid init(GLvoid)
 {
 	srand(unsigned(time(NULL)));
-	xpos = 0;
-	bottomangle = 0;
-	middleanglex = 0;
-	middleangley = 0;
-	topanglex = 0;
-	topanglez = 0;
+	
+	ball.setcolor(255, 0, 255);
+	cranespeed = 1;
 }
 
 GLvoid RegesterCallBack()
@@ -83,10 +77,16 @@ GLvoid drawScene(GLvoid)
 	glMatrixMode(GL_MODELVIEW);
 
 	DrawSpace();
-
 	glPushMatrix();
 	{
-		Crane.Render();
+		glTranslatef(0, 20, 0);
+		ball.Render(20);
+	}
+	glPopMatrix();
+	glPushMatrix();
+	{
+		//glScalef(0.5, 0.5, 0.5);
+		crane.Render();
 	}
 	glPopMatrix();
 
@@ -110,9 +110,9 @@ GLvoid DrawLines()
 
 GLvoid DrawSpace()
 {
+	glColor3f(1.0, 1.0, 0);
 	glPushMatrix();
 	glScalef(1, 0.01, 1);
-	glColor3f(1.0, 1.0, 0);
 	glutSolidCube(200);
 	glPopMatrix();
 }
@@ -133,7 +133,7 @@ GLvoid Reshape(int w, int h)
 	glMatrixMode(GL_MODELVIEW);
 
 	gluLookAt(
-		0.0, 0.2, 0.0,			// eye
+		0.0, 1, 0.0,			// eye
 		0.0, 0.0, 1.0,			// center
 		0.0, 1.0, 0.0);			// up
 }
@@ -152,48 +152,19 @@ GLvoid Keydown(unsigned char key, int x, int y)
 		break;
 
 	case 'w':
-		Crane.moveMiddle(5, true, false, false);
+		ball.Move(10, true, false, false);
 		break;
-	case 'W':
-		Crane.moveMiddle(-5, true, false, false);
-		break;
-
 	case 's':
-		Crane.moveMiddle(5, false, true, false);
+		ball.Move(-10, true, false, false);
 		break;
-	case 'S':
-		Crane.moveMiddle(-5, false, true, false);
-		break;
-
-	case 'x':
-		Crane.moveTop(5, true, false, false);
-		break;
-	case 'X':
-		Crane.moveTop(-5, true, false, false);
-		break;
-
-	case 'z':
-		Crane.moveTop(5, false, false, true);
-		break;
-	case 'Z':
-		Crane.moveTop(-5, false, false, true);
-		break;
-
 
 	case 'a':
-		Crane.moveCrane(10);
+		ball.Move(-10, false, false, true);
 		break;
-
 	case 'd':
-		Crane.moveCrane(-10);
+		ball.Move(10, false, false, true);
 		break;
 
-	case 'e':
-		Crane.moveBottom(10, false, true, false);
-		break;
-	case 'E':
-		Crane.moveBottom(-10, false, true, false);
-		break;
 	}
 
 	glutPostRedisplay();
@@ -210,8 +181,15 @@ GLvoid MouseEvent(int button, int state, int x, int y)
 }
 
 
-GLvoid Timer(int val)
+GLvoid Timer(int  val)
 {
+	V.x += cranespeed;
+	if (V.x >= 100)
+		cranespeed = -1;
+ 	else if (V.x <= -100)
+		cranespeed = 1;
+
+	crane.moveCrane(cranespeed);
 
 	glutPostRedisplay();
 	glutTimerFunc(10, Timer, 1);
