@@ -248,8 +248,11 @@ GLvoid MouseEvent(int button, int state, int x, int y)
 
 GLvoid Timer(int val)
 {
-	if(crane.isCollide(ball.GetBB()))
+	if (crane.isCollide(ball.GetBB()))
+	{
 		std::cout << "collide" << std::endl;
+		cranespeed = 0;
+	}
 	else 
 	{ 
 		crane.moveCrane(cranespeed); 

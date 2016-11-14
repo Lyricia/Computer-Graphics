@@ -1,7 +1,7 @@
 #include <iostream>
 #include <time.h>
 #include <gl\glut.h>
-#include "ObjectTree.h"
+#include "Object.h"
 
 #define W_Width		800
 #define W_Height	600
@@ -35,8 +35,11 @@ GLvoid Circle(Vertex P, float radius, float angle);
 float cameraz;
 float camerax;
 
-CObjectTree RectTree;
-CObjectTree SphereTree;
+CObject RectTree;
+CObject SphereTree;
+CObject TorusBuilding;
+CObject ConeBuilding;
+CObject DoorBuilding;
 
 void main(int, char *)
 {
@@ -56,7 +59,8 @@ GLvoid init(GLvoid)
 {
 	srand(unsigned(time(NULL)));
 	
-	cameraz = -300;
+	cameraz = -700;
+	camerax = 1;
 }
 
 GLvoid RegesterCallBack()
@@ -73,6 +77,7 @@ GLvoid drawScene(GLvoid)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
+	glEnable(GL_DEPTH_TEST);
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -89,8 +94,35 @@ GLvoid drawScene(GLvoid)
 	glPushMatrix();
 	{
 		DrawSpace();
-		//RectTree.RectTreeRender();
-		SphereTree.SphereTreeRender();
+		glPushMatrix();
+		{
+			DoorBuilding.DoorBuildingRender();
+		}
+		glPopMatrix();
+		glPushMatrix();
+		{
+			glTranslatef(200, 0, 200);
+			RectTree.RectTreeRender();
+		}
+		glPopMatrix();
+		glPushMatrix();
+		{
+			glTranslatef(200, 0, -200);
+			SphereTree.SphereTreeRender();
+		}
+		glPopMatrix();
+		glPushMatrix();
+		{
+			glTranslatef(-200, 0, 200);
+			TorusBuilding.TorusBuildingRender();
+		}
+		glPopMatrix();
+		glPushMatrix();
+		{
+			glTranslatef(-200, 0, -200);
+			ConeBuilding.ConeBuildingRender();
+		}
+		glPopMatrix();
 	}
 	glPopMatrix();
 
@@ -116,7 +148,7 @@ GLvoid DrawSpace()
 {
 	glColor3f(1.0, 1.0, 0);
 	glPushMatrix();
-	glScalef(1, 0.01, 1);
+	glScalef(3, 0.01, 3);
 	glutSolidCube(300);
 	glPopMatrix();
 }
@@ -187,7 +219,10 @@ GLvoid MouseEvent(int button, int state, int x, int y)
 GLvoid Timer(int val)
 {
 	RectTree.rotateRect(1);
-
+	SphereTree.scaleSphere(0.01);
+	TorusBuilding.moveTorus(1);
+	ConeBuilding.scaleCone(0.01);
+	DoorBuilding.moveDoor(1);
 	glutPostRedisplay();
 	glutTimerFunc(10, Timer, 1);
 }

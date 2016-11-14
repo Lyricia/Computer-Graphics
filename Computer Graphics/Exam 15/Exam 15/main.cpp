@@ -62,7 +62,7 @@ GLvoid RegesterCallBack()
 	glutKeyboardFunc(Keydown);
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
-	//glutTimerFunc(10, Timer, 1);
+	glutTimerFunc(10, Timer, 1);
 }
 
 GLvoid drawScene(GLvoid)
@@ -213,8 +213,9 @@ GLvoid MouseEvent(int button, int state, int x, int y)
 
 GLvoid Timer(int val)
 {
-	//angle++;
-	//angle2 -= 1;
+	angle += 5;
+	angle2 += 1;
+	angle3 += 2;
 	glutPostRedisplay();
 	glutTimerFunc(10, Timer, 1);
 }

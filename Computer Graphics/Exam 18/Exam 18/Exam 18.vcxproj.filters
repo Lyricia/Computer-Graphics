@@ -24,17 +24,17 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Ball.cpp">
       <Filter>Ball</Filter>
     </ClCompile>
     <ClCompile Include="Crane.cpp">
-      <Filter>Crane</Filter>
+      <Filter>Ball</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Ball</Filter>
     </ClCompile>
     <ClCompile Include="ObjProp.cpp">
-      <Filter>ObjProperty</Filter>
+      <Filter>Ball</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -42,13 +42,10 @@
       <Filter>Ball</Filter>
     </ClInclude>
     <ClInclude Include="Crane.h">
-      <Filter>Crane</Filter>
+      <Filter>Ball</Filter>
     </ClInclude>
     <ClInclude Include="ObjProp.h">
-      <Filter>ObjProperty</Filter>
+      <Filter>Ball</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>
