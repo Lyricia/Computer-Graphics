@@ -2,17 +2,21 @@
 #include "ObjProp.h"
 #include "Vector3D.h"
 
-class CCamera : public Vec3f
+class CCamera
 {
 public:
 	CCamera();
 	~CCamera();
 
 private:
-	Vec3f m_CameraVector;
+	CAngle m_angle;
+	Vec3f m_CameraVector{ 0,0,0 };
+	Vec3f m_LookVector{ 0,0,1 };
 	float m_Sensitivity;
 	
 public:
 	void SetCamera();
+	void SetLookVector(int x, int y); // get mouse move x, y
+
 };
 
