@@ -1,4 +1,0 @@
-﻿  main.cpp
-c:\users\admin\documents\visual studio 2015\projects\cg\cg\main.cpp(65): warning C4244: '초기화 중': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  CG.vcxproj -> c:\Users\Admin\Documents\Visual Studio 2015\Projects\CG\Debug\CG.exe
-  CG.vcxproj -> c:\Users\Admin\Documents\Visual Studio 2015\Projects\CG\Debug\CG.pdb (Full PDB)
