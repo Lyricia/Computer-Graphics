@@ -10,9 +10,9 @@ public:
 
 private:
 	CAngle m_angle;
-	Vec3f m_CameraVector{ 0,0,0 };
+	Vec3f m_CameraVector{ 0,1,0 };
 	Vec3f m_LookVector{ 0,0,1 };
-	float m_Sensitivity;
+	float m_Sensitivity{ 0.5 };
 	
 public:
 	void SetCamera();

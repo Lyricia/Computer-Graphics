@@ -20,6 +20,7 @@ GLvoid MouseMove(int, int);
 GLvoid MouseEvent(int, int, int, int);
 GLvoid init(GLvoid);
 
+bool boolswitch(bool chker);
 
 GLvoid DrawLines();
 GLvoid DrawSpace();
@@ -179,4 +180,11 @@ GLvoid Timer(int val)
 
 	glutPostRedisplay();
 	glutTimerFunc(10, Timer, 1);
+}
+
+bool boolswitch(bool chker)
+{
+	if (chker == true)			return false;
+	else if (chker == false)	return true;
+	return false;
 }

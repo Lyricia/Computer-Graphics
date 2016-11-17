@@ -10,16 +10,14 @@
 GLvoid RegesterCallBack();
 
 GLvoid drawScene(GLvoid);
-GLvoid RenderCrane();
-GLvoid RenderBuildings();
 GLvoid Reshape(int w, int h);
 
 GLvoid Timer(int);
+bool boolswitch(bool chker);
 GLvoid Keydown(unsigned char, int, int);
 GLvoid MouseMove(int, int);
 GLvoid MouseEvent(int, int, int, int);
 GLvoid init(GLvoid);
-
 
 GLvoid DrawLines();
 GLvoid DrawSpace();
@@ -31,6 +29,10 @@ float camerax;
 float angle;
 float angle2;
 float angle3;
+
+bool IsSmooth;
+bool IsDepth;
+bool IsCull;
 
 void main(int, char *)
 {
@@ -68,7 +70,7 @@ GLvoid drawScene(GLvoid)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	
+
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -90,32 +92,34 @@ GLvoid drawScene(GLvoid)
 			//1
 			glPushMatrix();
 			{
-				glShadeModel(GL_SMOOTH);
+				if (IsSmooth)					glShadeModel(GL_SMOOTH);
+				else if (!IsSmooth)				glShadeModel(GL_FLAT);
 				glBegin(GL_QUADS);
-				glColor3f(0.0f, 0.0f, 0.0f);		//black	
-				glVertex3f(0.0, 0.0, 0.0);
-				glColor3f(1.0f, 0.0f, 0.0f);		//red
-				glVertex3f(100.0, 0.0, 0.0);
-				glColor3f(1.0f, 1.0f, 0.0f);		//yellow
-				glVertex3f(100.0, 100.0, 0.0);
 				glColor3f(0.0f, 1.0f, 0.0f);		//green
 				glVertex3f(0.0, 100.0, 0.0);
+				glColor3f(1.0f, 1.0f, 0.0f);		//yellow
+				glVertex3f(100.0, 100.0, 0.0);
+				glColor3f(1.0f, 0.0f, 0.0f);		//red
+				glVertex3f(100.0, 0.0, 0.0);
+				glColor3f(0.0f, 0.0f, 0.0f);		//black	
+				glVertex3f(0.0, 0.0, 0.0);
 				glEnd();
 			}
 			glPopMatrix();
 			//2
 			glPushMatrix();
 			{
-				glShadeModel(GL_SMOOTH);
+				if (IsSmooth)					glShadeModel(GL_SMOOTH);
+				else if (!IsSmooth)				glShadeModel(GL_FLAT);
 				glBegin(GL_QUADS);
-				glColor3f(0.0f, 0.0f, 0.0f);		//black	
-				glVertex3f(0.0, 0.0, 0.0);
-				glColor3f(0.0f, 1.0f, 0.0f);		//green
-				glVertex3f(0.0, 100.0, 0.0);
-				glColor3f(0.0f, 1.0f, 1.0f);		//cyan
-				glVertex3f(0.0, 100.0, -100.0);
 				glColor3f(0.0f, 0.0f, 1.0f);		//blue
 				glVertex3f(0.0, 0.0, -100.0);
+				glColor3f(0.0f, 1.0f, 1.0f);		//cyan
+				glVertex3f(0.0, 100.0, -100.0);
+				glColor3f(0.0f, 1.0f, 0.0f);		//green
+				glVertex3f(0.0, 100.0, 0.0);
+				glColor3f(0.0f, 0.0f, 0.0f);		//black	
+				glVertex3f(0.0, 0.0, 0.0);
 				glEnd();
 			}
 			glPopMatrix();
@@ -126,16 +130,17 @@ GLvoid drawScene(GLvoid)
 				glRotatef(-angle3, 1, 0, 0);
 				glPushMatrix();
 				{
-					glShadeModel(GL_SMOOTH);
+					if (IsSmooth)					glShadeModel(GL_SMOOTH);
+					else if (!IsSmooth)				glShadeModel(GL_FLAT);
 					glBegin(GL_QUADS);
+					glColor3f(1.0f, 1.0f, 1.0f);		//white
+					glVertex3f(100.0, 100.0, 0);
 					glColor3f(0.0f, 1.0f, 1.0f);		//cyan
 					glVertex3f(0.0, 100.0, 0);
 					glColor3f(0.0f, 0.0f, 1.0f);		//blue
 					glVertex3f(0.0, 0.0, 0);
 					glColor3f(0.0f, 0.0f, 1.0f);		//magenta
 					glVertex3f(100.0, 0.0, 0);
-					glColor3f(1.0f, 1.0f, 1.0f);		//white
-					glVertex3f(100.0, 100.0, 0);
 					glEnd();
 				}
 				glPopMatrix();
@@ -144,14 +149,15 @@ GLvoid drawScene(GLvoid)
 			//4
 			glPushMatrix();
 			{
-				glShadeModel(GL_SMOOTH);
+				if (IsSmooth)					glShadeModel(GL_SMOOTH);
+				else if (!IsSmooth)				glShadeModel(GL_FLAT);
 				glBegin(GL_QUADS);
-				glColor3f(0.0f, 0.0f, 1.0f);		//magenta
-				glVertex3f(100.0, 0.0, -100.0);
-				glColor3f(1.0f, 1.0f, 1.0f);		//white
-				glVertex3f(100.0, 100.0, -100.0);
 				glColor3f(1.0f, 1.0f, 0.0f);		//yellow
 				glVertex3f(100.0, 100.0, 0.0);
+				glColor3f(1.0f, 1.0f, 1.0f);		//white
+				glVertex3f(100.0, 100.0, -100.0);
+				glColor3f(0.0f, 0.0f, 1.0f);		//magenta
+				glVertex3f(100.0, 0.0, -100.0);
 				glColor3f(1.0f, 0.0f, 0.0f);		//red
 				glVertex3f(100.0, 0.0, 0.0);
 				glEnd();
@@ -164,34 +170,36 @@ GLvoid drawScene(GLvoid)
 				glRotatef(angle2, 0, 0, 1);
 				glPushMatrix();
 				{
-					glShadeModel(GL_SMOOTH);
+					if (IsSmooth)					glShadeModel(GL_SMOOTH);
+					else if (!IsSmooth)				glShadeModel(GL_FLAT);
 					glBegin(GL_QUADS);
-					glColor3f(1.0f, 1.0f, 1.0f);		//white
-					glVertex3f(100.0, 0, -100.0);
 					glColor3f(1.0f, 1.0f, 0.0f);		//yellow
 					glVertex3f(100.0, 0, 0.0);
 					glColor3f(0.0f, 1.0f, 0.0f);		//green
 					glVertex3f(0.0, 0, 0.0);
 					glColor3f(0.0f, 1.0f, 1.0f);		//cyan
 					glVertex3f(0.0, 0, -100.0);
+					glColor3f(1.0f, 1.0f, 1.0f);		//white
+					glVertex3f(100.0, 0, -100.0);
 					glEnd();
 				}
 				glPopMatrix();
 			}
-			glPopMatrix(); 
+			glPopMatrix();
 			//6 bottom
 			glPushMatrix();
 			{
-				glShadeModel(GL_SMOOTH);
+				if (IsSmooth)					glShadeModel(GL_SMOOTH);
+				else if (!IsSmooth)				glShadeModel(GL_FLAT);
 				glBegin(GL_QUADS);
-				glColor3f(0.0f, 0.0f, 0.0f);		//black	
-				glVertex3f(0.0, 0.0, 0.0);
-				glColor3f(0.0f, 0.0f, 1.0f);		//blue
-				glVertex3f(0.0, 0.0, -100.0);
-				glColor3f(0.0f, 0.0f, 1.0f);		//magenta
-				glVertex3f(100.0, 0.0, -100.0);
 				glColor3f(1.0f, 0.0f, 0.0f);		//red
 				glVertex3f(100.0, 0.0, 0.0);
+				glColor3f(0.0f, 0.0f, 1.0f);		//magenta
+				glVertex3f(100.0, 0.0, -100.0);
+				glColor3f(0.0f, 0.0f, 1.0f);		//blue
+				glVertex3f(0.0, 0.0, -100.0);
+				glColor3f(0.0f, 0.0f, 0.0f);		//black	
+				glVertex3f(0.0, 0.0, 0.0);
 				glEnd();
 			}
 			glPopMatrix();
@@ -299,25 +307,22 @@ GLvoid Keydown(unsigned char key, int x, int y)
 		break;
 
 	case '1':
-		glEnable(GL_CULL_FACE);
+		IsCull = boolswitch(IsCull);
+		if (IsCull)			glEnable(GL_CULL_FACE);
+		else if (!IsCull)	glDisable(GL_CULL_FACE);
 		break;
+
 	case '2':
-		glDisable(GL_CULL_FACE);
+		IsDepth = boolswitch(IsDepth);
+		if (IsDepth)		glEnable(GL_DEPTH_TEST);
+		else if (!IsDepth)	glDisable(GL_DEPTH_TEST);
 		break;
+
 	case '3':
-		glEnable(GL_DEPTH_TEST);
-		break;
-	case '4':
-		glDisable(GL_DEPTH_TEST);
-		break;
-	case '5':
-		glEnable(GL_FLAT);
-		break;
-	case '6':
-		glEnable(GL_SMOOTH);
+		IsSmooth = boolswitch(IsSmooth);
 		break;
 	}
-	
+
 
 	glutPostRedisplay();
 }
@@ -339,4 +344,11 @@ GLvoid Timer(int val)
 
 	glutPostRedisplay();
 	glutTimerFunc(10, Timer, 1);
+}
+
+bool boolswitch(bool chker)
+{
+	if (chker == true)			return false;
+	else if (chker == false)	return true;
+	return false;
 }
