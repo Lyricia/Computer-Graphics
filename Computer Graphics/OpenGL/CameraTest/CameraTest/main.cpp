@@ -70,7 +70,7 @@ GLvoid RegesterCallBack()
 	glutKeyboardFunc(Keydown);
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
-	//glutTimerFunc(10, Timer, 1);
+	glutTimerFunc(10, Timer, 1);
 }
 
 GLvoid drawScene(GLvoid)
@@ -86,7 +86,7 @@ GLvoid drawScene(GLvoid)
 	//	0, 0, 1,
 	//	0, 1, 0
 	//);
-	Camera.SetLookVector(0, 0);
+	Camera.SetLookVector();
 	Camera.SetCamera();
 
 	glMatrixMode(GL_MODELVIEW);
@@ -277,10 +277,10 @@ GLvoid Keydown(unsigned char key, int x, int y)
 		break;
 
 	case 'a':
-		camerax += 1;
+		camerax = 1;
 		break;
 	case 'd':
-		camerax -= 1;
+		camerax = -1;
 		break;
 		
 	case 't':
@@ -342,7 +342,7 @@ GLvoid Keydown(unsigned char key, int x, int y)
 
 GLvoid MouseMove(int x, int y)
 {
-
+	Camera.getMouse(x, y);
 }
 
 GLvoid MouseEvent(int button, int state, int x, int y)

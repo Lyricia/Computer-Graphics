@@ -20,6 +20,7 @@ void CCamera::SetCamera()
 		0, 1, 0);
 }
 
+
 /*////////////// Set Camera Look Vector //////////////////
 default camera look vector is (0,0,1)
 default camera position is Origin (0,0,0)
@@ -39,16 +40,16 @@ angle alpha = arctan (size of hypotenuse of x-z triangle / delta y (mouse y move
  *alpha CANNOT reach to 90 deg. (tan 90 is infinite)
 ////////////////////////////////////////////////////////*/
 
-void CCamera::SetLookVector(int x, int y)
+void CCamera::SetLookVector()
 {
-	float delta_x = m_CameraVector.x - x;
-	float delta_y = m_CameraVector.y - y;
+	float delta_x = newMousePostion_x - oldMousePostion_x * m_Sensitivity;
+	float delta_y = newMousePostion_y - oldMousePostion_y * m_Sensitivity;
 	float hypo_zx;
 	float theta;
 	float alpha;
 	Vec3f Move;
 
-	m_CameraVector.x += x;
+	//m_LookVector.x += x;
 	//m_CameraVector.y += y;
 
 	hypo_zx = sqrtf((delta_x * delta_x) + 1);
@@ -56,7 +57,18 @@ void CCamera::SetLookVector(int x, int y)
 	theta = acos(delta_x / hypo_zx);
 	alpha = atan2f(delta_y, hypo_zx);
 
-	Move.x = cosf(theta);
-	Move.y = tanf(alpha);
-	Move.z = sinf(theta);
+	m_LookVector.x = cosf(theta);
+	m_LookVector.y = tanf(alpha);
+	m_LookVector.z = sinf(theta);
+
+	m_LookVector.Normalize();
+
+	oldMousePostion_x = newMousePostion_x;
+	oldMousePostion_y = newMousePostion_y;
+}
+
+void CCamera::getMouse(int x, int y)
+{
+	newMousePostion_x = x;
+	newMousePostion_y = y;
 }
