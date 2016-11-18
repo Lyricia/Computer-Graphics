@@ -1,7 +1,7 @@
 #include <iostream>
 #include <time.h>
 #include <gl\glut.h>
-#include "Camera.h"
+#include "Ball.h"
 
 #define W_Width		800
 #define W_Height	600
@@ -35,7 +35,9 @@ bool IsSmooth;
 bool IsDepth;
 bool IsCull;
 
-CCamera Camera;
+int ballsize;
+CBall ball[5];
+CColor color[6];
 
 void main(int, char *)
 {
@@ -48,6 +50,8 @@ void main(int, char *)
 
 	RegesterCallBack();
 
+	glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+
 	glutMainLoop();
 }
 
@@ -55,48 +59,55 @@ GLvoid init(GLvoid)
 {
 	srand(unsigned(time(NULL)));
 
-	cameraz = -300;
-	camerax = 1;
+	cameraz = -200;
+	camerax =0;
+	ballsize = 5;
+	glDisable(GL_CULL_FACE);
+	glFrontFace(GL_CCW);
 
-	IsSmooth = true;
-	IsDepth = true;
-	IsCull = true;
-	
+	color[0].setcolor(255, 0, 0);
+	color[1].setcolor(0, 255, 0);
+	color[2].setcolor(0, 0, 255);
+	color[3].setcolor(255, 255, 0);
+	color[4].setcolor(0, 255, 255);
+	color[5].setcolor(255, 0, 255);
 }
 
 GLvoid RegesterCallBack()
 {
 	glutMouseFunc(MouseEvent);
-	glutPassiveMotionFunc(MouseMove);
+	glutMotionFunc(MouseMove);
 	glutKeyboardFunc(Keydown);
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
-	//glutTimerFunc(10, Timer, 1);
+	glutTimerFunc(10, Timer, 1);
 }
 
 GLvoid drawScene(GLvoid)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
-	//glMatrixMode(GL_PROJECTION);
-	//glLoadIdentity();
-	//gluPerspective(110.0, 1.0, 1.0, 10000);
-	//glTranslatef(0.0, 0.0, cameraz);
-	//gluLookAt(
-	//	0, camerax, 0,
-	//	0, 0, 1,
-	//	0, 1, 0
-	//);
-	Camera.SetLookVector();
-	Camera.SetCamera();
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(60.0, 1.0, 1.0, 10000);
+	glTranslatef(0.0, 0.0, cameraz);
+	gluLookAt(
+		0, camerax, 0,
+		0, 0, 1,
+		0, 1, 0
+	);
 
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	{
-		if (IsDepth) glEnable(GL_DEPTH_TEST);
-		glTranslatef(0, 0, 300);
+		glRotatef(angle, 0, 1, 0);
 		DrawLines();
 		DrawPolygon();
+		glColor3f(1, 0, 0);
+		for (int i = 0; i < ballsize; i++)
+		{
+			ball[i].Render(5);
+		}
 	}
 	glPopMatrix();
 
@@ -105,16 +116,16 @@ GLvoid drawScene(GLvoid)
 
 GLvoid DrawLines()
 {
-	glColor3f(1.f, 1.f, 1.f);
+	glColor3f(0.f, 1.f, 1.f);
 	glBegin(GL_LINES);
-	//glVertex3f(-W_Width, 0.0, 0.0);
-	//glVertex3f(W_Width, 0.0, 0.0);
-	//
+	glVertex3f(-W_Width, 0.0, 0.0);
+	glVertex3f(W_Width, 0.0, 0.0);
+
 	//glVertex3f(0.0, -W_Height, 0.0);
 	//glVertex3f(0.0, W_Height, 0.0);
-
-	glVertex3f(0.0, 0.0, -W_Depth);
-	glVertex3f(0.0, 0.0, W_Depth);
+	//
+	//glVertex3f(0.0, 0.0, -W_Depth);
+	//glVertex3f(0.0, 0.0, W_Depth);
 	glEnd();
 }
 
@@ -128,40 +139,33 @@ GLvoid DrawSpace()
 }
 GLvoid DrawPolygon(GLvoid)
 {
-	glRotatef(angle, 0, 1, 0);
 	glPushMatrix();
 	{
 		glTranslatef(-50, -50, 50);
-		//1
+		//1 back
 		glPushMatrix();
 		{
+			color[0].applycolor();
 			if (IsSmooth)					glShadeModel(GL_SMOOTH);
 			else if (!IsSmooth)				glShadeModel(GL_FLAT);
 			glBegin(GL_QUADS);
-			glColor3f(0.0f, 1.0f, 0.0f);		//green
 			glVertex3f(0.0, 100.0, 0.0);
-			glColor3f(1.0f, 1.0f, 0.0f);		//yellow
 			glVertex3f(100.0, 100.0, 0.0);
-			glColor3f(1.0f, 0.0f, 0.0f);		//red
 			glVertex3f(100.0, 0.0, 0.0);
-			glColor3f(0.0f, 0.0f, 0.0f);		//black	
 			glVertex3f(0.0, 0.0, 0.0);
 			glEnd();
 		}
 		glPopMatrix();
-		//2
+		//2 bottom
 		glPushMatrix();
 		{
+			color[1].applycolor();
 			if (IsSmooth)					glShadeModel(GL_SMOOTH);
 			else if (!IsSmooth)				glShadeModel(GL_FLAT);
 			glBegin(GL_QUADS);
-			glColor3f(0.0f, 0.0f, 1.0f);		//blue
 			glVertex3f(0.0, 0.0, -100.0);
-			glColor3f(0.0f, 1.0f, 1.0f);		//cyan
 			glVertex3f(0.0, 100.0, -100.0);
-			glColor3f(0.0f, 1.0f, 0.0f);		//green
 			glVertex3f(0.0, 100.0, 0.0);
-			glColor3f(0.0f, 0.0f, 0.0f);		//black	
 			glVertex3f(0.0, 0.0, 0.0);
 			glEnd();
 		}
@@ -169,39 +173,27 @@ GLvoid DrawPolygon(GLvoid)
 		//3 front
 		glPushMatrix();
 		{
-			glTranslatef(0, 0, -100);
-			glRotatef(-angle3, 1, 0, 0);
-			glPushMatrix();
-			{
-				if (IsSmooth)					glShadeModel(GL_SMOOTH);
-				else if (!IsSmooth)				glShadeModel(GL_FLAT);
-				glBegin(GL_QUADS);
-				glColor3f(1.0f, 1.0f, 1.0f);		//white
-				glVertex3f(100.0, 100.0, 0);
-				glColor3f(0.0f, 1.0f, 1.0f);		//cyan
-				glVertex3f(0.0, 100.0, 0);
-				glColor3f(0.0f, 0.0f, 1.0f);		//blue
-				glVertex3f(0.0, 0.0, 0);
-				glColor3f(0.0f, 0.0f, 1.0f);		//magenta
-				glVertex3f(100.0, 0.0, 0);
-				glEnd();
-			}
-			glPopMatrix();
-		}
-		glPopMatrix();
-		//4
-		glPushMatrix();
-		{
+			color[2].applycolor();
 			if (IsSmooth)					glShadeModel(GL_SMOOTH);
 			else if (!IsSmooth)				glShadeModel(GL_FLAT);
 			glBegin(GL_QUADS);
-			glColor3f(1.0f, 1.0f, 0.0f);		//yellow
-			glVertex3f(100.0, 100.0, 0.0);
-			glColor3f(1.0f, 1.0f, 1.0f);		//white
 			glVertex3f(100.0, 100.0, -100.0);
-			glColor3f(0.0f, 0.0f, 1.0f);		//magenta
+			glVertex3f(0.0, 100.0, -100.0);
+			glVertex3f(0.0, 0.0, -100.0);
 			glVertex3f(100.0, 0.0, -100.0);
-			glColor3f(1.0f, 0.0f, 0.0f);		//red
+			glEnd();
+		}
+		glPopMatrix();
+		//4 right side
+		glPushMatrix();
+		{
+			color[3].applycolor();
+			if (IsSmooth)					glShadeModel(GL_SMOOTH);
+			else if (!IsSmooth)				glShadeModel(GL_FLAT);
+			glBegin(GL_QUADS);
+			glVertex3f(100.0, 100.0, 0.0);
+			glVertex3f(100.0, 100.0, -100.0);
+			glVertex3f(100.0, 0.0, -100.0);
 			glVertex3f(100.0, 0.0, 0.0);
 			glEnd();
 		}
@@ -209,39 +201,27 @@ GLvoid DrawPolygon(GLvoid)
 		//5 top
 		glPushMatrix();
 		{
-			glTranslatef(0, 100, 0);
-			glRotatef(angle2, 0, 0, 1);
-			glPushMatrix();
-			{
-				if (IsSmooth)					glShadeModel(GL_SMOOTH);
-				else if (!IsSmooth)				glShadeModel(GL_FLAT);
-				glBegin(GL_QUADS);
-				glColor3f(1.0f, 1.0f, 0.0f);		//yellow
-				glVertex3f(100.0, 0, 0.0);
-				glColor3f(0.0f, 1.0f, 0.0f);		//green
-				glVertex3f(0.0, 0, 0.0);
-				glColor3f(0.0f, 1.0f, 1.0f);		//cyan
-				glVertex3f(0.0, 0, -100.0);
-				glColor3f(1.0f, 1.0f, 1.0f);		//white
-				glVertex3f(100.0, 0, -100.0);
-				glEnd();
-			}
-			glPopMatrix();
-		}
-		glPopMatrix();
-		//6 bottom
-		glPushMatrix();
-		{
+			color[4].applycolor();
 			if (IsSmooth)					glShadeModel(GL_SMOOTH);
 			else if (!IsSmooth)				glShadeModel(GL_FLAT);
 			glBegin(GL_QUADS);
-			glColor3f(1.0f, 0.0f, 0.0f);		//red
+			glVertex3f(100.0, 100.0, 0.0);
+			glVertex3f(0.0, 100.0, 0.0);
+			glVertex3f(0.0, 100.0, -100.0);
+			glVertex3f(100.0, 100.0, -100.0);
+			glEnd();
+		}
+		glPopMatrix();
+		//6 left side
+		glPushMatrix();
+		{
+			color[5].applycolor();
+			if (IsSmooth)					glShadeModel(GL_SMOOTH);
+			else if (!IsSmooth)				glShadeModel(GL_FLAT);
+			glBegin(GL_QUADS);
 			glVertex3f(100.0, 0.0, 0.0);
-			glColor3f(0.0f, 0.0f, 1.0f);		//magenta
 			glVertex3f(100.0, 0.0, -100.0);
-			glColor3f(0.0f, 0.0f, 1.0f);		//blue
 			glVertex3f(0.0, 0.0, -100.0);
-			glColor3f(0.0f, 0.0f, 0.0f);		//black	
 			glVertex3f(0.0, 0.0, 0.0);
 			glEnd();
 		}
@@ -249,6 +229,7 @@ GLvoid DrawPolygon(GLvoid)
 
 	}
 	glPopMatrix();
+
 }
 
 GLvoid Reshape(int w, int h)
@@ -280,13 +261,6 @@ GLvoid Keydown(unsigned char key, int x, int y)
 		init();
 		break;
 
-	case 'a':
-		camerax = 1;
-		break;
-	case 'd':
-		camerax = -1;
-		break;
-		
 	case 't':
 		camerax += 0.1;
 		break;
@@ -340,15 +314,14 @@ GLvoid Keydown(unsigned char key, int x, int y)
 		IsSmooth = boolswitch(IsSmooth);
 		break;
 	}
-	
+
+
 	glutPostRedisplay();
 }
 
 GLvoid MouseMove(int x, int y)
 {
-	Camera.getMouse(x, y);
-	Camera.SetLookVector();
-	glutPostRedisplay();
+
 }
 
 GLvoid MouseEvent(int button, int state, int x, int y)
@@ -358,8 +331,11 @@ GLvoid MouseEvent(int button, int state, int x, int y)
 
 GLvoid Timer(int val)
 {
-	//angle += 0.1;
-	if (angle > 360) angle = 0;
+	for (int i = 0; i < ballsize; i++)
+	{
+		ball[i].Move(1);
+		ball[i].ChangeDir(color);
+	}
 
 	glutPostRedisplay();
 	glutTimerFunc(10, Timer, 1);

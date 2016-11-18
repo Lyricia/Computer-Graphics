@@ -10,8 +10,6 @@
 GLvoid RegesterCallBack();
 
 GLvoid drawScene(GLvoid);
-GLvoid RenderCrane();
-GLvoid RenderBuildings();
 GLvoid Reshape(int w, int h);
 
 GLvoid Timer(int);
