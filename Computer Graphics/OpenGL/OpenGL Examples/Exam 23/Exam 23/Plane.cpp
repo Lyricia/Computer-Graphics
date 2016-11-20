@@ -19,7 +19,7 @@ void CPlane::Render()
 	Angle.Rotate();
 	glTranslatef(0, Vertex.y, 0);
 	glScalef(1, 0.01f, 1);
-	glutSolidCube(100);
+	glutSolidCube(250);
 	glPopMatrix();
 }
 
@@ -28,16 +28,19 @@ void CPlane::Move(float speed)
 	if (Vertex.y > limit)
 	{
 		Angle.yaw += speed;
-		Vertex.y = 400 - speed;
+		Vertex.y -= speed;
 	}
 }
 
 void CPlane::SetLimit(int count)
 {
-	limit = count * 80;
+	limit =(count +1)  * 80 - 20;
 }
 
-void CPlane::ActivePlane()
+void CPlane::init(int _id)
 {
-	isActivated = true;
+	Vertex.y = 400;
+	m_id = _id;
+	SetLimit(m_id);
 }
+

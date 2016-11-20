@@ -7,7 +7,6 @@ public:
 	CPlane(int id);
 	~CPlane();
 private:
-	bool isActivated;
 	int m_id;
 	float limit;
 
@@ -15,6 +14,6 @@ public:
 	void Render();
 	void Move(float speed);
 	void SetLimit(int count);
-	void ActivePlane();
+	void init(int _id);
 };
 

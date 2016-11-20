@@ -62,7 +62,7 @@ GLvoid init(GLvoid)
 	srand(unsigned(time(NULL)));
 
 	cameraz = -200;
-	camerax = 0;
+	camerax =0;
 	ballsize = 5;
 	glDisable(GL_CULL_FACE);
 	glFrontFace(GL_CCW);
@@ -279,7 +279,7 @@ GLvoid Keydown(unsigned char key, int x, int y)
 	case 'f':
 		cameraz -= 10;
 		break;
-
+		
 	case 'b':
 		ballsize++;
 		if (ballsize >5)
@@ -342,7 +342,7 @@ GLvoid MouseMove(int x, int y)
 
 GLvoid MouseEvent(int button, int state, int x, int y)
 {
-
+	
 	glutPostRedisplay();
 }
 

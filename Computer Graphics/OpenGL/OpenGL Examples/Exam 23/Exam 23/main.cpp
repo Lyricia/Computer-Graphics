@@ -22,7 +22,7 @@ GLvoid init(GLvoid);
 
 bool boolswitch(bool chker);
 
-void initTorus();
+void initobj();
 
 GLvoid DrawLines();
 GLvoid DrawSpace();
@@ -37,6 +37,7 @@ CPlane* Plane[5];
 float speed[10];
 int toruscount;
 int planecount;
+int objcount;
 bool IsCull;
 bool IsDepth;
 
@@ -59,8 +60,6 @@ void main(int, char *)
 GLvoid init(GLvoid)
 {
 	srand(unsigned(time(NULL)));
-	
-	initTorus();
 
 	for (int i = 0; i < 5; i++)
 	{
@@ -68,9 +67,10 @@ GLvoid init(GLvoid)
 		Plane[i] = new CPlane(i);
 	}
 
+	initobj();
+
 	cameraz =-1000;
 	camerax = 1;
-
 }
 
 GLvoid RegesterCallBack()
@@ -193,12 +193,18 @@ GLvoid Keydown(unsigned char key, int x, int y)
 		break;
 
 	case 'a':
-		toruscount++;
-		if (toruscount % 3 == 0)	planecount++;
-		if (toruscount > 10)
+		objcount++;
+		if (objcount % 3 == 0) {
+			planecount++;
+			break;
+		}
+		else toruscount++;
+		if (objcount > 15)
 		{
 			toruscount = 0;
-			initTorus();
+			planecount = 0;
+			objcount = 0;
+			initobj();
 		}
 		break;
 
@@ -242,7 +248,9 @@ GLvoid Timer(int val)
 		speed[i] += 2;
 		Torus[i].Move(speed[i]);
 	}
-	Plane[0]->Move(2);
+	for (int i = 0; i < planecount; i++) {
+		Plane[i]->Move(2);
+	}
 	glutPostRedisplay();
 	glutTimerFunc(10, Timer, 1);
 }
@@ -254,10 +262,13 @@ bool boolswitch(bool chker)
 	return false;
 }
 
-void initTorus()
+void initobj()
 {
 	for (int i = 0; i < 10; i++) {
 		speed[i] = 0;
 		Torus[i].init(i);
+	}
+	for (int i = 0; i < 5; i++) {
+		Plane[i]->init(i);
 	}
 }
