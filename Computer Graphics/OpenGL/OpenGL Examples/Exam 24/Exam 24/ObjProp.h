@@ -50,6 +50,7 @@ class ObjProp
 public:
 	ObjProp();
 	~ObjProp();
+public:
 	Vec3f		Position;
 	CVertex		BoundingBox[4];
 	CAngle		Angle;
@@ -58,7 +59,6 @@ public:
 
 	void		initBB();
 	void		DrawBB();
-
 	CVertex *	GetBB();
 	bool		isCollide(CVertex * P);
 };
