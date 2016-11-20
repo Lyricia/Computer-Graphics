@@ -2,6 +2,8 @@
 #include <time.h>
 #include <gl\glut.h>
 #include "Ball.h"
+#include "Plane.h"
+#include "Box.h"
 
 #define W_Width		800
 #define W_Height	600
@@ -15,6 +17,8 @@ GLvoid Reshape(int w, int h);
 
 GLvoid Timer(int);
 bool boolswitch(bool chker);
+void collidechk();
+bool isCollide(Vec3f normalvec, Vec3f Centerpos);
 GLvoid Keydown(unsigned char, int, int);
 GLvoid MouseMove(int, int);
 GLvoid MouseEvent(int, int, int, int);
@@ -38,6 +42,9 @@ bool IsCull;
 int ballsize;
 CBall ball[5];
 CColor color[6];
+CPlane plane[4];
+CBox box;
+
 int oldmouse, newmouse;
 float boxangle;
 
@@ -52,7 +59,7 @@ void main(int, char *)
 
 	RegesterCallBack();
 
-	glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+	//glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
 
 	glutMainLoop();
 }
@@ -61,20 +68,18 @@ GLvoid init(GLvoid)
 {
 	srand(unsigned(time(NULL)));
 
-	cameraz = -200;
-	camerax =0;
+	cameraz = -500;
+	camerax = 0;
 	ballsize = 5;
+
 	glDisable(GL_CULL_FACE);
 	glFrontFace(GL_CCW);
 
 	oldmouse = 300;
+	for(int i=0; i<4; i++)
+		plane[i].SetPlane();
 
-	color[0].setcolor(255, 0, 0);
-	color[1].setcolor(0, 255, 0);
-	color[2].setcolor(0, 0, 255);
-	color[3].setcolor(255, 255, 0);
-	color[4].setcolor(0, 255, 255);
-	color[5].setcolor(255, 0, 255);
+	plane[0].Position.y = -50;
 }
 
 GLvoid RegesterCallBack()
@@ -104,15 +109,21 @@ GLvoid drawScene(GLvoid)
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	{
-		glRotatef(angle, 0, 1, 0);
-		glRotatef(boxangle, 0, 0, 1);
-		DrawLines();
-		DrawPolygon();
-		glColor3f(1, 0, 0);
-		for (int i = 0; i < ballsize; i++)
+		//glRotatef(angle, 0, 1, 0);
+		//glRotatef(boxangle, 0, 0, 1);
+		//DrawLines();
+		//DrawPolygon();
+		//glColor3f(1, 0, 0);
+		//for (int i = 0; i < ballsize; i++)
+		//{
+		//	ball[i].Render(5);
+		//}
+		glPushMatrix();
 		{
-			ball[i].Render(5);
+			plane[0].Render();
 		}
+		glPopMatrix();
+		box.Render();
 	}
 	glPopMatrix();
 
@@ -126,11 +137,12 @@ GLvoid DrawLines()
 	glVertex3f(-W_Width, 0.0, 0.0);
 	glVertex3f(W_Width, 0.0, 0.0);
 
-	//glVertex3f(0.0, -W_Height, 0.0);
-	//glVertex3f(0.0, W_Height, 0.0);
-	//
-	//glVertex3f(0.0, 0.0, -W_Depth);
-	//glVertex3f(0.0, 0.0, W_Depth);
+	glVertex3f(0.0, -W_Height, 0.0);
+	glVertex3f(0.0, W_Height, 0.0);
+	
+	glVertex3f(0.0, 0.0, -W_Depth);
+	glVertex3f(0.0, 0.0, W_Depth);
+
 	glEnd();
 }
 
@@ -326,6 +338,19 @@ GLvoid Keydown(unsigned char key, int x, int y)
 	case '3':
 		IsSmooth = boolswitch(IsSmooth);
 		break;
+
+	case 'z':
+		plane[0].VectorRotate(1, 0, 0, 1);
+		plane[0].SetPlane();
+		box.SetPosition(plane[0].GetPosition(box.GetPosition()));
+		box.SetAngle(1);
+		break;
+	case 'x':
+		plane[0].VectorRotate(-1, 0, 0, 1);
+		plane[0].SetPlane();
+		box.SetPosition(plane[0].GetPosition(box.GetPosition()));
+		box.SetAngle(-1);
+		break;
 	}
 
 
@@ -354,6 +379,8 @@ GLvoid Timer(int val)
 		ball[i].ChangeDir(color);
 	}
 
+	collidechk();
+
 	glutPostRedisplay();
 	glutTimerFunc(10, Timer, 1);
 }
@@ -363,4 +390,22 @@ bool boolswitch(bool chker)
 	if (chker == true)			return false;
 	else if (chker == false)	return true;
 	return false;
+}
+
+void collidechk()
+{
+	for (int i = 0; i < 4; i++)
+	{
+		if (isCollide(plane[i].GetNormalVector(), box.Position))
+			box.Move(1, plane[i].GetNormalVector(), plane[i].GetPosition(box.GetPosition()));
+	}
+}
+
+bool isCollide(Vec3f normalvec, Vec3f Centerpos)
+{
+	float z = DotProduct(Centerpos - normalvec * 15.0f, normalvec);
+	if (DotProduct(Centerpos - normalvec * 15.0f, normalvec) + 15 == 0)
+		return true;
+	else
+		return false;
 }

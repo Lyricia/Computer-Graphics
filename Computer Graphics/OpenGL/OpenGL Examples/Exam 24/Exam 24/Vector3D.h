@@ -1,5 +1,5 @@
 #pragma once
-
+#include <math.h>
 #include <Windows.h>
 
 template<typename Ty>
@@ -20,15 +20,21 @@ public:
 	Vector3D& operator*=(const int i) { x *= i; y *= i; z *= i; return *this; }
 	Vector3D& operator=(const Vector3D& other) { x = other.x; y = other.y; z = other.z; return *this; }
 
-	Vector3D Normalize() 
-	{ float fLength = Length(); if (fLength < EffectiveEffer)
-		{ static_cast<float>(x) /= fLength; static_cast<float>(y) /= fLength; static_cast<float>(z) /= fLength;} 
-	return *this; }
+	Vector3D Normalize()
+	{
+		float fLength = Length(); if (fLength > EffectiveEffer)
+		{
+			static_cast<float>(x) /= fLength; static_cast<float>(y) /= fLength; static_cast<float>(z) /= fLength;
+		}
+		return *this;
+	}
 
 	constexpr float Length() const { return(sqrt(x * x + y * y + z * z)); }
 
-	bool operator==(const Vector3D& other) const 
-	{ return(fabs(x - other.x) < EffectiveEffer && fabs(y - other.y) < EffectiveEffer && fabs(z - other.z) < EffectiveEffer); }
+	bool operator==(const Vector3D& other) const
+	{
+		return(fabs(x - other.x) < EffectiveEffer && fabs(y - other.y) < EffectiveEffer && fabs(z - other.z) < EffectiveEffer);
+	}
 };
 
 using Vec3f = Vector3D<float>;
