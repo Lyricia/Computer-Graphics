@@ -271,4 +271,7 @@ void initobj()
 	for (int i = 0; i < 5; i++) {
 		Plane[i]->init(i);
 	}
+	toruscount = 0;
+	planecount = 0;
+	objcount = 0;
 }

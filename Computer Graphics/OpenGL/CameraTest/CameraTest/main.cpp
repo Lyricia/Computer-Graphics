@@ -87,15 +87,16 @@ GLvoid drawScene(GLvoid)
 	//	0, 0, 1,
 	//	0, 1, 0
 	//);
+	glPushMatrix();
 	Camera.SetLookVector();
 	Camera.SetCamera();
-
+	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	{
 		if (IsDepth) glEnable(GL_DEPTH_TEST);
-		glTranslatef(0, 0, 300);
-		DrawLines();
+		//glTranslatef(0, 0, 300);
+		//DrawLines();
 		DrawPolygon();
 	}
 	glPopMatrix();
@@ -107,11 +108,11 @@ GLvoid DrawLines()
 {
 	glColor3f(1.f, 1.f, 1.f);
 	glBegin(GL_LINES);
-	//glVertex3f(-W_Width, 0.0, 0.0);
-	//glVertex3f(W_Width, 0.0, 0.0);
-	//
-	//glVertex3f(0.0, -W_Height, 0.0);
-	//glVertex3f(0.0, W_Height, 0.0);
+	glVertex3f(-W_Width, 0.0, 0.0);
+	glVertex3f(W_Width, 0.0, 0.0);
+	
+	glVertex3f(0.0, -W_Height, 0.0);
+	glVertex3f(0.0, W_Height, 0.0);
 
 	glVertex3f(0.0, 0.0, -W_Depth);
 	glVertex3f(0.0, 0.0, W_Depth);

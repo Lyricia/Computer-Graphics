@@ -105,9 +105,9 @@ GLvoid DrawSpace()
 GLvoid DrawPolygon(GLvoid)
 {
 	GLfloat ctrlpoints[3][4][3] = {
-		{ { -8.0, ypos1, 4 },	{ -4.0, ypos2, 4 },		{ 4.0, ypos3, 4.0 },	{ 8.0,ypos4, 4.0 }},
-		{ { -8.0, ypos1, 0 },	{ -4.0, ypos2, 0.0 },	{ 4.0, ypos3, 0.0 },	{ 8.0,ypos4, 0.0 } },
-		{ { -8.0, ypos1, -4 },	{ -4.0, ypos2, -4 },	{ 4.0, ypos3, -4.0 },	{ 8.0,ypos4, -4.0 } }
+		{ { -8.0, ypos1, 5 },	{ -4.0, ypos2, 3 },		{ 4.0, ypos3, 4.0 },	{ 8.0,ypos4, 4.0 }},
+		{ { -8.0, ypos1, 1 },	{ -4.0, ypos2, -1 },	{ 4.0, ypos3, 0.0 },	{ 8.0,ypos4, 0.0 } },
+		{ { -8.0, ypos1, -3 },	{ -4.0, ypos2, -5 },	{ 4.0, ypos3, -4.0 },	{ 8.0,ypos4, -4.0 } }
 	};
 
 	glMap2f(GL_MAP2_VERTEX_3, 
@@ -141,7 +141,7 @@ GLvoid Reshape(int w, int h)
 	glMatrixMode(GL_MODELVIEW);
 
 	gluLookAt(
-		0.0, 0.8, 0.0,			// eye
+		0.0, 100, 0.0,			// eye
 		0.0, 0.0, 1.0,			// center
 		0.0, 1.0, 0.0);			// up
 }

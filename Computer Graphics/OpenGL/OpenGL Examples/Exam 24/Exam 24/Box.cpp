@@ -43,7 +43,6 @@ float CBox::GetPosition()
 
 void CBox::Move(float speed, Vec3f externalVector, float ypos)
 {
-	m_MoveVector = GravityVector + externalVector;
-	Position.x += m_MoveVector.x;
-	Position.y = ypos;
+	Position = Position + GravityVector;
+	Position = Position + externalVector;
 }

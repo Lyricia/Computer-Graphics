@@ -41,6 +41,9 @@ CObject TorusBuilding;
 CObject ConeBuilding;
 CObject DoorBuilding;
 
+int angle;
+float ypos1, ypos2, ypos3, ypos4;
+
 void main(int, char *)
 {
 	init();
@@ -92,8 +95,12 @@ GLvoid drawScene(GLvoid)
 	glMatrixMode(GL_MODELVIEW);
 
 	glPushMatrix();
+	glScalef(50, 50, 100);
+		DrawPolygon();
+		glPopMatrix();
+	glPushMatrix();
 	{
-		DrawSpace();
+		//DrawSpace();
 		glPushMatrix();
 		{
 			DoorBuilding.DoorBuildingRender();
@@ -154,7 +161,29 @@ GLvoid DrawSpace()
 }
 GLvoid DrawPolygon(GLvoid)
 {
+	GLfloat ctrlpoints[3][4][3] = {
+		{ { -8.0, ypos1, 4 },{ -4.0, ypos2, 4 },{ 4.0, ypos3, 4.0 },{ 8.0,ypos4, 4.0 } },
+		{ { -8.0, ypos1, 0 },{ -4.0, ypos2, 0.0 },{ 4.0, ypos3, 0.0 },{ 8.0,ypos4, 0.0 } },
+		{ { -8.0, ypos1, -4 },{ -4.0, ypos2, -4 },{ 4.0, ypos3, -4.0 },{ 8.0,ypos4, -4.0 } }
+	};
 
+	glMap2f(GL_MAP2_VERTEX_3,
+		0.0, 1.0, 3, 4,
+		0.0, 1.0, 12, 3,
+		&ctrlpoints[0][0][0]);
+
+	glEnable(GL_MAP2_VERTEX_3);
+	glMapGrid2f(10, 0.0, 1.0, 10, 0.0, 1.0);
+	glEvalMesh2(GL_LINE, 0, 10, 0, 10);
+	glDisable(GL_MAP2_VERTEX_3);
+
+	glPointSize(2.0);
+	glColor3f(0.0, 0.0, 1.0);
+	glBegin(GL_POINTS);
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
+			glVertex3fv(ctrlpoints[i][j]);
+	glEnd();
 }
 
 GLvoid Reshape(int w, int h)
@@ -200,7 +229,39 @@ GLvoid Keydown(unsigned char key, int x, int y)
 	case 'f':
 		cameraz -= 10;
 		break;
+
+
+	case 'z':
+		ypos1++;
+		break;
+	case 'x':
+		ypos2++;
+		break;
+	case 'c':
+		ypos3++;
+		break;
+	case 'v':
+		ypos4++;
+		break;
+
+	case 'Z':
+		ypos1--;
+		break;
+	case 'X':
+		ypos2--;
+		break;
+	case 'C':
+		ypos3--;
+		break;
+	case 'V':
+		ypos4--;
+		break;
+
+	case 'e':
+		angle++;
+		break;
 	}
+
 	
 	glutPostRedisplay();
 }

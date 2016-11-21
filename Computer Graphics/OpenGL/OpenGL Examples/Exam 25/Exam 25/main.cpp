@@ -74,6 +74,8 @@ GLvoid drawScene(GLvoid)
 	glMatrixMode(GL_MODELVIEW);
 
 	DrawPolygon();
+
+	drawText("STRING", 0, 0, 0);
 	glutSwapBuffers();
 }
 
@@ -119,7 +121,6 @@ GLvoid Reshape(int w, int h)
 GLvoid Keydown(unsigned char key, int x, int y)
 {
 	switch (key)
-	{
 	case 'q':
 		exit(0);
 		break;

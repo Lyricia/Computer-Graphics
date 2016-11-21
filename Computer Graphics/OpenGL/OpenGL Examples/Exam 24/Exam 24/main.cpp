@@ -378,8 +378,8 @@ GLvoid Timer(int val)
 		ball[i].Move(1);
 		ball[i].ChangeDir(color);
 	}
-
-	collidechk();
+	box.Move(1, plane[0].GetNormalVector(), plane[0].GetPosition(box.GetPosition()));
+	//collidechk();
 
 	glutPostRedisplay();
 	glutTimerFunc(10, Timer, 1);
@@ -403,9 +403,5 @@ void collidechk()
 
 bool isCollide(Vec3f normalvec, Vec3f Centerpos)
 {
-	float z = DotProduct(Centerpos - normalvec * 15.0f, normalvec);
-	if (DotProduct(Centerpos - normalvec * 15.0f, normalvec) + 15 == 0)
-		return true;
-	else
-		return false;
+	d =  
 }
