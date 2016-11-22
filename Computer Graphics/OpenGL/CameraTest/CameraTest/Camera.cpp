@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "gl/glut.h"
 #define PI			3.14159265359
+#define RAD(x)		x * (PI / 180)
 
 CCamera::CCamera()
 {}
@@ -20,9 +21,9 @@ void CCamera::SetCamera()
 	//	m_LookVector.x, m_LookVector.y, m_LookVector.z,
 	//	0, 1, 0);
 	gluLookAt(
-			0, 1, 0,
-		m_LookVector.x, 0,m_LookVector.z,
-			0, 1, 0);
+		0, 0, 0,
+		m_LookVector.x, m_LookVector.y, m_LookVector.z, 
+		0, 1, 0);
 }
 
 
@@ -47,42 +48,41 @@ angle alpha = arctan (size of hypotenuse of x-z triangle / delta y (mouse y move
 
 void CCamera::SetLookVector()
 {
-	float delta_x = (newMousePostion_x - oldMousePostion_x) * m_Sensitivity;
-	float delta_y = -(newMousePostion_y - oldMousePostion_y * m_Sensitivity);
-	float hypo_zx;
-	float theta;
-	float alpha;
-	Vec3f Move;
+	float delta_x;
+	float delta_y;
+	const float ROTATE_SPEED =0.5;
 
-	//std::cout << newMousePostion_x <<" "<< newMousePostion_y << std::endl;
-	
-	hypo_zx = sqrtf((delta_x * delta_x) + 1);
-	theta = acos(delta_x / hypo_zx);
-	//theta = atan2f(1, 1.f);
-	alpha = atan2f(delta_y, hypo_zx);
-	std::cout << theta << ' ' << alpha << std::endl;
-	
-	Move.x = cosf(theta);
-	Move.y = tanf(alpha);
-	Move.z = sinf(theta);
-	
-	Move.Normalize();
-	
-	m_LookVector = m_LookVector + Move;
-	
+	delta_x = 400 - newMousePostion_x;
+	delta_y = 300 - newMousePostion_y;
+	//std::cout << delta_x << ' ' << delta_y << std::endl;
+
+
+	if (delta_x > 0.0f)
+ 		Angle.yaw += ROTATE_SPEED;
+	else if (delta_x < 0.0f)
+		Angle.yaw -= ROTATE_SPEED;
+
+	if (delta_y > 0.0f)
+		Angle.pitch += ROTATE_SPEED;
+	else if (delta_y < 0.0f)
+		Angle.pitch -= ROTATE_SPEED;
+
+	if (Angle.pitch > 80.0f)	Angle.pitch = 80.0f; 
+	if (Angle.pitch <  -80.0f)	Angle.pitch = -80.0f;
+
+	m_LookVector = { cosf(RAD(Angle.yaw)), tanf(RAD(Angle.pitch)), sinf(RAD(Angle.yaw)) };
+//	m_LookVector = { 1.0f, tanf(RAD(Angle.pitch)), 1.0f };
+	std::cout << Angle.pitch << std::endl;
+	m_LookVector.Normalize();
+
 	oldMousePostion_x = newMousePostion_x;
 	oldMousePostion_y = newMousePostion_y;
-	SetCamera();
-	//m_LookVector.x = m_CameraPosition.x + 400 - newMousePostion_x;
-	//m_LookVector.Normalize();
-	//
-	//std::cout << oldMousePostion_x << ' ' << newMousePostion_x << std::endl;
-	//oldMousePostion_x = newMousePostion_x;
 }
+
 
 void CCamera::getMouse(int x, int y)
 {
 	newMousePostion_x = x;
 	newMousePostion_y = y;
-	//std::cout << x << ' ' << y << std::endl;
+	//std::cout << x << ' ' << y << std::endl; 
 }

@@ -31,8 +31,12 @@ GLvoid DrawSpace();
 GLvoid DrawPolygon(GLvoid);
 GLvoid Circle(Vertex P, float radius, float angle);
 
-int angle;
-float ypos1, ypos2, ypos3, ypos4;
+float cameray;
+float camdist;
+
+float MousePoints[30][3];
+float ctrlpoints[3][4][3]
+int pointcounter;
 
 void main(int, char *)
 {
@@ -51,7 +55,7 @@ void main(int, char *)
 GLvoid init(GLvoid)
 {
 	srand(unsigned(time(NULL)));
-
+	camdist = -200;
 }
 
 GLvoid RegesterCallBack()
@@ -69,9 +73,20 @@ GLvoid drawScene(GLvoid)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(60.0, 1.0, 1.0, 10000);
+	glTranslatef(0.0, 0.0, camdist);
+	gluLookAt(
+		0, cameray, 0,
+		0, 0, 1,
+		0, 1, 0
+	);
+
+	glMatrixMode(GL_MODELVIEW);
+
 	//DrawSpace();
 	glPushMatrix();
-	glRotatef(angle, 0, 1, 0);
 	glScalef(20, 20, 20);
 	DrawPolygon();
 	glPopMatrix();
@@ -104,11 +119,11 @@ GLvoid DrawSpace()
 }
 GLvoid DrawPolygon(GLvoid)
 {
-	GLfloat ctrlpoints[3][4][3] = {
-		{ { -8.0, ypos1, 5 },	{ -4.0, ypos2, 3 },		{ 4.0, ypos3, 4.0 },	{ 8.0,ypos4, 4.0 }},
-		{ { -8.0, ypos1, 1 },	{ -4.0, ypos2, -1 },	{ 4.0, ypos3, 0.0 },	{ 8.0,ypos4, 0.0 } },
-		{ { -8.0, ypos1, -3 },	{ -4.0, ypos2, -5 },	{ 4.0, ypos3, -4.0 },	{ 8.0,ypos4, -4.0 } }
-	};
+	//GLfloat ctrlpoints[3][4][3] = {
+	//	{ { -8.0, ypos1, 5 },	{ -4.0, ypos2, -2 },		{ 4.0, ypos3, 5 },	{ 8.0,ypos4, 2 }},
+	//	{ { -8.0, ypos1, 1 },	{ -4.0, ypos2, -6 },	{ 4.0, ypos3, 1 },	{ 8.0,ypos4, -2} },
+	//	{ { -8.0, ypos1, -3 },	{ -4.0, ypos2, -10 },	{ 4.0, ypos3, -3 },	{ 8.0,ypos4, -6 } }
+	//};
 
 	glMap2f(GL_MAP2_VERTEX_3, 
 		0.0, 1.0, 3, 4, 
@@ -141,7 +156,7 @@ GLvoid Reshape(int w, int h)
 	glMatrixMode(GL_MODELVIEW);
 
 	gluLookAt(
-		0.0, 100, 0.0,			// eye
+		0.0, cameray, 0.0,			// eye
 		0.0, 0.0, 1.0,			// center
 		0.0, 1.0, 0.0);			// up
 }
@@ -165,34 +180,21 @@ GLvoid Keydown(unsigned char key, int x, int y)
 	case 'd':
 		break;
 
-	case 'z':
-		ypos1++;
+	case 't':
+		cameray += 0.1f;
 		break;
-	case 'x':
-		ypos2++;
-		break;
-	case 'c':
-		ypos3++;
-		break;
-	case 'v':
-		ypos4++;
+	case 'g':
+		cameray -= 0.1f;
 		break;
 
-	case 'Z':
-		ypos1--;
+	case 'y':
+		camdist += 10;
 		break;
-	case 'X':
-		ypos2--;
-		break;
-	case 'C':
-		ypos3--;
-		break;
-	case 'V':
-		ypos4--;
+	case 'h':
+		camdist -= 10;
 		break;
 
 	case 'e':
-		angle++;
 		break;
 	}
 
@@ -201,11 +203,21 @@ GLvoid Keydown(unsigned char key, int x, int y)
 
 GLvoid MouseMove(int x, int y)
 {
-
 }
 
 GLvoid MouseEvent(int button, int state, int x, int y)
 {
+	switch (button)
+	{
+	case GLUT_LEFT_BUTTON:
+		if (state == GLUT_DOWN)
+		{
+
+		}
+		break;
+	case GLUT_RIGHT_BUTTON:
+		break;
+	}
 	glutPostRedisplay();
 }
 

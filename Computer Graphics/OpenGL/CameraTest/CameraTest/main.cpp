@@ -71,7 +71,7 @@ GLvoid RegesterCallBack()
 	glutKeyboardFunc(Keydown);
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
-	//glutTimerFunc(10, Timer, 1);
+	glutTimerFunc(10, Timer, 1);
 }
 
 GLvoid drawScene(GLvoid)
@@ -95,8 +95,8 @@ GLvoid drawScene(GLvoid)
 	glPushMatrix();
 	{
 		if (IsDepth) glEnable(GL_DEPTH_TEST);
-		//glTranslatef(0, 0, 300);
-		//DrawLines();
+		glTranslatef(0, 0, 300);
+		DrawLines();
 		DrawPolygon();
 	}
 	glPopMatrix();
@@ -359,8 +359,9 @@ GLvoid MouseEvent(int button, int state, int x, int y)
 
 GLvoid Timer(int val)
 {
+	glutWarpPointer(400, 300);
 	//angle += 0.1;
-	if (angle > 360) angle = 0;
+	//if (angle > 360) angle = 0;
 
 	glutPostRedisplay();
 	glutTimerFunc(10, Timer, 1);

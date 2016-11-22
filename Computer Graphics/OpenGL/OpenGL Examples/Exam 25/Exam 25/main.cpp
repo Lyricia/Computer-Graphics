@@ -34,8 +34,6 @@ void drawText(char * string, float x, float y, float z);
 
 float ctrlpoints[30][3];
 int pointcounter;
-int endcounter;
-int completedcurves;
 char text[2];
 
 void main(int, char *)
