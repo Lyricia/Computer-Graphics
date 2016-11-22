@@ -1,6 +1,5 @@
 #include <iostream>
 #include <queue>
-#include "Source.h"
 
 using namespace std;
 
@@ -191,6 +190,278 @@ void SJF()
 		{
 			if (false == ready_queue.empty())
 			{
+				current_process = ready_queue.top();
+				ready_queue.pop();
+				if (0 == current_process->executed_Length)
+					total_response_time += current_time - current_process->arrive_time;
+			}
+		}
+
+		if ((true == end_of_schedule) && ready_queue.empty() && (nullptr == current_process))  break;
+
+		if (nullptr != current_process) {
+			current_process->executed_Length++;
+			//			cout << "Time:" << current_time << "   PID" << current_process->PID << endl;
+		}
+		//		 else { cout << "PAUSE\n";  }
+
+		current_time++;
+	}
+
+	cout << "Total Execution Time = " << current_time << endl;
+	cout
+		<< "Number of Processes Executed = " << total_process << endl;
+	cout << "Average Return Time = " << total_return_time / total_process << endl;
+	cout << "Average Wait Time = " << total_wait_time / total_process << endl;
+	cout << "Average Response Time = " << total_response_time / total_process << endl;
+}
+
+void SRF()
+{
+	int current_time = 0;
+	priority_queue <PCB *, vector<PCB *>, length_Greater> ready_queue;
+	PCB *current_process = nullptr;
+	int total_return_time = 0;
+	int total_wait_time = 0;
+	int total_process = 0;
+	int total_response_time = 0;
+	int pid = 1;
+
+	for (;;) {
+		int length, priority;
+		bool end_of_schedule;
+
+		while (true == GetProcess(current_time, &length, &priority, &end_of_schedule))
+		{
+			ready_queue.push(new PCB{ pid++, current_time, length, 0, priority });
+		}
+
+		if (nullptr != current_process)
+		{
+			if (current_process->executed_Length >= current_process->length) {
+				total_return_time += current_time - current_process->arrive_time;
+				total_wait_time += current_time - current_process->arrive_time - current_process->length;
+				total_process++;
+				delete current_process;
+				current_process = nullptr;
+			}
+			else
+			{
+				ready_queue.push(new PCB{ current_process->PID, current_process->arrive_time, current_process->length, current_process->executed_Length, current_process->priority });
+				delete current_process;
+				current_process = nullptr;
+			}
+		}
+
+		if (nullptr == current_process)
+		{
+			if (false == ready_queue.empty())
+			{
+				current_process = ready_queue.top();
+				ready_queue.pop();
+				if (0 == current_process->executed_Length)
+					total_response_time += current_time - current_process->arrive_time;
+			}
+		}
+
+		if ((true == end_of_schedule) && ready_queue.empty() && (nullptr == current_process))  break;
+
+		if (nullptr != current_process) {
+			current_process->executed_Length++;
+			//			cout << "Time:" << current_time << "   PID" << current_process->PID << endl;
+		}
+		//		 else { cout << "PAUSE\n";  }
+
+		current_time++;
+	}
+
+	cout << "Total Execution Time = " << current_time << endl;
+	cout
+		<< "Number of Processes Executed = " << total_process << endl;
+	cout << "Average Return Time = " << total_return_time / total_process << endl;
+	cout << "Average Wait Time = " << total_wait_time / total_process << endl;
+	cout << "Average Response Time = " << total_response_time / total_process << endl;
+}
+
+struct priority_Greater
+{
+	bool operator()(PCB *a, PCB *b)
+	{
+		return b->priority > a->priority;
+	}
+};
+
+//Non-preemptive priority schedule
+void NonPreemptivePrioritySchedule()	
+{
+	int current_time = 0;
+	priority_queue <PCB *, vector<PCB *>, priority_Greater> ready_queue;
+	PCB *current_process = nullptr;
+	int total_return_time = 0;
+	int total_wait_time = 0;
+	int total_process = 0;
+	int total_response_time = 0;
+	int pid = 1;
+
+	for (;;) {
+		int length, priority;
+		bool end_of_schedule;
+
+		while (true == GetProcess(current_time, &length, &priority, &end_of_schedule))
+		{
+			ready_queue.push(new PCB{ pid++, current_time, length, 0, priority });
+		}
+
+		if (nullptr != current_process)
+		{
+			if (current_process->executed_Length >= current_process->length) {
+				total_return_time += current_time - current_process->arrive_time;
+				total_wait_time += current_time - current_process->arrive_time - current_process->length;
+				total_process++;
+				delete current_process;
+				current_process = nullptr;
+			}
+		}
+
+		if (nullptr == current_process)
+		{
+			if (false == ready_queue.empty())
+			{
+				current_process = ready_queue.top();
+				ready_queue.pop();
+				if (0 == current_process->executed_Length)
+					total_response_time += current_time - current_process->arrive_time;
+			}
+		}
+
+		if ((true == end_of_schedule) && ready_queue.empty() && (nullptr == current_process))  break;
+
+		if (nullptr != current_process) {
+			current_process->executed_Length++;
+			//			cout << "Time:" << current_time << "   PID" << current_process->PID << endl;
+		}
+		//		 else { cout << "PAUSE\n";  }
+
+		current_time++;
+	}
+
+	cout << "Total Execution Time = " << current_time << endl;
+	cout
+		<< "Number of Processes Executed = " << total_process << endl;
+	cout << "Average Return Time = " << total_return_time / total_process << endl;
+	cout << "Average Wait Time = " << total_wait_time / total_process << endl;
+	cout << "Average Response Time = " << total_response_time / total_process << endl;
+}
+
+void PreemptivePrioritySchedule()
+{
+	int current_time = 0;
+	priority_queue <PCB *, vector<PCB *>, priority_Greater> ready_queue;
+	PCB *current_process = nullptr;
+	int total_return_time = 0;
+	int total_wait_time = 0;
+	int total_process = 0;
+	int total_response_time = 0;
+	int pid = 1;
+
+	for (;;) {
+		int length, priority;
+		bool end_of_schedule;
+
+		while (true == GetProcess(current_time, &length, &priority, &end_of_schedule))
+		{
+			ready_queue.push(new PCB{ pid++, current_time, length, 0, priority });
+		}
+
+		if (nullptr != current_process)
+		{
+			if (current_process->executed_Length >= current_process->length) {
+				total_return_time += current_time - current_process->arrive_time;
+				total_wait_time += current_time - current_process->arrive_time - current_process->length;
+				total_process++;
+				delete current_process;
+				current_process = nullptr;
+			}
+			else
+			{
+				ready_queue.push(new PCB{ current_process->PID, current_process->arrive_time, current_process->length, current_process->executed_Length, current_process->priority });
+				delete current_process;
+				current_process = nullptr;
+			}
+		}
+
+		if (nullptr == current_process)
+		{
+			if (false == ready_queue.empty())
+			{
+				current_process = ready_queue.top();
+				ready_queue.pop();
+				if (0 == current_process->executed_Length)
+					total_response_time += current_time - current_process->arrive_time;
+			}
+		}
+
+		if ((true == end_of_schedule) && ready_queue.empty() && (nullptr == current_process))  break;
+
+		if (nullptr != current_process) {
+			current_process->executed_Length++;
+			//			cout << "Time:" << current_time << "   PID" << current_process->PID << endl;
+		}
+		//		 else { cout << "PAUSE\n";  }
+
+		current_time++;
+	}
+
+	cout << "Total Execution Time = " << current_time << endl;
+	cout
+		<< "Number of Processes Executed = " << total_process << endl;
+	cout << "Average Return Time = " << total_return_time / total_process << endl;
+	cout << "Average Wait Time = " << total_wait_time / total_process << endl;
+	cout << "Average Response Time = " << total_response_time / total_process << endl;
+}
+
+void RoundRobin()
+{
+	int current_time = 0;
+	queue <PCB *> ready_queue;
+	PCB *current_process = nullptr;
+	int total_return_time = 0;
+	int total_wait_time = 0;
+	int total_process = 0;
+	int total_response_time = 0;
+	int pid = 1;
+	int timeslice = 2;
+
+	for (;;) {
+		int length, priority;
+		bool end_of_schedule;
+
+		while (true == GetProcess(current_time, &length, &priority, &end_of_schedule))
+		{
+			ready_queue.push(new PCB{ pid++, current_time, length, 0, priority });
+		}
+
+		if (nullptr != current_process)
+		{
+			if (current_process->executed_Length >= current_process->length) {
+				total_return_time += current_time - current_process->arrive_time;
+				total_wait_time += current_time - current_process->arrive_time - current_process->length;
+				total_process++;
+				delete current_process;
+				current_process = nullptr;
+			}
+			else if (current_time % timeslice == 0)
+			{
+				ready_queue.push(new PCB{ current_process->PID, current_process->arrive_time, current_process->length, current_process->executed_Length, current_process->priority });
+				delete current_process;
+				current_process = nullptr;
+			}
+		}
+
+		if (nullptr == current_process)
+		{
+			if (false == ready_queue.empty())
+			{
 				current_process = ready_queue.front();
 				ready_queue.pop();
 				if (0 == current_process->executed_Length)
@@ -218,10 +489,8 @@ void SJF()
 }
 
 
-
 int main()
 {
 	//GenerateProcess();
-	FCFS();
+	RoundRobin();
 }
-e
