@@ -43,15 +43,15 @@ CVertex* ObjProp::GetBB()
 
 bool ObjProp::isCollide(CVertex *P)
 {
-	float p_left	= BoundingBox[BBPOS::LEFTTOP].x;
-	float p_right	= BoundingBox[BBPOS::RIGHTBOTTOM].x;
-	float p_top		= BoundingBox[BBPOS::LEFTTOP].z;
-	float p_bottom	= BoundingBox[BBPOS::RIGHTBOTTOM].z;
+	float p_left = BoundingBox[BBPOS::LEFTTOP].x;
+	float p_right = BoundingBox[BBPOS::RIGHTBOTTOM].x;
+	float p_top = BoundingBox[BBPOS::LEFTTOP].z;
+	float p_bottom = BoundingBox[BBPOS::RIGHTBOTTOM].z;
 
-	float q_left	= P[BBPOS::LEFTTOP].x;
-	float q_right	= P[BBPOS::RIGHTBOTTOM].x;
-	float q_top		= P[BBPOS::LEFTTOP].z;
-	float q_bottom	= P[BBPOS::RIGHTBOTTOM].z;
+	float q_left = P[BBPOS::LEFTTOP].x;
+	float q_right = P[BBPOS::RIGHTBOTTOM].x;
+	float q_top = P[BBPOS::LEFTTOP].z;
+	float q_bottom = P[BBPOS::RIGHTBOTTOM].z;
 
 	if (p_left > q_right)	return false;
 	if (p_right < q_left)	return false;

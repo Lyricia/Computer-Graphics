@@ -61,7 +61,7 @@ GLvoid init(GLvoid)
 	IsSmooth = true;
 	IsDepth = true;
 	IsCull = true;
-	
+
 }
 
 GLvoid RegesterCallBack()
@@ -77,7 +77,7 @@ GLvoid RegesterCallBack()
 GLvoid drawScene(GLvoid)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
+
 	//glMatrixMode(GL_PROJECTION);
 	//glLoadIdentity();
 	//gluPerspective(110.0, 1.0, 1.0, 10000);
@@ -110,7 +110,7 @@ GLvoid DrawLines()
 	glBegin(GL_LINES);
 	glVertex3f(-W_Width, 0.0, 0.0);
 	glVertex3f(W_Width, 0.0, 0.0);
-	
+
 	glVertex3f(0.0, -W_Height, 0.0);
 	glVertex3f(0.0, W_Height, 0.0);
 
@@ -287,7 +287,7 @@ GLvoid Keydown(unsigned char key, int x, int y)
 	case 'd':
 		camerax = -1;
 		break;
-		
+
 	case 't':
 		camerax += 0.1;
 		break;
@@ -341,7 +341,7 @@ GLvoid Keydown(unsigned char key, int x, int y)
 		IsSmooth = boolswitch(IsSmooth);
 		break;
 	}
-	
+
 	glutPostRedisplay();
 }
 
