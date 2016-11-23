@@ -23,6 +23,8 @@ bool boolswitch(bool chker);
 GLvoid DrawLines();
 GLvoid DrawSpace();
 void DrawObject();
+void DrawWall2();
+void DrawWall();
 GLvoid DrawPolygon(GLvoid);
 
 float cameray;
@@ -58,6 +60,7 @@ void main(int, char *)
 	glutCreateWindow("Test");
 
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
 	RegesterCallBack();
 
 	glutMainLoop();
@@ -97,25 +100,48 @@ GLvoid drawScene(GLvoid)
 	}
 
 	glMatrixMode(GL_MODELVIEW);
-
-	//DrawSpace();
 	glPushMatrix();
-	//glScalef(20, 20, 20);
-	DrawObject();
-	DrawPolygon();
-
-	//glutWireSphere(50, 10, 10);
-	glPopMatrix();
-
-	glPointSize(3.0);
-	glColor3f(1.0, 1.0, 1.0);
-	glBegin(GL_POINTS);
-	glVertex3f(100, 100, 0);
-	for (int i = 0; i < pointcounter; i++) {
-		glVertex3f(MousePoints[i][0], MousePoints[i][1], MousePoints[i][2]);
+	{
+		glScalef(3, 1, 3);
+		glTranslatef(0, -5, 0);
+		DrawSpace();
 	}
-	glEnd();
-
+	glPopMatrix();
+	glPushMatrix();
+	{
+		glPushMatrix();
+		{
+			glColor3f(1.f, 1.f, 1.f);
+			glTranslatef(200, 70, 225);
+			glScalef(10, 15, 20);
+			glRotatef(90, 1, 0, 0);
+			DrawWall();
+		}
+		glPopMatrix();
+		glPushMatrix();
+		{
+			glColor3f(1.f, 0.f, 1.f);
+			glTranslatef(0, 80, 300);
+			glScalef(75, 75, 75);
+			glRotatef(90, 1, 0, 0);
+			DrawWall2();
+			glTranslatef(-4, -4, 0);
+			glRotatef(90, 0, 0,1);
+			DrawWall2();
+			glTranslatef(-4, -4, 0);
+			glRotatef(90, 0, 0, 1);
+			DrawWall2();
+			glTranslatef(-4, -4, 0);
+			glRotatef(90, 0, 0, 1);
+			DrawWall2();
+			
+		}
+		glPopMatrix();
+		
+		DrawObject();
+		DrawPolygon();
+	}
+	glPopMatrix();
 
 	glutSwapBuffers();
 }
@@ -182,8 +208,57 @@ void DrawObject()
 	glPopMatrix();
 }
 
+void DrawWall2()
+{
+	GLfloat ctrlpoints2[3][5][3] = {
+		{ { -4, 0.0, 4.0 },{ -2.0, 2.0, 4.0 },	{ 0, 0.0, 4.0 } ,{ 2.0, 0.0, 4.0 } ,{ 4.0, 0.0, 4.0 } },
+		{ { -4, 0.0, 0.0 },{ -2.0, 2.0, 0.0 },	{ 0, 0.0, 0.0 } ,{ 2.0, 0.0, 0.0 } ,{ 4.0, 0.0, 0.0 } },
+		{ { -4, 0.0, -4.0 },{ -2.0, 2.0, -4.0 },{ 0, 0.0, -4.0 },{ 2.0, 0.0, -4.0 },{ 4.0, 0.0, -4.0 } }
+	};
+	 
+	glMap2f(GL_MAP2_VERTEX_3, 
+		0.0, 1.0, 3, 5, 
+		0.0, 1.0, 15, 3,
+		&ctrlpoints2[0][0][0]);
+
+	glEnable(GL_MAP2_VERTEX_3);
+
+	glMapGrid2f(10, 0.0, 1.0, 10, 0.0, 1.0);
+	glEvalMesh2(GL_FILL, 0, 10, 0, 10);
+	glPointSize(2.0); glColor3f(0.0, 0.0, 1.0);
+	glBegin(GL_POINTS);
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
+			glVertex3fv(ctrlpoints2[i][j]);
+	glEnd();
+}
+
+void DrawWall()
+{
+	GLfloat ctrlpoints3[3][3][3] = 	{
+		{ { -2.5, 0.0, 4.0 },{ 0.0, 2.0, 4.0 },{ 2.5, 0.0, 4.0 } },
+		{ { -2.5, 0.0, 0.0 },{ 0.0, 2.0, 0.0 },{ 2.5, 0.0, 0.0 } },
+		{ { -2.5, 0.0, -4.0 },{ 0.0, 2.0, -4.0 },{ 2.5, 0.0, -4.0 } } 
+	};
+
+	glMap2f(GL_MAP2_VERTEX_3, 0.0, 1.0, 3, 3, 0.0, 1.0, 9, 3, &ctrlpoints3[0][0][0]);
+
+	glEnable(GL_MAP2_VERTEX_3);
+
+	glMapGrid2f(10, 0.0, 1.0, 10, 0.0, 1.0);
+	glEvalMesh2(GL_LINE, 0, 10, 0, 10);
+	glPointSize(2.0); glColor3f(0.0, 0.0, 1.0);
+	glBegin(GL_POINTS);
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
+			glVertex3fv(ctrlpoints[i][j]);
+	glEnd();
+}
+
+
 GLvoid DrawPolygon(GLvoid)
 {
+	glColor3f(0, 0, 1);
 	for (int i = 0; i < 9; i++)
 	{
 			glMap2f(GL_MAP2_VERTEX_3,
@@ -248,14 +323,16 @@ GLvoid Keydown(unsigned char key, int x, int y)
 		exit(0);
 		break;
 
-	case 'r':
+	case 'i':
 		init();
 		break;
 
-	case 'u':
+	case 'r':
+		Camera.Move(DIRECTION::FRONT, 10);
 		break;
 
-	case 'd':
+	case 'f':
+		Camera.Move(DIRECTION::BACK, 10);
 		break;
 
 	case 't':

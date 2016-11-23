@@ -8,7 +8,9 @@
 #define RAD(x)		x * (PI / 180)
 
 CCamera::CCamera()
-{}
+{
+	dist = -300;
+}
 CCamera::~CCamera()
 {}
 
@@ -17,7 +19,7 @@ void CCamera::SetCamera()
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(110.0, 1.0, 1.0, 10000);
-	glTranslatef(0.0, 0.0, -500.0);
+	glTranslatef(0.0, 0.0, dist);
 	gluLookAt(
 		m_CameraPosition.x, m_CameraPosition.y, m_CameraPosition.z,
 		m_CameraPosition.x + m_LookVector.x, m_CameraPosition.y + m_LookVector.y, m_CameraPosition.z + m_LookVector.z,
@@ -93,10 +95,10 @@ void CCamera::Move(DIRECTION dir, float speed)
 	switch (dir)
 	{
 	case DIRECTION::FRONT:
-		//Position.z += speed;
+		dist += speed;
 		break;
 	case DIRECTION::BACK:
-		//Position.z -= speed;
+		dist -= speed;
 		break;
 	case DIRECTION::LEFT:
 		break;
