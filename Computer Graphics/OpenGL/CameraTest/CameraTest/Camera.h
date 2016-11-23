@@ -15,10 +15,11 @@ private:
 	int oldMousePostion_x, oldMousePostion_y;
 	float m_Sensitivity{ 0.001f };
 	
-
+	
 public:
 	void SetCamera();
 	void SetLookVector(); // get mouse move x, y
 	void getMouse(int x, int y);
+	void Move(DIRECTION dir, float speed);
 };
 

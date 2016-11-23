@@ -23,7 +23,7 @@ public:
 	unsigned char green;
 	unsigned char blue;
 
-	void applycolor() { glColor3f(static_cast <float> (red / 255.0f), float(green / 255.0f), float( blue / 255.0f)); }
+	void applycolor() { glColor3f(red / 255, green / 255, blue / 255); }
 	void setcolor(unsigned char _red, unsigned char _green, unsigned char _blue) {
 		red = _red;
 		green = _green;
@@ -42,14 +42,13 @@ public:
 };
 
 enum BBPOS { LEFTTOP, RIGHTTOP, RIGHTBOTTOM, LEFTBOTTOM };
-enum DIRECTION { FRONT, BACK, RIGHT, LEFT };
 
 class ObjProp
 {
 public:
 	ObjProp();
 	~ObjProp();
-	Vec3f Position;
+	CVertex Vertex;
 	CVertex BoundingBox[4];
 	CAngle Angle;
 	float m_scale;

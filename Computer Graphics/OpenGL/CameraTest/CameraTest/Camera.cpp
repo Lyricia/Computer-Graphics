@@ -1,7 +1,11 @@
 #include <cmath>
 #include <iostream>
+#include "ObjProp.h"
+#include "Vector3D.h"
 #include "Camera.h"
 #include "gl/glut.h"
+
+
 #define PI			3.14159265359
 #define RAD(x)		x * (PI / 180)
 
@@ -16,16 +20,15 @@ void CCamera::SetCamera()
 	glLoadIdentity();
 	gluPerspective(110.0, 1.0, 1.0, 10000);
 	glTranslatef(0.0, 0.0, -100.0);
-	//gluLookAt(
-	//	m_CameraVector.x, m_CameraVector.y, m_CameraVector.z,
-	//	m_LookVector.x, m_LookVector.y, m_LookVector.z,
-	//	0, 1, 0);
 	gluLookAt(
-		0, 0, 0,
-		m_LookVector.x, m_LookVector.y, m_LookVector.z, 
+		m_CameraPosition.x, m_CameraPosition.y, m_CameraPosition.z,
+		m_CameraPosition.x + m_LookVector.x, m_CameraPosition.y + m_LookVector.y, m_CameraPosition.z + m_LookVector.z,
 		0, 1, 0);
+//	gluLookAt(
+//		0, 0, 0,
+//		m_LookVector.x, m_LookVector.y, m_LookVector.z, 
+//		0, 1, 0);
 }
-
 
 /*////////////// Set Camera Look Vector //////////////////
 default camera look vector is (0,0,1)
@@ -86,3 +89,22 @@ void CCamera::getMouse(int x, int y)
 	newMousePostion_y = y;
 	//std::cout << x << ' ' << y << std::endl; 
 }
+
+void CCamera::Move(DIRECTION dir, float speed)
+{
+	switch (dir)
+	{
+	case DIRECTION::FRONT:
+		Position.z += speed;
+		break;
+	case DIRECTION::BACK:
+		Position.z -= speed;
+		break;
+	case DIRECTION::LEFT:
+		break;
+	case DIRECTION::RIGHT:
+		break;
+	}
+}
+
+
