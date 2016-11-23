@@ -1,7 +1,5 @@
 #include <cmath>
 #include <iostream>
-#include "ObjProp.h"
-#include "Vector3D.h"
 #include "Camera.h"
 #include "gl/glut.h"
 
@@ -61,9 +59,9 @@ void CCamera::SetLookVector()
 
 
 	if (delta_x > 0.0f)
- 		Angle.yaw -= ROTATE_SPEED;
+ 		Angle.yaw += ROTATE_SPEED;
 	else if (delta_x < 0.0f)
-		Angle.yaw += ROTATE_SPEED;
+		Angle.yaw -= ROTATE_SPEED;
 
 	if (delta_y > 0.0f)
 		Angle.pitch += ROTATE_SPEED;

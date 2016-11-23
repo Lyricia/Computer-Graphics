@@ -1,7 +1,7 @@
 #include<iostream>
 #include<time.h>
 #include<gl\glut.h>
-
+#include "Camera.h"
 #include "Object.h"
 
 #define W_Width		800
@@ -39,6 +39,7 @@ CObject SphereTree;
 CObject TorusBuilding;
 CObject ConeBuilding;
 CObject DoorBuilding;
+CCamera Camera;
 
 float projectionmatrix[16] = {
 	1,0,0,0,
@@ -73,7 +74,7 @@ GLvoid init(GLvoid)
 GLvoid RegesterCallBack()
 {
 	glutMouseFunc(MouseEvent);
-	glutMotionFunc(MouseMove);
+	glutPassiveMotionFunc(MouseMove);
 	glutKeyboardFunc(Keydown);
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
@@ -83,18 +84,10 @@ GLvoid RegesterCallBack()
 GLvoid drawScene(GLvoid)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glMatrixMode(GL_MODELVIEW);
 
 	if (IsPerspective) {
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		gluPerspective(60.0, 1.0, 1.0, 10000);
-		glTranslatef(0.0, 0.0, camdist);
-		gluLookAt(
-			0, cameray, 0,
-			0, 0, 1,
-			0, 1, 0
-		);
+		Camera.SetLookVector();
+		Camera.SetCamera();
 	}
 	else {
 		glMatrixMode(GL_PROJECTION);
@@ -289,54 +282,62 @@ GLvoid Keydown(unsigned char key, int x, int y)
 
 GLvoid MouseMove(int x, int y)
 {
+	if (IsPerspective) {
+		Camera.getMouse(x, y);
+		Camera.SetLookVector();
+	}
+	glutPostRedisplay();
 }
 
 GLvoid MouseEvent(int button, int state, int x, int y)
 {
-	switch (button)
+	if (!IsPerspective)
 	{
-	case GLUT_LEFT_BUTTON:
-		if (state == GLUT_DOWN)
+		switch (button)
 		{
-			MousePoints[pointcounter][0] = x - 400;
-			MousePoints[pointcounter][1] = 0;
-			MousePoints[pointcounter][2] = 300 - y;
-
-			ctrlpoints[pointcounter][0][0] = MousePoints[pointcounter][0] - 10;
-			ctrlpoints[pointcounter][0][1] = MousePoints[pointcounter][1];
-			ctrlpoints[pointcounter][0][2] = MousePoints[pointcounter][2] - 10;
-
-			ctrlpoints[pointcounter][1][0] = MousePoints[pointcounter][0];
-			ctrlpoints[pointcounter][1][1] = MousePoints[pointcounter][1];
-			ctrlpoints[pointcounter][1][2] = MousePoints[pointcounter][2];
-
-			ctrlpoints[pointcounter][2][0] = MousePoints[pointcounter][0] + 10;
-			ctrlpoints[pointcounter][2][1] = MousePoints[pointcounter][1];
-			ctrlpoints[pointcounter][2][2] = MousePoints[pointcounter][2] + 10;
-
-			for (int i = pointcounter; i < 30; i++)
+		case GLUT_LEFT_BUTTON:
+			if (state == GLUT_DOWN)
 			{
-				MousePoints[i][0] = x - 400;
-				MousePoints[i][1] = 0;
-				MousePoints[i][2] = 300 - y;
+				MousePoints[pointcounter][0] = x - 400;
+				MousePoints[pointcounter][1] = 0;
+				MousePoints[pointcounter][2] = 300 - y;
 
-				ctrlpoints[i][0][0] = MousePoints[i][0] - 10;
-				ctrlpoints[i][0][1] = MousePoints[i][1];
-				ctrlpoints[i][0][2] = MousePoints[i][2] - 10;
+				ctrlpoints[pointcounter][0][0] = MousePoints[pointcounter][0] - 10;
+				ctrlpoints[pointcounter][0][1] = MousePoints[pointcounter][1];
+				ctrlpoints[pointcounter][0][2] = MousePoints[pointcounter][2] - 10;
 
-				ctrlpoints[i][1][0] = MousePoints[i][0];
-				ctrlpoints[i][1][1] = MousePoints[i][1];
-				ctrlpoints[i][1][2] = MousePoints[i][2];
+				ctrlpoints[pointcounter][1][0] = MousePoints[pointcounter][0];
+				ctrlpoints[pointcounter][1][1] = MousePoints[pointcounter][1];
+				ctrlpoints[pointcounter][1][2] = MousePoints[pointcounter][2];
 
-				ctrlpoints[i][2][0] = MousePoints[i][0] + 10;
-				ctrlpoints[i][2][1] = MousePoints[i][1];
-				ctrlpoints[i][2][2] = MousePoints[i][2] + 10;
+				ctrlpoints[pointcounter][2][0] = MousePoints[pointcounter][0] + 10;
+				ctrlpoints[pointcounter][2][1] = MousePoints[pointcounter][1];
+				ctrlpoints[pointcounter][2][2] = MousePoints[pointcounter][2] + 10;
+
+				for (int i = pointcounter; i < 30; i++)
+				{
+					MousePoints[i][0] = x - 400;
+					MousePoints[i][1] = 0;
+					MousePoints[i][2] = 300 - y;
+
+					ctrlpoints[i][0][0] = MousePoints[i][0] - 10;
+					ctrlpoints[i][0][1] = MousePoints[i][1];
+					ctrlpoints[i][0][2] = MousePoints[i][2] - 10;
+
+					ctrlpoints[i][1][0] = MousePoints[i][0];
+					ctrlpoints[i][1][1] = MousePoints[i][1];
+					ctrlpoints[i][1][2] = MousePoints[i][2];
+
+					ctrlpoints[i][2][0] = MousePoints[i][0] + 10;
+					ctrlpoints[i][2][1] = MousePoints[i][1];
+					ctrlpoints[i][2][2] = MousePoints[i][2] + 10;
+				}
+				pointcounter++;
 			}
-			pointcounter++;
+			break;
+		case GLUT_RIGHT_BUTTON:
+			break;
 		}
-		break;
-	case GLUT_RIGHT_BUTTON:
-		break;
 	}
 	glutPostRedisplay();
 }
@@ -349,6 +350,8 @@ GLvoid Timer(int val)
 	TorusBuilding.moveTorus(1);
 	ConeBuilding.scaleCone(0.01);
 	DoorBuilding.moveDoor(1);
+	if(IsPerspective)
+		glutWarpPointer(400, 300);
 
 	glutPostRedisplay();
 	glutTimerFunc(10, Timer, 1);

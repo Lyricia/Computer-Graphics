@@ -127,6 +127,7 @@ GLvoid DrawSpace()
 	glutSolidCube(300);
 	glPopMatrix();
 }
+
 GLvoid DrawPolygon(GLvoid)
 {
 	glRotatef(angle, 0, 1, 0);

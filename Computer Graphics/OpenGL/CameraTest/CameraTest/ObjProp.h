@@ -1,5 +1,6 @@
 #pragma once
 #include "gl/glut.h"
+#include "Vector3D.h"
 
 class CAngle
 {

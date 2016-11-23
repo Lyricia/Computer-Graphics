@@ -50,7 +50,7 @@ class ObjProp
 public:
 	ObjProp();
 	~ObjProp();
-	CVertex Vertex;
+	Vec3f Position;
 	CVertex BoundingBox[4];
 	CAngle Angle;
 	float m_scale;
