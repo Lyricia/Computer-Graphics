@@ -243,3 +243,19 @@ void CObject::moveDoor(float speed)
 		m_DoorPos -= speed;
 }
 
+void CObject::PyramidRender()
+{
+	glPushMatrix();
+	{
+		Color.setcolor(255, 0, 255);
+		Color.applycolor();
+		glRotatef(-90, 1, 0, 0);
+		glutSolidCone(100, 100, 4, 4);
+	}
+	glPopMatrix();
+}
+
+void CObject::moveOrbit()
+{
+}
+

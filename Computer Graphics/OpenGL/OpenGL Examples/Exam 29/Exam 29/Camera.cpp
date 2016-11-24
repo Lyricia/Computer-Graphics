@@ -78,7 +78,7 @@ void CCamera::SetLookVector()
 
 	m_LookVector = { cosf(RAD(Angle.yaw)), tanf(RAD(Angle.pitch)), sinf(RAD(Angle.yaw)) };
 //	m_LookVector = { 1.0f, tanf(RAD(Angle.pitch)), 1.0f };
-	std::cout << Angle.pitch << std::endl;
+//	std::cout << Angle.pitch << std::endl;
 	m_LookVector = Normalize(m_LookVector);
 
 	oldMousePostion_x = newMousePostion_x;

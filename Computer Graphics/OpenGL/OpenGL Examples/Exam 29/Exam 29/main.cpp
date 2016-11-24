@@ -34,10 +34,17 @@ CObject RectTree;
 CObject SphereTree;
 CObject TorusBuilding;
 CObject ConeBuilding;
-CObject DoorBuilding;
+CObject Pyramid;
 
 CCamera Camera;
 float camdist;
+float ambiantlevel;
+float diffuselevel;
+float specularlevel;
+bool light1on;
+bool light2on;
+
+bool mousehold;
 
 void main(int, char *)
 {
@@ -59,6 +66,11 @@ GLvoid init(GLvoid)
 {
 	srand(unsigned(time(NULL)));
 	camdist = -400;
+
+	ambiantlevel = 0.0f;
+	diffuselevel = 0.0f;
+	specularlevel = 0.0f;
+	mousehold = true;
 }
 
 GLvoid RegesterCallBack()
@@ -88,27 +100,43 @@ void EnLighten()
 	//glLightfv(GL_LIGHT0, GL_POSITION, PositionLightValue); //조명의 위치(광원)를 설정한다.
 
 
-	GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat SpecularLight[] = { specularlevel, specularlevel, specularlevel, specularlevel };
+	GLfloat AmbientLight[] = { ambiantlevel, ambiantlevel, ambiantlevel, ambiantlevel };
+	GLfloat DiffuseLight[] = { diffuselevel, diffuselevel, diffuselevel, diffuselevel };
+	GLfloat light1_position[] = { 300.0, 100.0, 00.0, 0.0 };
+	GLfloat light2_position[] = { -300.0, 100.0, 0.0, 0.0 };
 	GLfloat mat_shininess[] = { 15 };
-	GLfloat light_position[] = { 100.0, 100.0, 50.0, 0.0 };
-	GLfloat ambientLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	GLfloat diffuseLight[] = { 0.0f, 1.0f, 0.0f, 1.0f };
 	glShadeModel(GL_SMOOTH);
 
 	glEnable(GL_COLOR_MATERIAL);
 	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 
-	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, SpecularLight);
 	glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
-	glMaterialfv(GL_FRONT, GL_AMBIENT, ambientLight);
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuseLight);
-	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+	glMaterialfv(GL_FRONT, GL_AMBIENT, AmbientLight);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, DiffuseLight);
 
-	glColor3f(1, 1, 0);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, AmbientLight);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, DiffuseLight);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, SpecularLight);
+	glLightfv(GL_LIGHT0, GL_POSITION, light1_position);
+
+	glLightfv(GL_LIGHT1, GL_AMBIENT, AmbientLight);
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, DiffuseLight);
+	glLightfv(GL_LIGHT1, GL_SPECULAR, SpecularLight);
+	glLightfv(GL_LIGHT1, GL_POSITION, light2_position);
 
 	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
+
+
+	if(light1on)		glEnable(GL_LIGHT0);
+	else				glDisable(GL_LIGHT0);
+
+	if (light2on)		glEnable(GL_LIGHT1);
+	else				glDisable(GL_LIGHT1);
+
 }
+
 
 GLvoid drawScene(GLvoid)
 {
@@ -168,7 +196,7 @@ void DrawObject()
 		DrawSpace();
 		glPushMatrix();
 		{
-			DoorBuilding.DoorBuildingRender();
+			Pyramid.PyramidRender();
 		}
 		glPopMatrix();
 		glPushMatrix();
@@ -223,10 +251,18 @@ GLvoid Keydown(unsigned char key, int x, int y)
 	{
 	case 'q':
 		exit(0);
-		break;
+		break; 
 
 	case 'i':
 		init();
+		break;
+
+	case '1':
+		light1on = boolswitch(light1on);
+		break;
+		
+	case '2':
+		light2on = boolswitch(light2on);
 		break;
 
 	case 'r':
@@ -237,8 +273,31 @@ GLvoid Keydown(unsigned char key, int x, int y)
 		Camera.Move(DIRECTION::BACK, 10);
 		break;
 
+	case 'a':
+		ambiantlevel += 0.1;
+		break;
+	case 'A':
+		ambiantlevel -= 0.1;
+		break;
+	case 'd':
+		diffuselevel += 0.1;
+		break;
+	case 'D':
+		diffuselevel -= 0.1;
+		break;
+	case 's':
+		specularlevel += 0.1;
+		break;
+	case 'S':
+		specularlevel -= 0.1;
+		break;
+
+	case 'm':
+		mousehold = boolswitch(mousehold);
+		break;
 	}
 	
+	std::cout << ambiantlevel << " " << diffuselevel << " " << specularlevel << std::endl;
 
 	glutPostRedisplay();
 }
@@ -261,9 +320,8 @@ GLvoid Timer(int val)
 	SphereTree.scaleSphere(0.01);
 	TorusBuilding.moveTorus(1);
 	ConeBuilding.scaleCone(0.01);
-	DoorBuilding.moveDoor(1);
-
-	glutWarpPointer(400, 300);
+	if(mousehold)
+		glutWarpPointer(400, 300);
 	glutPostRedisplay();
 	glutTimerFunc(10, Timer, 1);
 }

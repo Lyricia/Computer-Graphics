@@ -28,5 +28,8 @@ public:
 	void scaleCone(float scale);
 	void DoorBuildingRender();
 	void moveDoor(float speed);
+	void PyramidRender();
+	void moveOrbit();
+
 };
 
