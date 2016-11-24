@@ -11,17 +11,17 @@ ObjProp::~ObjProp()
 
 void ObjProp::initBB()
 {
-	BoundingBox[BBPOS::LEFTTOP].x = Vertex.x - m_scale;
-	BoundingBox[BBPOS::LEFTTOP].z = Vertex.z + m_scale;
+	BoundingBox[BBPOS::LEFTTOP].x = Position.x - m_scale;
+	BoundingBox[BBPOS::LEFTTOP].z = Position.z + m_scale;
 
-	BoundingBox[BBPOS::RIGHTTOP].x = Vertex.x + m_scale;
-	BoundingBox[BBPOS::RIGHTTOP].z = Vertex.z + m_scale;
+	BoundingBox[BBPOS::RIGHTTOP].x = Position.x + m_scale;
+	BoundingBox[BBPOS::RIGHTTOP].z = Position.z + m_scale;
 
-	BoundingBox[BBPOS::RIGHTBOTTOM].x = Vertex.x + m_scale;
-	BoundingBox[BBPOS::RIGHTBOTTOM].z = Vertex.z - m_scale;
+	BoundingBox[BBPOS::RIGHTBOTTOM].x = Position.x + m_scale;
+	BoundingBox[BBPOS::RIGHTBOTTOM].z = Position.z - m_scale;
 
-	BoundingBox[BBPOS::LEFTBOTTOM].x = Vertex.x - m_scale;
-	BoundingBox[BBPOS::LEFTBOTTOM].z = Vertex.z - m_scale;
+	BoundingBox[BBPOS::LEFTBOTTOM].x = Position.x - m_scale;
+	BoundingBox[BBPOS::LEFTBOTTOM].z = Position.z - m_scale;
 }
 
 void ObjProp::DrawBB()
@@ -38,8 +38,6 @@ CVertex* ObjProp::GetBB()
 {
 	return BoundingBox;
 }
-
-
 
 bool ObjProp::isCollide(CVertex *P)
 {

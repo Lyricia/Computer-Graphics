@@ -9,7 +9,10 @@
 
 CCamera::CCamera()
 {
-	dist = -300;
+	dist = -500;
+	Position.z = 100;
+	Angle.yaw = 90;
+	Angle.pitch = 0;
 }
 CCamera::~CCamera()
 {}
@@ -76,7 +79,7 @@ void CCamera::SetLookVector()
 	m_LookVector = { cosf(RAD(Angle.yaw)), tanf(RAD(Angle.pitch)), sinf(RAD(Angle.yaw)) };
 //	m_LookVector = { 1.0f, tanf(RAD(Angle.pitch)), 1.0f };
 	std::cout << Angle.pitch << std::endl;
-	m_LookVector.Normalize();
+	m_LookVector = Normalize(m_LookVector);
 
 	oldMousePostion_x = newMousePostion_x;
 	oldMousePostion_y = newMousePostion_y;
@@ -87,7 +90,7 @@ void CCamera::getMouse(int x, int y)
 {
 	newMousePostion_x = x;
 	newMousePostion_y = y;
-	std::cout << x << ' ' << y << std::endl; 
+	//std::cout << x << ' ' << y << std::endl; 
 }
 
 void CCamera::Move(DIRECTION dir, float speed)
