@@ -250,7 +250,7 @@ void CObject::PyramidRender()
 		Color.setcolor(255, 0, 255);
 		Color.applycolor();
 		glRotatef(-90, 1, 0, 0);
-		glutSolidCone(100, 100, 4, 4);
+		glutSolidCone(50, 100, 4, 4);
 	}
 	glPopMatrix();
 }

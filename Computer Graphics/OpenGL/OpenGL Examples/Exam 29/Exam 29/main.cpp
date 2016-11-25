@@ -3,6 +3,7 @@
 #include <gl\glut.h>
 #include "Camera.h"
 #include "Object.h"
+#include "Orbit.h"
 
 #define W_Width		800
 #define W_Height	600
@@ -27,6 +28,7 @@ GLvoid DrawLines();
 GLvoid DrawSpace();
 GLvoid DrawPolygon(GLvoid);
 void DrawObject();
+void DrawOrbit();
 void EnLighten();
 
 
@@ -35,6 +37,7 @@ CObject SphereTree;
 CObject TorusBuilding;
 CObject ConeBuilding;
 CObject Pyramid;
+COrbit Orbit;
 
 CCamera Camera;
 float camdist;
@@ -43,6 +46,8 @@ float diffuselevel;
 float specularlevel;
 bool light1on;
 bool light2on;
+int angle;
+int angle2;
 
 bool mousehold;
 
@@ -103,8 +108,8 @@ void EnLighten()
 	GLfloat SpecularLight[] = { specularlevel, specularlevel, specularlevel, specularlevel };
 	GLfloat AmbientLight[] = { ambiantlevel, ambiantlevel, ambiantlevel, ambiantlevel };
 	GLfloat DiffuseLight[] = { diffuselevel, diffuselevel, diffuselevel, diffuselevel };
-	GLfloat light1_position[] = { 300.0, 100.0, 00.0, 0.0 };
-	GLfloat light2_position[] = { -300.0, 100.0, 0.0, 0.0 };
+	GLfloat light1_position[] = { 600.0, 100.0, 00.0, 0.0 };
+	GLfloat light2_position[] = { -600.0, 100.0, 0.0, 0.0 };
 	GLfloat mat_shininess[] = { 15 };
 	glShadeModel(GL_SMOOTH);
 
@@ -154,6 +159,17 @@ GLvoid drawScene(GLvoid)
 	{
 		DrawLines();
 		DrawObject();
+		DrawOrbit();
+	}
+	glPopMatrix();
+
+	glPushMatrix();
+	{
+		glTranslatef(-600, 100, 0);
+		glutSolidCone(10, 10, 10, 10);
+		glLoadIdentity();
+		glTranslatef(600, 100, 0);
+		glutSolidCone(10, 10, 10, 10);
 	}
 	glPopMatrix();
 
@@ -227,6 +243,23 @@ void DrawObject()
 	glPopMatrix();
 }
 
+void DrawOrbit()
+{
+	glPushMatrix();
+	{
+		glTranslatef(0, 100, 0);
+		glColor3f(1, 1, 1);
+		//Orbit.DrawOrbit(120);
+		glPushMatrix();
+		{
+			Orbit.DrawPlanet(40, 30, angle, 0);
+			//Orbit.DrawOrbit(90);
+			Orbit.DrawPlanet(30, 10, angle2, 0);
+		}
+		glPopMatrix();
+	}
+	glPopMatrix();
+}
 
 GLvoid Reshape(int w, int h)
 {
@@ -316,12 +349,17 @@ GLvoid MouseEvent(int button, int state, int x, int y)
 
 GLvoid Timer(int val)
 {
+	angle = (angle + 2) % 360;
+	angle2 = (angle2 + 4) % 360;
+
 	RectTree.rotateRect(1);
 	SphereTree.scaleSphere(0.01);
 	TorusBuilding.moveTorus(1);
 	ConeBuilding.scaleCone(0.01);
+
 	if(mousehold)
 		glutWarpPointer(400, 300);
+
 	glutPostRedisplay();
 	glutTimerFunc(10, Timer, 1);
 }
