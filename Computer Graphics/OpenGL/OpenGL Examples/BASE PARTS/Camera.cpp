@@ -9,7 +9,10 @@
 
 CCamera::CCamera()
 {
-	dist = -300;
+	dist = 0;
+	Position.z = 100;
+	Angle.yaw = 90;
+	Angle.pitch = 0;
 }
 CCamera::~CCamera()
 {}
@@ -19,15 +22,23 @@ void CCamera::SetCamera()
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(110.0, 1.0, 1.0, 10000);
-	glTranslatef(0.0, 0.0, dist);
+	//glTranslatef(0.0, 0.0, dist);
 	gluLookAt(
-		m_CameraPosition.x, m_CameraPosition.y, m_CameraPosition.z,
-		m_CameraPosition.x + m_LookVector.x, m_CameraPosition.y + m_LookVector.y, m_CameraPosition.z + m_LookVector.z,
+		Position.x , Position.y, Position.z,
+		Position.x + m_LookVector.x, Position.y + m_LookVector.y, Position.z + m_LookVector.z,
 		0, 1, 0);
-//	gluLookAt(
-//		0, 0, 0,
-//		m_LookVector.x, m_LookVector.y, m_LookVector.z, 
-//		0, 1, 0);
+
+	//std::cout << Position.x << " " << Position.y << " " << Position.z << std::endl;
+}
+
+void CCamera::SetCameraPosition(float x, float y, float z)
+{
+	Position = { x, y, z };
+}
+
+void CCamera::SetCameraPosition(Vec3f _positioninput)
+{
+	Position = _positioninput;
 }
 
 /*////////////// Set Camera Look Vector //////////////////
@@ -53,7 +64,7 @@ void CCamera::SetLookVector()
 {
 	float delta_x;
 	float delta_y;
-	const float ROTATE_SPEED =0.5;
+	const float ROTATE_SPEED =1;
 
 	delta_x = 400 - newMousePostion_x;
 	delta_y = 300 - newMousePostion_y;
@@ -61,9 +72,9 @@ void CCamera::SetLookVector()
 
 
 	if (delta_x > 0.0f)
- 		Angle.yaw += ROTATE_SPEED;
+ 		Angle.yaw -= ROTATE_SPEED;
 	else if (delta_x < 0.0f)
-		Angle.yaw -= ROTATE_SPEED;
+		Angle.yaw += ROTATE_SPEED;
 
 	if (delta_y > 0.0f)
 		Angle.pitch += ROTATE_SPEED;
@@ -75,34 +86,43 @@ void CCamera::SetLookVector()
 
 	m_LookVector = { cosf(RAD(Angle.yaw)), tanf(RAD(Angle.pitch)), sinf(RAD(Angle.yaw)) };
 //	m_LookVector = { 1.0f, tanf(RAD(Angle.pitch)), 1.0f };
-	std::cout << Angle.pitch << std::endl;
-	m_LookVector.Normalize();
+//	std::cout << Angle.pitch << std::endl;
+	m_LookVector = Normalize(m_LookVector);
 
 	oldMousePostion_x = newMousePostion_x;
 	oldMousePostion_y = newMousePostion_y;
 }
 
-
 void CCamera::getMouse(int x, int y)
 {
 	newMousePostion_x = x;
 	newMousePostion_y = y;
-	std::cout << x << ' ' << y << std::endl; 
+	//std::cout << x << ' ' << y << std::endl; 
 }
+/*////////////////////////////////////////////////////////////
+
+Movements goes forward, backward along camera lookvector. 
+Left, right movements goes along perpendicular vector of lookvector.
+
+/////////////////////////////////////////////////////////////*/
 
 void CCamera::Move(DIRECTION dir, float speed)
 {
 	switch (dir)
 	{
 	case DIRECTION::FRONT:
-		dist += speed;
+		Position = Position + (m_LookVector * speed);
 		break;
 	case DIRECTION::BACK:
-		dist -= speed;
+		Position = Position - (m_LookVector * speed);
 		break;
 	case DIRECTION::LEFT:
+		Position.x = Position.x + (m_LookVector.z * speed);
+		Position.z = Position.z - (m_LookVector.x * speed);
 		break;
 	case DIRECTION::RIGHT:
+		Position.x = Position.x - (m_LookVector.z * speed);
+		Position.z = Position.z + (m_LookVector.x * speed);
 		break;
 	}
 }

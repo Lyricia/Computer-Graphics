@@ -19,6 +19,7 @@ GLvoid MouseEvent(int, int, int, int);
 GLvoid init(GLvoid);
 
 bool boolswitch(bool chker);
+static float CATMULL_ROM_SPLINE(float u, float u_2, float u_3, float cntrl0, float cntrl1, float cntrl2, float cntrl3);
 GLvoid DrawLines();
 GLvoid DrawSpace();
 GLvoid DrawPolygon(GLvoid);
@@ -59,13 +60,13 @@ GLvoid RegesterCallBack()
 GLvoid drawScene(GLvoid)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	Camera.SetLookVector();
-	Camera.SetCamera();
+	//Camera.SetLookVector();
+	//Camera.SetCamera();
 	
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	{
-	
+		DrawPolygon();
 	}
 	glPopMatrix();
 
@@ -96,8 +97,36 @@ GLvoid DrawSpace()
 	glPopMatrix();
 }
 
+float u, u_2, u_3, f, fy;
+
+float startPointX, endPointX, controlPoint1X, controlPoint2X;
+float startPointY, endPointY, controlPoint1Y, controlPoint2Y;
+
 GLvoid DrawPolygon(GLvoid)
 {
+	glPointSize(4);
+	glBegin(GL_POINTS);
+	for (int j = 0; j < 20; j++)
+	{
+		u = (float)j / 20;
+		u_2 = u * u;
+		u_3 = u_2 * u;
+		f = CATMULL_ROM_SPLINE(u, u_2, u_3,
+			0,
+			100,
+			0,
+			100
+		);
+
+		fy = CATMULL_ROM_SPLINE(u, u_2, u_3,
+			0,
+			100,
+			0,
+			100
+		);
+		glVertex3f(f, fy, 0);
+	}
+	glEnd();
 }
 
 GLvoid Reshape(int w, int h)
@@ -107,7 +136,7 @@ GLvoid Reshape(int w, int h)
 	glLoadIdentity();
 
 	gluPerspective(60.0, 1.0, 1.0, 1000.0);
-	glTranslatef(0.0, 0.0, 300.0);
+	glTranslatef(0.0, 0.0, -300.0);
 
 	glMatrixMode(GL_MODELVIEW);
 
@@ -160,4 +189,15 @@ bool boolswitch(bool chker)
 	if (chker == true)			return false;
 	else if (chker == false)	return true;
 	return false;
+}
+
+static inline float
+CATMULL_ROM_SPLINE(float u, float u_2, float u_3, float cntrl0, float cntrl1, float cntrl2, float cntrl3)
+{
+	return (
+		(-1.0f*u_3 + 2.0f*u_2 - 1.0f*u + 0.0f) * cntrl0 +
+		(3.0f*u_3 - 5.0f*u_2 + 0.0f*u + 2.0f) * cntrl1 +
+		(-3.0f*u_3 + 4.0f*u_2 + 1.0f*u + 0.0f) * cntrl2 +
+		(1.0f*u_3 - 1.0f*u_2 + 0.0f*u + 0.0f) * cntrl3
+		) / 2.0f;
 }
