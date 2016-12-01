@@ -27,7 +27,7 @@ POINT LenOperMinus(POINT a, POINT b)
 	c.y = a.y - b.y;
 	return c;
 }
-
+/*
 void  numFix(LPWSTR DestMsg, int fixnum)
 {
 	TCHAR Fix[20] = L"0\0", returnMsg[20];
@@ -56,6 +56,7 @@ void  numFix(LPWSTR DestMsg, int fixnum)
 	lstrcpy(DestMsg, returnMsg);
 
 }
+*/
 
 RECT SizeDown(RECT rc, int len)
 {

@@ -38,7 +38,7 @@ EXT POINT POINT_oper_plus(POINT a, POINT b);
 EXT RECT RECT_oper_plus_pt(RECT rc, POINT pt);
 EXT RECT SizeDown(RECT rc, int len);
 EXT bool flip(bool Is);
-EXT void  numFix(LPSTR DestMsg, int fixnum);
+//EXT void numFix(LPSTR DestMsg, int fixnum);
 EXT int square(int val);
 EXT double square(double val);
 EXT int sideStore(int min, int value, int max);

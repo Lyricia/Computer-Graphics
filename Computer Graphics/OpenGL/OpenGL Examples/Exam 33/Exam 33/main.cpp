@@ -1,17 +1,42 @@
+//실습34
+//실습 33 에 건물과 스포트라이트 추가하기
+//
+//실습 33의 길에 다양한 크기의 건물을 여러 개 그린다.
+//각 길마다 2개 이상의 건물을 그린다.
+//스포트라이트 설정하기
+//
+//움직이는 물체 위에 스포트라이트를 설정하고 물체 방향을 ㅗ빛을 쏜다.
+//
+//스포트 라이트를 사용하기 위해서는 glLight 함수에서 다음 ㅗㄱ성을 설정한다.
+//GL_POSITION
+//GL_SPOT_DIRECTION : 스포트라이트 방향벡터
+//	GL_SPOT_CUTOFF : 확산각도
+//	GL_SPOT_EXPONENT : 스포트라이트 지수
+//	GL_CONSTANT_ATTENUATION : 흐림지수
+//
+//	물체가 움직이면 같이 움직인다
+//
+//	점프 길에서 건물을 건너뛸 수 있는 점프를 구현
+//	키보드명령 - 스포트라이트 켜기 / 끄기
+//	효과구현
+//	자동차가 건물과 충돌하면 폭발
+//
+
 #include <iostream>
 #include <time.h>
 #include <gl\glut.h>
 #include "Camera.h"
-#include "Object.h"
-#include "Orbit.h"
+#include "Ball.h"
+#include "Crane.h"
 
 #define W_Width		800
 #define W_Height	600
 #define W_Depth		800
 #define PI			3.14159265359
 
-GLvoid RegesterCallBack();
+#define RAD(x)		x * PI / 180
 
+GLvoid RegesterCallBack();
 
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
@@ -24,15 +49,13 @@ GLvoid init(GLvoid);
 
 bool boolswitch(bool chker);
 
+
 GLvoid DrawLines();
 GLvoid DrawSpace();
 GLvoid DrawPolygon(GLvoid);
-void DrawObject();
-void DrawOrbit();
+void carjump();
+void DrawCar();
 void EnLighten();
-
-CObject Pyramid;
-COrbit Orbit;
 
 CCamera Camera;
 
@@ -43,14 +66,26 @@ float specularlevel1;
 
 bool light1on;
 
-int angle;
+float angle;
 float angle2;
+
+CBall wheel[4];
+CCrane crane;
 
 bool mousehold;
 bool IsNormalOn;
 
 float camangle;
 
+enum lane { lfall, left, center, right, rfall };
+
+int cranelane;
+
+bool IsJump = false;
+
+float cranexdir = 1;
+float craneydir = 1;
+float xdist = 0;
 void main(int, char *)
 {
 	init();
@@ -72,16 +107,17 @@ GLvoid init(GLvoid)
 	srand(unsigned(time(NULL)));
 	camdist = -400;
 
-	ambiantlevel1= 0.3f;
-	diffuselevel1= 1.0f;
-	specularlevel1= 1.0f;
+	ambiantlevel1 = 0.0f;
+	diffuselevel1 = 0.0f;
+	specularlevel1 = 0.0f;
 
 	light1on = true;
 
-	Camera.SetCameraPosition(0, 200, -500);
+	Camera.SetCameraPosition(0, 400, -800);
 
 	mousehold = true;
 
+	cranelane = 2;
 }
 
 GLvoid RegesterCallBack()
@@ -96,11 +132,15 @@ GLvoid RegesterCallBack()
 
 void EnLighten()
 {
-	GLfloat SpecularLight1[] = { specularlevel1, specularlevel1, specularlevel1, specularlevel1 };
-	GLfloat AmbientLight1[] = { ambiantlevel1, ambiantlevel1, ambiantlevel1, ambiantlevel1 };
-	GLfloat DiffuseLight1[] = { diffuselevel1, diffuselevel1, diffuselevel1, diffuselevel1 };
+	GLfloat SpecularLight1[] = { 0.0, specularlevel1, 0.0, 1.0f };
+	GLfloat AmbientLight1[] = { ambiantlevel1, ambiantlevel1, 0.0, 1.0f };
+	GLfloat DiffuseLight1[] = { 0.0, diffuselevel1, 0.0, 1.0f };
+	
+	if (IsJump) { AmbientLight1[0] = 0; }
 
-	GLfloat light1_position[] = { 600.0, 10, -600.0, 0.0 };
+
+	GLfloat light1_position[] = { crane.Position.x, 1000, crane.Position.z, 0.0f };
+
 	GLfloat mat_shininess[] = { 15 };
 	glShadeModel(GL_SMOOTH);
 
@@ -120,7 +160,7 @@ void EnLighten()
 	glEnable(GL_LIGHTING);
 
 
-	if(light1on)		glEnable(GL_LIGHT0);
+	if (light1on)		glEnable(GL_LIGHT0);
 	else				glDisable(GL_LIGHT0);
 }
 
@@ -137,88 +177,50 @@ GLvoid drawScene(GLvoid)
 
 	EnLighten();
 
-	//DrawSpace();
+
+	//glutSolidCube(100);
+
+	glPushMatrix();
+	{
+		
+		DrawCar();
+	}
+	glPopMatrix();
+
 
 
 	glPushMatrix();
 	{
-
+		glTranslatef(-500, -20, 0);
+		DrawSpace();
+		glTranslatef(500, 0, 0);
+		DrawSpace();
+		glTranslatef(500, 0, 0);
+		DrawSpace();
 	}
 	glPopMatrix();
 
-	glPushMatrix();
-	{
-		glTranslatef(200, 0, 0);
-		glPushMatrix();
-		{
-			DrawLines();
-			glColor3f(0.1, 0.2, 0);
-			glRotatef(angle, 0, 1, 0);
-			glTranslatef(50, 0, 0);
-			glutSolidCube(50);
-		}
-		glPopMatrix();
-	}
-	glPopMatrix();
 	
-	glPushMatrix();
-	{
-		glTranslatef(-200, 0, 0);
-		glPushMatrix();
-		{
-			glRotatef(angle, 1, 0, 0);
-			DrawLines();
-			glPushMatrix();
-			{
-				glColor3f(1, 1, 0);
-				glRotatef(angle, 0, 1, 0);
-				glTranslatef(0, 100, 0);
-				glutSolidSphere(50, 10, 10);
-			}
-			glPopMatrix();
-		}
-		glPopMatrix();
-	}
-	glPopMatrix();
-
-	glPushMatrix();
-	{
-		glTranslatef(100, 0, -300);
-		glRotatef(45, 0, 0, 1);
-		glPushMatrix();
-		{
-			DrawLines();
-			glTranslatef(cosf(angle2)*100, 0, sinf(angle2)*100);
-			glRotatef(90, 0, 1, 0);
-			glPushMatrix();
-			{
-				glColor3f(1, 0, 1);
-				glRotatef(angle, 0, 1, 0);
-				glTranslatef(0, 100, 0);
-				glutSolidSphere(50, 10, 10);
-				glRotatef(-90, 1, 0, 0);
-				glutWireTorus(10, 90, 10, 10);
-			}
-			glPopMatrix();
-		}
-		glPopMatrix();
-	}
-	glPopMatrix();
-
+	
 	glutSwapBuffers();
 }
 
-void RotatingCube()
+void DrawCar()
 {
 	glPushMatrix();
 	{
-		glColor3f(1.f, 1.f, 1.f);
-		glBegin(GL_LINES);
-		glVertex3f(0.0, 0.0, -W_Depth);
-		glVertex3f(0.0, 0.0, W_Depth);
-		glEnd();
-		glutSolidCube(50);
+		glRotatef(90, 0, 1, 0);
+		glScaled(2, 2, 2);
+		glPushMatrix();
+		{
+			glPushMatrix();
+			glTranslatef(0, 20, 0);
+			crane.Render();
+			glPopMatrix();
+		}
+		glPopMatrix();
 	}
+	glPopMatrix();
 }
 
 GLvoid DrawLines()
@@ -240,7 +242,7 @@ GLvoid DrawSpace()
 	glColor3f(1.0, 1.0, 0);
 	glPushMatrix();
 	{
-		glScalef(3, 0.01, 3);
+		glScalef(1, 0.01, 6);
 		glutSolidCube(300);
 	}
 	glPopMatrix();
@@ -256,24 +258,6 @@ void DrawObject()
 	else glDisable(GL_NORMALIZE);
 	glPushMatrix();
 	{
-		Pyramid.PyramidRender();
-	}
-	glPopMatrix();
-}
-
-void DrawOrbit()
-{
-	glPushMatrix();
-	{
-		glColor3f(0, 1, 1);
-		//Orbit.DrawOrbit(120);
-		glPushMatrix();
-		{
-			Orbit.DrawPlanet(40, 30, angle, 0);
-			//Orbit.DrawOrbit(90);
-			Orbit.DrawPlanet(30, 10, angle2, 0);
-		}
-		glPopMatrix();
 	}
 	glPopMatrix();
 }
@@ -345,6 +329,20 @@ GLvoid Keydown(unsigned char key, int x, int y)
 		specularlevel1 -= 0.1;
 		break;
 
+	case 'g':
+		if (cranelane > -1)
+			cranelane--;
+		cranexdir = 1;
+		IsJump = true;
+		break;
+
+	case 'h':
+		if (cranelane < 5)
+			cranelane++;
+		cranexdir = -1;
+		IsJump = true;
+		break;
+
 	case 'm':
 		mousehold = boolswitch(mousehold);
 		break;
@@ -354,7 +352,8 @@ GLvoid Keydown(unsigned char key, int x, int y)
 		break;
 	}
 	
-
+	//std::cout << ambiantlevel1 << " " << diffuselevel1 << " " << specularlevel1 << std::endl;
+	std::cout << cranelane << std::endl;
 	glutPostRedisplay();
 }
 
@@ -364,19 +363,23 @@ GLvoid MouseMove(int x, int y)
 	Camera.SetLookVector();
 }
 
-GLvoid MouseEvent(int button, int state, int x, int y)
+GLvoid MouseEvent(int button, int state, int x, int y) 
 {
 	glutPostRedisplay();
 }
 
-
 GLvoid Timer(int val)
 {
-	angle = (angle + 1) % 360;
-	angle2 = angle2 + 0.01;
+	const float cranespeed = 1;
+
+	carjump();
 
 	if(mousehold)
 		glutWarpPointer(400, 300);
+
+	crane.moveCrane(cranespeed);
+	for (int i = 0; i < 4; i++)
+		wheel[i].Move(-cranespeed * 3 * crane.xdir, false, false, true);
 
 	glutPostRedisplay();
 	glutTimerFunc(10, Timer, 1);
@@ -387,4 +390,31 @@ bool boolswitch(bool chker)
 	if (chker == true)			return false;
 	else if (chker == false)	return true;
 	return false;
+}
+
+
+
+void carjump()
+{
+	if (IsJump) {
+		if (xdist > 125 && cranelane != lfall && cranelane != rfall) {
+			IsJump = false;
+			xdist = 0;
+			cranexdir = 1;
+			craneydir = 1;
+			crane.angle = 0;
+		}
+		if (xdist >= 63)
+			craneydir = -1;
+
+		if (crane.angle < 360 && crane.angle > -360) {
+			if (cranexdir > 0)
+				crane.angle += 3;
+			else if (cranexdir < 0)
+				crane.angle -= 3;
+		}
+		crane.Position.z += cranexdir * 2;
+		crane.Position.y += craneydir * 4;
+		xdist++;
+	}
 }

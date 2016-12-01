@@ -39,8 +39,6 @@ CVertex* ObjProp::GetBB()
 	return BoundingBox;
 }
 
-
-
 bool ObjProp::isCollide(CVertex *P)
 {
 	float p_left	= BoundingBox[BBPOS::LEFTTOP].x;
