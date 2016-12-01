@@ -55,6 +55,7 @@ GLvoid DrawSpace();
 GLvoid DrawPolygon(GLvoid);
 void DrawWall();
 void carjump();
+void IsCollide();
 void DrawCar();
 void EnLighten();
 
@@ -74,7 +75,7 @@ CBall wheel[4];
 CCrane crane;
 
 bool mousehold;
-bool IsNormalOn;
+bool IsNormalOn = true;
 bool IsExpoltion;
 
 float camangle;
@@ -84,6 +85,8 @@ enum lane { lfall, left, center, right, rfall };
 int cranelane;
 
 bool IsJump = false;
+bool IsLanejump = false;
+bool IsRunning = true;
 
 float cranexdir = 1;
 float craneydir = 1;
@@ -136,16 +139,17 @@ GLvoid RegesterCallBack()
 void EnLighten()
 {
 	GLfloat mat_AmbientLight1[] = { 1.f, 1.f, 1.f, 1.0f };
-	GLfloat mat_SpecularLight1[] = { 1.f, 1.f, 1.f, 1.0f };
+	GLfloat mat_SpecularLight1[] = { 1.f, 1.f, 1.f, 0.0f };
 	GLfloat mat_DiffuseLight1[] = { 1.f, 1.f, 1.f, 1.0f };
 
-	GLfloat AmbientLight1[] = { ambiantlevel1, ambiantlevel1, ambiantlevel1, 1.0f };
+	GLfloat AmbientLight1[] = { -1.f,-1.f, -1.f, 1.0f };
 	GLfloat SpecularLight1[] = { 1.f, 1.f, 1.f, 1.0f };
-	GLfloat DiffuseLight1[] = { diffuselevel1, diffuselevel1, diffuselevel1, 1.0f };
+	GLfloat DiffuseLight1[] = { 2.0f, 2.0f, 2.0f, 1.0f };
 	GLfloat spotlightDirection[] = { 0.0f, -1.0f, 0.0f };
 
+	GLfloat AmbientLight2[] = { 0, 0, 0, 1.0f };
+	
 	if (IsJump) { DiffuseLight1[0] = 0; }
-
 
 	GLfloat light1_position[] = { crane.Position.z * 2, 200, -crane.Position.x * 2, 1.0f };
 
@@ -154,8 +158,8 @@ void EnLighten()
 
 	glEnable(GL_COLOR_MATERIAL);
 	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
-	
-	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_SpecularLight1);
+
+	//glMaterialfv(GL_FRONT, GL_SPECULAR, mat_SpecularLight1);
 	glMaterialfv(GL_FRONT, GL_AMBIENT, mat_AmbientLight1);
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_DiffuseLight1);
 	glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
@@ -171,7 +175,6 @@ void EnLighten()
 	//glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 1.0);
 
 	glEnable(GL_LIGHTING);
-
 
 	if (light1on)		glEnable(GL_LIGHT0);
 	else				glDisable(GL_LIGHT0);
@@ -201,7 +204,10 @@ GLvoid drawScene(GLvoid)
 	glPushMatrix();
 	{
 		if(!IsExpoltion)		DrawCar();
-		else if (IsExpoltion)	glutWireSphere(explosionsize, 50, 50);
+		else if (IsExpoltion) {
+			glTranslatef(crane.Position.z *2, 0, -crane.Position.x * 2);
+			glutWireSphere(explosionsize, 50, 50);
+		}
 	}
 	glPopMatrix();
 
@@ -218,8 +224,20 @@ GLvoid drawScene(GLvoid)
 
 	glPushMatrix();
 	{
-		glTranslatef(0, 0, 70);
+		glPushMatrix();
+		glTranslatef(-500, 0, -400);
 		DrawWall();
+		glPopMatrix();
+		
+		glPushMatrix();
+		glTranslatef(0, 0, 150);
+		DrawWall();
+		glPopMatrix();
+		
+		glPushMatrix();
+		glTranslatef(500, 0, 400);
+		DrawWall();
+		glPopMatrix();
 	}
 	glPopMatrix();
 
@@ -272,13 +290,12 @@ GLvoid DrawSpace()
 
 GLvoid DrawPolygon(GLvoid)
 {
-	if (IsNormalOn)	glEnable(GL_NORMALIZE);
-	else glDisable(GL_NORMALIZE);
+	glEnable(GL_NORMALIZE);
 
 	GLfloat ctrlpoints[3][4][3] = {
-		{ { -8.0, 0, 4 },{ -4.0, 0, 4 },	{ 4.0, 0, 4.0 },	{ 8.0,0, 4.0 } },
-		{ { -8.0, 0, 0 },{ -4.0, 0, 0.0 },	{ 4.0, 0, 0.0 },	{ 8.0,0, 0.0 } },
-		{ { -8.0, 0, -4 },{ -4.0,0, -4 },	{ 4.0, 0, -4.0 },	{ 8.0,0, -4.0 } }
+		{ { -8.0,-1, 4 },{ -4.0, -1, 4 },	{ 4.0,-1, 4.0 },	{ 8.0,-1, 4.0 } },
+		{ { -8.0,-1, 0 },{ -4.0, -1, 0.0 },	{ 4.0,-1, 0.0 },	{ 8.0,-1, 0.0 } },
+		{ { -8.0,-1, -4 },{ -4.0,-1, -4 },	{ 4.0,-1, -4.0 },	{ 8.0,-1, -4.0 } }
 	};
 
 	glMap2f(GL_MAP2_VERTEX_3,
@@ -393,12 +410,16 @@ GLvoid Keydown(unsigned char key, int x, int y)
 		mousehold = boolswitch(mousehold);
 		break;
 
+	case 'j':
+		IsLanejump = true;
+		break;
+
 	case '`':
 		IsNormalOn = boolswitch(IsNormalOn);
 		break;
 	}
 	
-	//std::cout << ambiantlevel1 << " " << diffuselevel1 << " " << specularlevel1 << std::endl;
+	std::cout << ambiantlevel1 << " " << diffuselevel1 << " " << specularlevel1 << std::endl;
 	std::cout << IsNormalOn << std::endl;
 
 	glutPostRedisplay();
@@ -417,7 +438,7 @@ GLvoid MouseEvent(int button, int state, int x, int y)
 
 GLvoid Timer(int val)
 {
-	const float cranespeed = 1;
+	const float cranespeed = 2;
 
 	carjump();
 
@@ -432,16 +453,23 @@ GLvoid Timer(int val)
 	if(mousehold)
 		glutWarpPointer(400, 300);
 
-	if (IsExpoltion)
-	{
-		explosionsize++;
+	if (IsRunning) {
+		if (IsExpoltion)
+		{
+			explosionsize += 2;
+			if (explosionsize > 150) {
+				explosionsize = 0;
+				IsRunning = false;
+			}
+		}
+		else
+			crane.moveCrane(cranespeed);
+
+		for (int i = 0; i < 4; i++)
+			wheel[i].Move(-cranespeed * 3 * crane.xdir, false, false, true);
+
+		IsCollide();
 	}
-
-	crane.moveCrane(cranespeed);
-
-	for (int i = 0; i < 4; i++)
-		wheel[i].Move(-cranespeed * 3 * crane.xdir, false, false, true);
-
 	//std::cout << crane.Position.x << " " << crane.Position.z << std::endl;
 
 	glutPostRedisplay();
@@ -457,9 +485,10 @@ bool boolswitch(bool chker)
 
 void carjump()
 {
-	if (IsJump) {
+	if (IsJump || IsLanejump) {
 		if (xdist > 125 && cranelane != lfall && cranelane != rfall) {
 			IsJump = false;
+			IsLanejump = false;
 			xdist = 0;
 			cranexdir = 1;
 			craneydir = 1;
@@ -474,27 +503,25 @@ void carjump()
 			else if (cranexdir < 0)
 				crane.angle -= 3;
 		}
-		crane.Position.z += cranexdir * 2;
+		if (!IsLanejump)
+			crane.Position.z += cranexdir * 2;
 		crane.Position.y += craneydir * 4;
 		xdist++;
 	}
 }
-
 void IsCollide()
 {
 	if (cranelane == left) {
-		if (crane.Position.z - 70 == 100)
-			IsExpoltion = true;
-		else if (crane.Position.z + 70 == 100)
+		if (crane.Position.x * 2 >  -400 - 50 && crane.Position.x * 2 < -400 + 50 && !IsLanejump)
 			IsExpoltion = true;
 	}
 	else if (cranelane == center) {
-		if (crane.Position.z - 70 == 100)
-			IsExpoltion = true;
-		else if (crane.Position.z + 70 == 100)
-			IsExpoltion = true;
+ 		if (crane.Position.x*2 > -150 - 50 && crane.Position.x*2 < -150 + 50 && !IsLanejump)
+				IsExpoltion = true;
 	}
-	else if (cranelane == right) {
 
+	else if (cranelane == right) {
+		if (crane.Position.x * 2 > 400 - 50 && crane.Position.x * 2 < 400 + 50 && !IsLanejump)
+			IsExpoltion = true;
 	}
 }
