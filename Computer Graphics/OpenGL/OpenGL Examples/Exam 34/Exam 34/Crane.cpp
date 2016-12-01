@@ -48,28 +48,29 @@ void CCrane::Render()
 {
 	glPushMatrix();
 	{
-
 		glTranslatef(Position.x, Position.y, Position.z);
 
 		glRotatef(angle, 1, 0, 0);
 		glPushMatrix();
 		{
 			glPushMatrix();
-			glTranslatef(30, -20, -25);
-			wheel[0].Render(20);
-			glTranslatef(0, 0, 50);
-			wheel[1].Render(20);
-			glTranslatef(-60, 0, 0);
-			wheel[2].Render(20);
-			glTranslatef(0, 0, -50);
-			wheel[3].Render(20);
+			{
+				glTranslatef(30, -20, -25);
+				wheel[0].Render(20);
+				glTranslatef(0, 0, 50);
+				wheel[1].Render(20);
+				glTranslatef(-60, 0, 0);
+				wheel[2].Render(20);
+				glTranslatef(0, 0, -50);
+				wheel[3].Render(20);
+			}
 			glPopMatrix();
 
 			glRotatef(bottomangle, 0, 1, 0);
 			glScalef(1, 0.5, 1);
 			glColor3f(1.0, 0.0, 0);
 			glutSolidCube(80);
-			glTranslatef(0, 40, 0);
+/*			glTranslatef(0, 40, 0);
 			glPushMatrix();
 			{
 				glRotatef(middleanglex, 1, 0, 0);
@@ -90,7 +91,7 @@ void CCrane::Render()
 				}
 				glPopMatrix();
 			}
-			glPopMatrix();
+			glPopMatrix();*/
 		}
 		glPopMatrix();
 	}

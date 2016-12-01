@@ -53,6 +53,7 @@ bool boolswitch(bool chker);
 GLvoid DrawLines();
 GLvoid DrawSpace();
 GLvoid DrawPolygon(GLvoid);
+void DrawWall();
 void carjump();
 void DrawCar();
 void EnLighten();
@@ -67,13 +68,14 @@ float specularlevel1;
 bool light1on;
 
 float angle;
-float angle2;
+float explosionsize;
 
 CBall wheel[4];
 CCrane crane;
 
 bool mousehold;
 bool IsNormalOn;
+bool IsExpoltion;
 
 float camangle;
 
@@ -133,33 +135,37 @@ GLvoid RegesterCallBack()
 
 void EnLighten()
 {
-	GLfloat SpecularLight1[] = { 0.0, specularlevel1, 0.0, 1.0f };
-	GLfloat AmbientLight1[] = { ambiantlevel1, ambiantlevel1, 0.0, 1.0f };
-	GLfloat DiffuseLight1[] = { 0.0, diffuselevel1, 0.0, 1.0f };
+	GLfloat mat_AmbientLight1[] = { 1.f, 1.f, 1.f, 1.0f };
+	GLfloat mat_SpecularLight1[] = { 1.f, 1.f, 1.f, 1.0f };
+	GLfloat mat_DiffuseLight1[] = { 1.f, 1.f, 1.f, 1.0f };
+
+	GLfloat AmbientLight1[] = { ambiantlevel1, ambiantlevel1, ambiantlevel1, 1.0f };
+	GLfloat SpecularLight1[] = { 1.f, 1.f, 1.f, 1.0f };
+	GLfloat DiffuseLight1[] = { diffuselevel1, diffuselevel1, diffuselevel1, 1.0f };
 	GLfloat spotlightDirection[] = { 0.0f, -1.0f, 0.0f };
 
-	if (IsJump) { AmbientLight1[0] = 0; }
+	if (IsJump) { DiffuseLight1[0] = 0; }
 
 
-	GLfloat light1_position[] = { 0, 500, -crane.Position.x * 2, 1.0f };
+	GLfloat light1_position[] = { crane.Position.z * 2, 200, -crane.Position.x * 2, 1.0f };
 
-	GLfloat mat_shininess[] = { 15 };
+	GLfloat mat_shininess[] = { 64 };
 	glShadeModel(GL_SMOOTH);
 
 	glEnable(GL_COLOR_MATERIAL);
 	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 	
-	glMaterialfv(GL_FRONT, GL_SPECULAR, SpecularLight1);
-	glMaterialfv(GL_FRONT, GL_AMBIENT, AmbientLight1);
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, DiffuseLight1);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_SpecularLight1);
+	glMaterialfv(GL_FRONT, GL_AMBIENT, mat_AmbientLight1);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_DiffuseLight1);
 	glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
 
-	//glLightfv(GL_LIGHT0, GL_AMBIENT, AmbientLight1);
-	//glLightfv(GL_LIGHT0, GL_DIFFUSE, DiffuseLight1);
-	//glLightfv(GL_LIGHT0, GL_SPECULAR, SpecularLight1);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, AmbientLight1);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, DiffuseLight1);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, SpecularLight1);
 
-	glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 50.f);                  // 80도 원뿔
-	glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, -100.0f);                 // 초점 설정
+	glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 20.f);                  // 80도 원뿔
+	glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 100.0f);                 // 초점 설정
 	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spotlightDirection);   // 방향 설정
 	glLightfv(GL_LIGHT0, GL_POSITION, light1_position);
 	//glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 1.0);
@@ -186,41 +192,37 @@ GLvoid drawScene(GLvoid)
 
 	glPushMatrix();
 	{
-		glTranslatef(0, 500, -crane.Position.x * 2);
-		glutSolidSphere(50,50,50);
+		glTranslatef(crane.Position.z * 2, 200, -crane.Position.x * 2);
+		glutSolidSphere(10,50,50);
 	}
 	glPopMatrix();
 
 	
 	glPushMatrix();
 	{
-		DrawCar();
+		if(!IsExpoltion)		DrawCar();
+		else if (IsExpoltion)	glutWireSphere(explosionsize, 50, 50);
 	}
 	glPopMatrix();
-
-	
 
 	glPushMatrix();
 	{
-		//glColor3f(1.0, 1.0, 0);
-		glScalef(50, 1, 50);
-		DrawPolygon();
+		glTranslatef(-500, -20, 0);
+		DrawSpace();
+		glTranslatef(500, 0, 0);
+		DrawSpace();
+		glTranslatef(500, 0, 0);
+		DrawSpace();
 	}
 	glPopMatrix();
 
-	//glPushMatrix();
-	//{
-	//	glTranslatef(-500, -20, 0);
-	//	DrawSpace();
-	//	glTranslatef(500, 0, 0);
-	//	DrawSpace();
-	//	glTranslatef(500, 0, 0);
-	//	DrawSpace();
-	//}
-	//glPopMatrix();
+	glPushMatrix();
+	{
+		glTranslatef(0, 0, 70);
+		DrawWall();
+	}
+	glPopMatrix();
 
-	
-	
 	glutSwapBuffers();
 }
 
@@ -262,14 +264,17 @@ GLvoid DrawSpace()
 	glColor3f(1.0, 1.0, 0);
 	glPushMatrix();
 	{
-		glScalef(1, 0.01, 6);
-		glutSolidCube(300);
+		glScalef(20,1,200);
+		DrawPolygon();
 	}
 	glPopMatrix();
 }
 
 GLvoid DrawPolygon(GLvoid)
 {
+	if (IsNormalOn)	glEnable(GL_NORMALIZE);
+	else glDisable(GL_NORMALIZE);
+
 	GLfloat ctrlpoints[3][4][3] = {
 		{ { -8.0, 0, 4 },{ -4.0, 0, 4 },	{ 4.0, 0, 4.0 },	{ 8.0,0, 4.0 } },
 		{ { -8.0, 0, 0 },{ -4.0, 0, 0.0 },	{ 4.0, 0, 0.0 },	{ 8.0,0, 0.0 } },
@@ -282,17 +287,19 @@ GLvoid DrawPolygon(GLvoid)
 		&ctrlpoints[0][0][0]);
 
 	glEnable(GL_MAP2_VERTEX_3);
-	glMapGrid2f(10, 0.0, 1.0, 10, 0.0, 1.0);
-	glEvalMesh2(GL_FILL, 0, 10, 0, 10);
+	glNormal3f(0, 1, 0);
+	glMapGrid2f(50, 0.0, 1.0, 50, 0.0, 1.0);
+	glEvalMesh2(GL_FILL, 0, 50, 0, 50);
 	glDisable(GL_MAP2_VERTEX_3);
 }
 
-void DrawObject()
+void DrawWall()
 {
-	if(IsNormalOn)	glEnable(GL_NORMALIZE);
-	else glDisable(GL_NORMALIZE);
 	glPushMatrix();
 	{
+		glColor3f(1, 0, 0);
+		glScalef(3, 2, 0.1);
+		glutSolidCube(100);
 	}
 	glPopMatrix();
 }
@@ -392,7 +399,8 @@ GLvoid Keydown(unsigned char key, int x, int y)
 	}
 	
 	//std::cout << ambiantlevel1 << " " << diffuselevel1 << " " << specularlevel1 << std::endl;
-	std::cout << cranelane << std::endl;
+	std::cout << IsNormalOn << std::endl;
+
 	glutPostRedisplay();
 }
 
@@ -413,14 +421,28 @@ GLvoid Timer(int val)
 
 	carjump();
 
+	if (!IsJump)
+	{
+		crane.angle = 0;
+		if (cranelane == 1)	crane.Position.z = 250;
+		else if (cranelane == 2)	crane.Position.z = 0;
+		else if (cranelane == 3)	crane.Position.z = -250;
+	}
+
 	if(mousehold)
 		glutWarpPointer(400, 300);
 
+	if (IsExpoltion)
+	{
+		explosionsize++;
+	}
+
 	crane.moveCrane(cranespeed);
+
 	for (int i = 0; i < 4; i++)
 		wheel[i].Move(-cranespeed * 3 * crane.xdir, false, false, true);
 
-	std::cout << crane.Position.x << " " << crane.Position.z << std::endl;
+	//std::cout << crane.Position.x << " " << crane.Position.z << std::endl;
 
 	glutPostRedisplay();
 	glutTimerFunc(10, Timer, 1);
@@ -432,8 +454,6 @@ bool boolswitch(bool chker)
 	else if (chker == false)	return true;
 	return false;
 }
-
-
 
 void carjump()
 {
@@ -457,5 +477,24 @@ void carjump()
 		crane.Position.z += cranexdir * 2;
 		crane.Position.y += craneydir * 4;
 		xdist++;
+	}
+}
+
+void IsCollide()
+{
+	if (cranelane == left) {
+		if (crane.Position.z - 70 == 100)
+			IsExpoltion = true;
+		else if (crane.Position.z + 70 == 100)
+			IsExpoltion = true;
+	}
+	else if (cranelane == center) {
+		if (crane.Position.z - 70 == 100)
+			IsExpoltion = true;
+		else if (crane.Position.z + 70 == 100)
+			IsExpoltion = true;
+	}
+	else if (cranelane == right) {
+
 	}
 }
