@@ -12,6 +12,8 @@ GLvoid RegesterCallBack();
 
 void EnLighten();
 
+void RenderScene(void);
+
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
 
@@ -33,7 +35,7 @@ float cameraz;
 float camerax;
 
 GLubyte *pBytes;
-BITMAPINFO *info[6];
+BITMAPINFO *info;
 GLuint texture[6];
 
 float angle;
@@ -91,11 +93,11 @@ GLvoid RegesterCallBack()
 
 void EnLighten()
 {
-	GLfloat AmbientLight1[] = { ambiantlevel1, ambiantlevel1, ambiantlevel1, 1.0f };
-	GLfloat DiffuseLight1[] = { diffuselevel1, diffuselevel1, diffuselevel1, 1.0f };
-	GLfloat SpecularLight1[] = { specularlevel1, specularlevel1, specularlevel1, 1.0f };
+	GLfloat AmbientLight1[] = { 0.3, 0.3, 0.3, 1.0f };
+	GLfloat DiffuseLight1[] = { 1.0, 1.0, 1.0, 1.0f };
+	GLfloat SpecularLight1[] = { 1.0, 1.0, 1.0, 1.0f };
 
-	GLfloat light1_position[] = { 600.0, 10, -600.0, 0.0 };
+	GLfloat light1_position[] = { 600.0, 10, 600.0, 0.0 };
 	GLfloat mat_shininess[] = { 15 };
 	glShadeModel(GL_SMOOTH);
 
@@ -114,8 +116,7 @@ void EnLighten()
 
 	glEnable(GL_LIGHTING);
 
-	if (light1on)		glEnable(GL_LIGHT0);
-	else				glDisable(GL_LIGHT0);
+	glEnable(GL_LIGHT0);
 }
 
 GLvoid drawScene(GLvoid)
@@ -133,6 +134,10 @@ GLvoid drawScene(GLvoid)
 	);
 
 	glMatrixMode(GL_MODELVIEW);
+	EnLighten();
+
+	bitmapSetup();
+	
 	glPushMatrix();
 	{
 		glRotatef(angle, 0, 1, 0);
@@ -142,16 +147,15 @@ GLvoid drawScene(GLvoid)
 			//1
 			glPushMatrix();
 			{
-				glColor3f(1, 1, 1);
 				glBindTexture(GL_TEXTURE_2D, texture[0]);
 				glBegin(GL_QUADS);
-				glTexCoord2f(0.0f, 1.0f);
+				glTexCoord2f(0.f, 1.0f);
 				glVertex3f(0.0, 100.0, 0.0);
 				glTexCoord2f(1.0f, 1.0f);
 				glVertex3f(100.0, 100.0, 0.0);
 				glTexCoord2f(1.0f, 0.0f);
 				glVertex3f(100.0, 0.0, 0.0);
-				glTexCoord2f(0.0f, 0.0f);
+				glTexCoord2f(0.f, 0.0f);
 				glVertex3f(0.0, 0.0, 0.0);
 				glEnd();
 			}
@@ -159,16 +163,15 @@ GLvoid drawScene(GLvoid)
 			//2
 			glPushMatrix();
 			{
-				if (IsSmooth)					glShadeModel(GL_SMOOTH);
-				else if (!IsSmooth)				glShadeModel(GL_FLAT);
+				glBindTexture(GL_TEXTURE_2D, texture[0]);
 				glBegin(GL_QUADS);
-				glColor3f(0.0f, 0.0f, 1.0f);		//blue
+				glTexCoord2f(0.f, 0.0f);
 				glVertex3f(0.0, 0.0, -100.0);
-				glColor3f(0.0f, 1.0f, 1.0f);		//cyan
+				glTexCoord2f(1.f, 0.0f);
 				glVertex3f(0.0, 100.0, -100.0);
-				glColor3f(0.0f, 1.0f, 0.0f);		//green
+				glTexCoord2f(1.f, 1.0f);
 				glVertex3f(0.0, 100.0, 0.0);
-				glColor3f(0.0f, 0.0f, 0.0f);		//black	
+				glTexCoord2f(0.f, 1.0f);
 				glVertex3f(0.0, 0.0, 0.0);
 				glEnd();
 			}
@@ -180,16 +183,15 @@ GLvoid drawScene(GLvoid)
 				glRotatef(-angle3, 1, 0, 0);
 				glPushMatrix();
 				{
-					if (IsSmooth)					glShadeModel(GL_SMOOTH);
-					else if (!IsSmooth)				glShadeModel(GL_FLAT);
+					glBindTexture(GL_TEXTURE_2D, texture[0]);
 					glBegin(GL_QUADS);
-					glColor3f(1.0f, 1.0f, 1.0f);		//white
+					glTexCoord2f(1.f, 1.0f);
 					glVertex3f(100.0, 100.0, 0);
-					glColor3f(0.0f, 1.0f, 1.0f);		//cyan
+					glTexCoord2f(0.f, 1.0f);
 					glVertex3f(0.0, 100.0, 0);
-					glColor3f(0.0f, 0.0f, 1.0f);		//blue
+					glTexCoord2f(0.f, 0.0f);
 					glVertex3f(0.0, 0.0, 0);
-					glColor3f(0.0f, 0.0f, 1.0f);		//magenta
+					glTexCoord2f(1.f, 0.0f);
 					glVertex3f(100.0, 0.0, 0);
 					glEnd();
 				}
@@ -199,16 +201,15 @@ GLvoid drawScene(GLvoid)
 			//4
 			glPushMatrix();
 			{
-				if (IsSmooth)					glShadeModel(GL_SMOOTH);
-				else if (!IsSmooth)				glShadeModel(GL_FLAT);
+				glBindTexture(GL_TEXTURE_2D, texture[0]);
 				glBegin(GL_QUADS);
-				glColor3f(1.0f, 1.0f, 0.0f);		//yellow
+				glTexCoord2f(1.f, 1.0f);
 				glVertex3f(100.0, 100.0, 0.0);
-				glColor3f(1.0f, 1.0f, 1.0f);		//white
+				glTexCoord2f(1.f, 0.0f);
 				glVertex3f(100.0, 100.0, -100.0);
-				glColor3f(0.0f, 0.0f, 1.0f);		//magenta
+				glTexCoord2f(0.f, 0.0f);
 				glVertex3f(100.0, 0.0, -100.0);
-				glColor3f(1.0f, 0.0f, 0.0f);		//red
+				glTexCoord2f(0.f, 1.0f);
 				glVertex3f(100.0, 0.0, 0.0);
 				glEnd();
 			}
@@ -220,17 +221,16 @@ GLvoid drawScene(GLvoid)
 				glRotatef(angle2, 0, 0, 1);
 				glPushMatrix();
 				{
-					if (IsSmooth)					glShadeModel(GL_SMOOTH);
-					else if (!IsSmooth)				glShadeModel(GL_FLAT);
+					glBindTexture(GL_TEXTURE_2D, texture[0]);
 					glBegin(GL_QUADS);
-					glColor3f(1.0f, 1.0f, 0.0f);		//yellow
-					glVertex3f(100.0, 0, 0.0);
-					glColor3f(0.0f, 1.0f, 0.0f);		//green
-					glVertex3f(0.0, 0, 0.0);
-					glColor3f(0.0f, 1.0f, 1.0f);		//cyan
-					glVertex3f(0.0, 0, -100.0);
-					glColor3f(1.0f, 1.0f, 1.0f);		//white
-					glVertex3f(100.0, 0, -100.0);
+					glTexCoord2f(1.f, 1.0f);
+					glVertex3f(100.0, 0.0, 0.0);
+					glTexCoord2f(0.f, 1.0f);
+					glVertex3f(0.0, 0.0, 0.0);
+					glTexCoord2f(0.f, 0.0f);
+					glVertex3f(0.0, 0.0, -100.0);
+					glTexCoord2f(1.f, 0.0f);
+					glVertex3f(100.0, 0.0, -100.0);
 					glEnd();
 				}
 				glPopMatrix();
@@ -239,16 +239,15 @@ GLvoid drawScene(GLvoid)
 			//6 bottom
 			glPushMatrix();
 			{
-				if (IsSmooth)					glShadeModel(GL_SMOOTH);
-				else if (!IsSmooth)				glShadeModel(GL_FLAT);
+				glBindTexture(GL_TEXTURE_2D, texture[0]);
 				glBegin(GL_QUADS);
-				glColor3f(1.0f, 0.0f, 0.0f);		//red
+				glTexCoord2f(1.f, 1.0f);
 				glVertex3f(100.0, 0.0, 0.0);
-				glColor3f(0.0f, 0.0f, 1.0f);		//magenta
+				glTexCoord2f(1.f, 0.0f);
 				glVertex3f(100.0, 0.0, -100.0);
-				glColor3f(0.0f, 0.0f, 1.0f);		//blue
+				glTexCoord2f(0.f, 0.0f);
 				glVertex3f(0.0, 0.0, -100.0);
-				glColor3f(0.0f, 0.0f, 0.0f);		//black	
+				glTexCoord2f(0.f, 1.0f);
 				glVertex3f(0.0, 0.0, 0.0);
 				glEnd();
 			}
@@ -257,6 +256,7 @@ GLvoid drawScene(GLvoid)
 		glPopMatrix();
 	}
 	glPopMatrix();
+	//RenderScene();
 
 	glutSwapBuffers();
 }
@@ -461,16 +461,19 @@ void bitmapSetup()
 
 	glBindTexture(GL_TEXTURE_2D, texture[0]);
 
-	pBytes = LoadDIBitmap("t4.bmp", &info[0]);
+	pBytes = LoadDIBitmap("t4.bmp", &info);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, 3, 259, 194, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, pBytes);
+	glTexImage2D(
+		GL_TEXTURE_2D, 0, 3, 
+		info->bmiHeader.biWidth, info->bmiHeader.biHeight, 0, 
+		GL_BGR_EXT, GL_UNSIGNED_BYTE, pBytes);
+
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, GL_MODULATE);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, GL_MODULATE);
 
 	glEnable(GL_TEXTURE_2D);
 }
