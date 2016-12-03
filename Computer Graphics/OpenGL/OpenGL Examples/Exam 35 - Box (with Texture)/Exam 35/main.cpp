@@ -12,8 +12,6 @@ GLvoid RegesterCallBack();
 
 void EnLighten();
 
-void RenderScene(void);
-
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
 

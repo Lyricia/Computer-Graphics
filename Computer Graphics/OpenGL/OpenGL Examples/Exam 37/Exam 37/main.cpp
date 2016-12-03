@@ -24,7 +24,9 @@
 
 #include <iostream>
 #include <time.h>
+#include <Windows.h>
 #include <gl\glut.h>
+
 #include "Camera.h"
 #include "Ball.h"
 #include "Crane.h"
@@ -58,6 +60,12 @@ void carjump();
 void IsCollide();
 void DrawCar();
 void EnLighten();
+GLubyte * LoadDIBitmap(const char * filename, BITMAPINFO ** info);
+void bitmapSetup();
+
+GLubyte *pBytes;
+BITMAPINFO *info[6];
+GLuint texture[6];
 
 CCamera Camera;
 
@@ -151,7 +159,7 @@ void EnLighten()
 	
 	if (IsJump) { DiffuseLight1[0] = 0; }
 
-	GLfloat light1_position[] = { crane.Position.z * 2, 200, -crane.Position.x * 2, 1.0f };
+	GLfloat light1_position[] = { crane.Position.z * 2, crane.Position.y + 500, -crane.Position.x * 2, 1.0f };
 
 	GLfloat mat_shininess[] = { 64 };
 	glShadeModel(GL_SMOOTH);
@@ -159,7 +167,7 @@ void EnLighten()
 	glEnable(GL_COLOR_MATERIAL);
 	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 
-	//glMaterialfv(GL_FRONT, GL_SPECULAR, mat_SpecularLight1);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_SpecularLight1);
 	glMaterialfv(GL_FRONT, GL_AMBIENT, mat_AmbientLight1);
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_DiffuseLight1);
 	glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
@@ -168,7 +176,7 @@ void EnLighten()
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, DiffuseLight1);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, SpecularLight1);
 
-	glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 20.f);                  // 80도 원뿔
+	glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 5.f);                  // 80도 원뿔
 	glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 100.0f);                 // 초점 설정
 	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spotlightDirection);   // 방향 설정
 	glLightfv(GL_LIGHT0, GL_POSITION, light1_position);
@@ -193,9 +201,11 @@ GLvoid drawScene(GLvoid)
 
 	EnLighten();
 
+	bitmapSetup();
+
 	glPushMatrix();
 	{
-		glTranslatef(crane.Position.z * 2, 200, -crane.Position.x * 2);
+		glTranslatef(crane.Position.z * 2, crane.Position.y + 500, -crane.Position.x * 2);
 		glutSolidSphere(10,50,50);
 	}
 	glPopMatrix();
@@ -292,6 +302,7 @@ GLvoid DrawPolygon(GLvoid)
 {
 	glEnable(GL_NORMALIZE);
 
+
 	GLfloat ctrlpoints[3][4][3] = {
 		{ { -8.0,-1, 4 },{ -4.0, -1, 4 },	{ 4.0,-1, 4.0 },	{ 8.0,-1, 4.0 } },
 		{ { -8.0,-1, 0 },{ -4.0, -1, 0.0 },	{ 4.0,-1, 0.0 },	{ 8.0,-1, 0.0 } },
@@ -303,20 +314,38 @@ GLvoid DrawPolygon(GLvoid)
 		0.0, 1.0, 12, 3,
 		&ctrlpoints[0][0][0]);
 
+	glEnable(GL_TEXTURE_GEN_S);
+	glEnable(GL_TEXTURE_GEN_T);
+	glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+	glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+	glBindTexture(GL_TEXTURE_2D, texture[0]);
+
 	glEnable(GL_MAP2_VERTEX_3);
 	glNormal3f(0, 1, 0);
 	glMapGrid2f(50, 0.0, 1.0, 50, 0.0, 1.0);
 	glEvalMesh2(GL_FILL, 0, 50, 0, 50);
 	glDisable(GL_MAP2_VERTEX_3);
+
+	glDisable(GL_TEXTURE_GEN_S);
+	glDisable(GL_TEXTURE_GEN_T);
 }
 
 void DrawWall()
 {
 	glPushMatrix();
 	{
-		glColor3f(1, 0, 0);
+		glEnable(GL_TEXTURE_GEN_S);
+		glEnable(GL_TEXTURE_GEN_T);
+		glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+		glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+		glBindTexture(GL_TEXTURE_2D, texture[1]);
+
+		glColor3f(1, 1, 1);
 		glScalef(3, 2, 0.1);
 		glutSolidCube(100);
+
+		glDisable(GL_TEXTURE_GEN_S);
+		glDisable(GL_TEXTURE_GEN_T);
 	}
 	glPopMatrix();
 }
@@ -509,6 +538,7 @@ void carjump()
 		xdist++;
 	}
 }
+
 void IsCollide()
 {
 	if (cranelane == left) {
@@ -516,12 +546,97 @@ void IsCollide()
 			IsExpoltion = true;
 	}
 	else if (cranelane == center) {
-		if (crane.Position.x * 2 > -150 - 50 && crane.Position.x * 2 < -150 + 50 && !IsLanejump && !IsJump)
-			IsExpoltion = true;
+ 		if (crane.Position.x*2 > -150 - 50 && crane.Position.x*2 < -150 + 50 && !IsLanejump && !IsJump)
+				IsExpoltion = true;
 	}
 
 	else if (cranelane == right) {
 		if (crane.Position.x * 2 > 400 - 50 && crane.Position.x * 2 < 400 + 50 && !IsLanejump && !IsJump)
 			IsExpoltion = true;
 	}
+}
+
+GLubyte * LoadDIBitmap(const char *filename, BITMAPINFO **info)
+{
+	FILE *fp;
+	GLubyte *bits;
+	int bitsize, infosize;
+	BITMAPFILEHEADER header;
+	// 바이너리 읽기 모드로 파일을 연다
+	if ((fp = fopen(filename, "rb")) == NULL)
+		return NULL;
+	// 비트맵 파일 헤더를 읽는다.
+	if (fread(&header, sizeof(BITMAPFILEHEADER), 1, fp) < 1) {
+		fclose(fp);
+		return NULL;
+	}
+	// 파일이 BMP 파일인지 확인한다.
+	if (header.bfType != 'MB') {
+		fclose(fp);
+		return NULL;
+	}
+	// BITMAPINFOHEADER 위치로 간다.
+	infosize = header.bfOffBits - sizeof(BITMAPFILEHEADER);
+	// 비트맵 이미지 데이터를 넣을 메모리 할당을 한다.
+	if ((*info = (BITMAPINFO *)malloc(infosize)) == NULL) {
+		fclose(fp);
+		exit(0);
+		return NULL;
+	}
+	// 비트맵 인포 헤더를 읽는다.
+	if (fread(*info, 1, infosize, fp) < (unsigned int)infosize) {
+		free(*info);
+		fclose(fp);
+		return NULL;
+	}
+	if ((bitsize = (*info)->bmiHeader.biSizeImage) == 0)
+		bitsize = ((*info)->bmiHeader.biWidth *
+		(*info)->bmiHeader.biBitCount + 7) / 8.0 *
+		abs((*info)->bmiHeader.biHeight);
+	// 비트맵의 크기만큼 메모리를 할당한다.
+	if ((bits = (unsigned char *)malloc(bitsize)) == NULL) {
+		free(*info);
+		fclose(fp);
+		return NULL;
+	}
+	// 비트맵 데이터를 bit(GLubyte 타입)에 저장한다.
+	if (fread(bits, 1, bitsize, fp) < (unsigned int)bitsize) {
+		free(*info); free(bits);
+		fclose(fp);
+		return NULL;
+	}
+	fclose(fp);
+	return bits;
+}
+
+void bitmapSetup()
+{
+	glGenTextures(2, texture);
+
+	glBindTexture(GL_TEXTURE_2D, texture[0]);
+	pBytes = LoadDIBitmap("t4.bmp", &info[0]);
+	glTexImage2D(
+		GL_TEXTURE_2D, 0, 3,
+		info[0]->bmiHeader.biWidth, info[0]->bmiHeader.biHeight, 0,
+		GL_BGR_EXT, GL_UNSIGNED_BYTE, pBytes);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, GL_MODULATE);
+
+
+	glBindTexture(GL_TEXTURE_2D, texture[1]);
+	pBytes = LoadDIBitmap("wall.bmp", &info[1]);
+	glTexImage2D(
+		GL_TEXTURE_2D, 0, 3,
+		info[1]->bmiHeader.biWidth, info[1]->bmiHeader.biHeight, 0,
+		GL_BGR_EXT, GL_UNSIGNED_BYTE, pBytes);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, GL_MODULATE);
+
+	glEnable(GL_TEXTURE_2D);
 }
