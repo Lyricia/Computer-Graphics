@@ -28,6 +28,7 @@ void CCamera::SetCamera()
 		Position.x + m_LookVector.x, Position.y + m_LookVector.y, Position.z + m_LookVector.z,
 		0, 1, 0);
 
+	glMatrixMode(GL_MODELVIEW);
 	//std::cout << Position.x << " " << Position.y << " " << Position.z << std::endl;
 }
 
@@ -99,6 +100,7 @@ void CCamera::getMouse(int x, int y)
 	newMousePostion_y = y;
 	//std::cout << x << ' ' << y << std::endl; 
 }
+
 /*////////////////////////////////////////////////////////////
 
 Movements goes forward, backward along camera lookvector. 

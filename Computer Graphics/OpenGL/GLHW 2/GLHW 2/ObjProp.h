@@ -38,8 +38,6 @@ public:
 	float x;
 	float y;
 	float z;
-
-	CColor color;
 };
 
 enum BBPOS { LEFTTOP, RIGHTTOP, RIGHTBOTTOM, LEFTBOTTOM };
@@ -51,6 +49,7 @@ public:
 	ObjProp();
 	~ObjProp();
 	Vec3f Position;
+	CColor Color;
 	CVertex BoundingBox[4];
 	CAngle Angle;
 	float m_scale;
