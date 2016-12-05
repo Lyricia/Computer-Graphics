@@ -372,12 +372,12 @@ GLvoid Keydown(unsigned char key, int x, int y)
 		break;
 
 	case 't':
-		RailHeight += 20;
+		RailHeight += 50;
 		break;
 
 	case 'g':
 		if(RailHeight > 0)
-			RailHeight -= 20;
+			RailHeight -= 50;
 		break;
 	}
 	glutPostRedisplay();
