@@ -18,7 +18,7 @@ generally used in every gl projects.
 
 #define W_Width		800
 #define W_Height	800
-#define W_Depth		800
+#define W_Depth		1000
 #define PI			3.141592f
 
 #define RAD(x)		x * PI * 0.005555f
