@@ -10,7 +10,7 @@
 CCamera::CCamera()
 {
 	dist = 0;
-	Position.z = 100;
+	Position.z = -100;
 	Angle.yaw = 90;
 	Angle.pitch = 0;
 }
@@ -22,12 +22,12 @@ void CCamera::SetCamera()
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(110.0, 1.0, 1.0, 10000);
-	glTranslatef(0.0, 0.0, dist);
+	//glTranslatef(0.0, 0.0, dist);
 	gluLookAt(
 		Position.x , Position.y, Position.z,
 		Position.x + m_LookVector.x, Position.y + m_LookVector.y, Position.z + m_LookVector.z,
 		0, 1, 0);
-	glMatrixMode(GL_MODELVIEW);
+
 	//std::cout << Position.x << " " << Position.y << " " << Position.z << std::endl;
 }
 
@@ -67,7 +67,7 @@ void CCamera::SetLookVector()
 	const float ROTATE_SPEED = 1;
 
 	delta_x = 400 - newMousePostion_x;
-	delta_y = 400 - newMousePostion_y;
+	delta_y = 300 - newMousePostion_y;
 	//std::cout << delta_x << ' ' << delta_y << std::endl;
 
 
@@ -93,17 +93,6 @@ void CCamera::SetLookVector()
 	oldMousePostion_y = newMousePostion_y;
 }
 
-void CCamera::SetLookVector(Vec3f _look_vector)
-{
-	m_LookVector = _look_vector;
-	m_LookVector = Normalize(m_LookVector);
-}
-
-void CCamera::SetViewpoint(int _dist)
-{
-	dist = _dist;
-}
-
 void CCamera::getMouse(int x, int y)
 {
 	newMousePostion_x = x;
@@ -119,7 +108,6 @@ Left, right movements goes along perpendicular vector of lookvector.
 
 void CCamera::Move(DIRECTION dir, float speed)
 {
-	Vec3f MoveLR = Normalize(Vec3f({ m_LookVector.z, 0, m_LookVector.x }));
 	switch (dir)
 	{
 	case DIRECTION::FRONT:
@@ -129,12 +117,12 @@ void CCamera::Move(DIRECTION dir, float speed)
 		Position = Position - (m_LookVector * speed);
 		break;
 	case DIRECTION::LEFT:
-		Position.x = Position.x + (MoveLR.x * speed);
-		Position.z = Position.z - (MoveLR.z * speed);
+		Position.x = Position.x + (m_LookVector.z * speed);
+		Position.z = Position.z - (m_LookVector.x * speed);
 		break;
 	case DIRECTION::RIGHT:
-		Position.x = Position.x - (MoveLR.x * speed);
-		Position.z = Position.z + (MoveLR.z * speed);
+		Position.x = Position.x - (m_LookVector.z * speed);
+		Position.z = Position.z + (m_LookVector.x * speed);
 		break;
 	}
 }

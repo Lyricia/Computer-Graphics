@@ -19,9 +19,9 @@ float WScaleX = 1, WScaleY = 1, LScaleX = 1, LScaleY = 1;
 char *String;
 
 float teapotalpha[9];
-float conealpha[9];
-int currentteapotalpha;
-int currentconealpha;
+float conealpha[9] = { 0.5f, };
+int currentteapot;
+int currentcone;
 
 void main(int argc, char *argv[])
 {
@@ -79,18 +79,19 @@ GLvoid drawScene(GLvoid)
 	{
 		glTranslatef(-300, 0, 0);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glColor4f(1.0f, 0.0f, 0.0f, 0.3f);
+		glColor4f(1.0f, 0.0f, 0.0f, 0.5f);
 		glPushMatrix();
 		glutSolidSphere(50, 50, 10);
 		glPopMatrix();
 
-		glColor4f(0.0f, 1.0f, 0.0f, 0.3f);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glColor4f(0.0f, 1.0f, 0.0f, 0.5f);
 		glPushMatrix();
 		glTranslatef(-10, 0, 0);
 		glutSolidTeapot(50);
 		glPopMatrix();
 
-		glColor4f(0.0f, 0.0f, 1.0f, conealpha[1]);
+		glColor4f(0.0f, 0.0f, 1.0f, conealpha[3]);
 		glPushMatrix();
 		glTranslatef(10, 0, 0);
 		glRotatef(-90, 1, 0, 0);
@@ -109,18 +110,19 @@ GLvoid drawScene(GLvoid)
 	{
 		glTranslatef(-300, -200, 0);
 		glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ZERO);
-		glColor4f(1.0f, 0.0f, 0.0f, 0.3f);
+		glColor4f(1.0f, 0.0f, 0.0f, 0.5f);
 		glPushMatrix();
 		glutSolidSphere(50, 50, 10);
 		glPopMatrix();
 
-		glColor4f(0.0f, 1.0f, 0.0f, 0.3f);
+		glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ZERO);
+		glColor4f(0.0f, 1.0f, 0.0f, 0.5f);
 		glPushMatrix();
 		glTranslatef(-10, 0, 0);
 		glutSolidTeapot(50);
 		glPopMatrix();
 
-		glColor4f(0.0f, 0.0f, 1.0f, conealpha[2]);
+		glColor4f(0.0f, 0.0f, 1.0f, conealpha[6]);
 		glPushMatrix();
 		glTranslatef(10, 0, 0);
 		glRotatef(-90, 1, 0, 0);
@@ -150,7 +152,7 @@ GLvoid drawScene(GLvoid)
 		glutSolidTeapot(50);
 		glPopMatrix();
 
-		glColor4f(0.0f, 0.0f, 1.0f, conealpha[3]);
+		glColor4f(0.0f, 0.0f, 1.0f, conealpha[1]);
 		glPushMatrix();
 		glTranslatef(10, 0, 0);
 		glRotatef(-90, 1, 0, 0);
@@ -210,7 +212,7 @@ GLvoid drawScene(GLvoid)
 		glutSolidTeapot(50);
 		glPopMatrix();
 
-		glColor4f(0.0f, 0.0f, 1.0f, conealpha[5]);
+		glColor4f(0.0f, 0.0f, 1.0f, conealpha[7]);
 		glPushMatrix();
 		glTranslatef(10, 0, 0);
 		glRotatef(-90, 1, 0, 0);
@@ -240,7 +242,7 @@ GLvoid drawScene(GLvoid)
 		glutSolidTeapot(50);
 		glPopMatrix();
 
-		glColor4f(0.0f, 0.0f, 1.0f, conealpha[6]);
+		glColor4f(0.0f, 0.0f, 1.0f, conealpha[2]);
 		glPushMatrix();
 		glTranslatef(10, 0, 0);
 		glRotatef(-90, 1, 0, 0);
@@ -270,7 +272,7 @@ GLvoid drawScene(GLvoid)
 		glutSolidTeapot(50);
 		glPopMatrix();
 
-		glColor4f(0.0f, 0.0f, 1.0f, conealpha[7]);
+		glColor4f(0.0f, 0.0f, 1.0f, conealpha[5]);
 		glPushMatrix();
 		glTranslatef(10, 0, 0);
 		glRotatef(-90, 1, 0, 0);
@@ -336,48 +338,54 @@ void Keyboard(unsigned char key, int x, int y)
 		break;
 
 	case '1':
-		currentconealpha = conealpha[0];
-		currentteapotalpha = teapotalpha[0];
+		currentcone = 0;
+		currentteapot = 0;
 		break;
 	case '2':
-		currentconealpha = conealpha[1];
-		currentteapotalpha = teapotalpha[1];
+		currentcone = 1;
+		currentteapot = 1;
 		break;
 	case '3':
-		currentconealpha = conealpha[2];
-		currentteapotalpha = teapotalpha[2];
+		currentcone = 2;
+		currentteapot = 2;
 		break;
 
 	case '4':
-		currentconealpha = conealpha[3];
-		currentteapotalpha = teapotalpha[3];
+		currentcone = 3;
+		currentteapot = 3;
 		break;
 	case '5':
-		currentconealpha = conealpha[4];
-		currentteapotalpha = teapotalpha[4];
+		currentcone = 4;
+		currentteapot = 4;
 		break;
 	case '6':
-		currentconealpha = conealpha[5];
-		currentteapotalpha = teapotalpha[5];
+		currentcone = 5;
+		currentteapot = 5;
 		break;
 
 	case '7':
-		currentconealpha = conealpha[6];
-		currentteapotalpha = teapotalpha[6];
+		currentcone = 6;
+		currentteapot = 6;
 		break;
 	case '8':
-		currentconealpha = conealpha[7];
-		currentteapotalpha = teapotalpha[7];
+		currentcone = 7;
+		currentteapot = 7;
 		break;
 	case '9':
-		currentconealpha = conealpha[8];
-		currentteapotalpha = teapotalpha[8];
+		currentcone = 8;
+		currentteapot = 8;
 		break;
 
 		
-	case 'f':
-		currentconealpha
+	case 'F':
+		if (conealpha[currentcone] > 0.0f )
+			conealpha[currentcone] -= 0.1;
+		break;
 
+	case 'f':
+		if (conealpha[currentcone] < 1.0f)
+			conealpha[currentcone] += 0.1;
+		break;
 
 	default:
 		break;

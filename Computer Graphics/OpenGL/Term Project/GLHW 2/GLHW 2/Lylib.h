@@ -14,6 +14,7 @@ generally used in every gl projects.
 
 #include "Vector3D.h"
 #include "Spline.h"
+#include "Crane.h"
 
 
 #define W_Width		800
