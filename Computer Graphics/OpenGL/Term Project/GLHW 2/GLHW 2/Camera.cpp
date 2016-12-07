@@ -95,7 +95,7 @@ void CCamera::SetLookVector()
 
 void CCamera::SetLookVector(Vec3f _look_vector)
 {
-	m_LookVector = _look_vector - Position;
+	m_LookVector = _look_vector;
 	m_LookVector = Normalize(m_LookVector);
 }
 

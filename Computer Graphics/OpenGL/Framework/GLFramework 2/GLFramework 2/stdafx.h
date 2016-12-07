@@ -7,6 +7,8 @@
 #include <ctime>
 #include "Vector3D.h"
 #include "Camera.h"
+#include "TextureLib.h"
+
 enum class GLKeyStateCombine : long
 {
 	  LBUTTONDOWN	= ((long(GLUT_LEFT_BUTTON)	<< 8) + GLUT_DOWN)
@@ -59,5 +61,30 @@ inline void DrawCircle(float x, float y, float scale, int detail)
 			);
 	}
 	glEnd();
+}
+
+
+inline void DrawQuad(const Vec3f& ptPosition, float fScale, bool isXY = false) {
+	glPushMatrix();
+	{
+		glTranslatef(ptPosition.x, ptPosition.y, ptPosition.z);
+		float fx = fScale * 0.5f;
+		float fy = (isXY) ? fScale * 0.5f : 0;
+		float fz = (isXY) ? 0 : fScale * 0.5f;
+
+		glBegin(GL_QUADS);
+		{
+			glTexCoord2f(+0.0f, +1.0f);
+			glVertex3f(-fx, +fy, -fz);
+			glTexCoord2f(+0.0f, +0.0f);
+			glVertex3f(-fx, -fy, +fz);
+			glTexCoord2f(+1.0f, +0.0f);
+			glVertex3f(+fx, -fy, -fz);
+			glTexCoord2f(+1.0f, +1.0f);
+			glVertex3f(+fx, +fy, -fz);
+		}
+		glEnd();
+	}
+	glPopMatrix();
 }
 

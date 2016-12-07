@@ -20,35 +20,17 @@ void CMainGameScene::Update()
 
 void CMainGameScene::Render()
 {
-	glColor3f(1, 0, 0);
+	glColor4f(1.f, 1.f, 1.f, 1.f);
 	//glutSolidCube(1.0f);
 
 	glPushMatrix();
 	{
-		glBegin(GL_LINE_STRIP);
-		for (float f = 0.f; f <= 1.f; f += 0.05) {
-			glVertex3fv(CCardinalSpline::CalcCardinal(
-				f, -1.f,
-				Vec3f{-0.5, -0.5, 0},
-				Vec3f{-0.5, +0.5 ,0},
-				Vec3f{ -0.5, -0.5, 0 },
-				Vec3f{ -0.5, +0.5 ,0 }
-				//Vec3f{+0.5, +0.5, 0},
-				//Vec3f{+0.5, -0.5, 0}
-			).arr);
-		}
-		glEnd();
-
-		glPointSize(20);
-		glColor3f(1, 1, 0);
-		glBegin(GL_POINTS);
+		CTextureLibraray::UsingTexture2D();
 		{
-			glVertex3fv(Vec3f{ -0.5, -0.5, 0 }.arr);
-			glVertex3fv(Vec3f{ -0.5, +0.5 ,0 }.arr);
-			glVertex3fv(Vec3f{ +0.5, +0.5, 0 }.arr);
-			glVertex3fv(Vec3f{ +0.5, -0.5, 0 }.arr);
+			m_texLib.LoadTexture(0);
+			DrawQuad({ 0,0,0 }, 1.f, false);
 		}
-		glEnd();
+		CTextureLibraray::StopUsingTexture2D();
 	}
 	glPopMatrix();
 }
@@ -82,4 +64,6 @@ void CMainGameScene::BuildScene(CGLFramework * pframework, int tag)
 {
 	CScene::BuildScene(pframework, tag);
 	glClearColor(0.5, 0.5, 0.8, 1);
+
+	m_texLib.SetTexture(L"Image/menu.png");
 }

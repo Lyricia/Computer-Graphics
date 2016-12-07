@@ -1,5 +1,6 @@
 #pragma once
 #include "Scene.h"
+#include "TextureLib.h"
 
 class CMainGameScene :
 	public CScene
@@ -19,7 +20,7 @@ public:
 	);
 
 private:
-
+	CTextureLibraray m_texLib;
 	CCamera m_Camera;
 };
 

@@ -34,6 +34,7 @@ bool IsPerspective = false;
 bool IsTrainRunning = false;
 bool IsFPSView = true;
 bool IsFlatConnected = false;
+bool IsRailCompleted = false;
 
 Vec3f CurveCtrlPt[50];
 int pointcounter;
@@ -187,7 +188,7 @@ GLvoid drawScene(GLvoid)
 	}
 	glPopMatrix();
 
-	
+
 
 	glutSwapBuffers();
 }
@@ -250,33 +251,33 @@ void DrawRail()
 			glColor3f(1, 0, 1);
 		glBegin(GL_POINTS);
 		{
-			for (int i = 0; i < pointcounter - 2; i++)
+			for (int i = 0; i < pointcounter; i++)
 			{
-				//if (i == 0)
-				//{
-				//	for (float f = 0.0f; f < 1.05f; f += 0.05)
-				//	{
-				//		glVertex3fv(CCardinalSpline::CalcCardinal(
-				//			f, 0.1f,
-				//			CurveCtrlPt[0],
-				//			CurveCtrlPt[1],
-				//			CurveCtrlPt[0],
-				//			CurveCtrlPt[1]
-				//		).arr);
-				//	}
-				//}
-				//if (i < pointcounter - 2) {
-				//	for (float f = 0.0f; f < 1.05f; f += 0.05)
-				//	{
-				//		glVertex3fv(CCardinalSpline::CalcCardinal(
-				//			f, 0.1f,
-				//			CurveCtrlPt[i],
-				//			CurveCtrlPt[i + 1],
-				//			CurveCtrlPt[i + 2],
-				//			CurveCtrlPt[i + 3]
-				//		).arr);
-				//	}
-				//}
+				if (i == 0)
+				{
+					for (float f = 0.0f; f < 1.05f; f += 0.05)
+					{
+						glVertex3fv(CCardinalSpline::CalcCardinal(
+							f, 0.1f,
+							CurveCtrlPt[0],
+							CurveCtrlPt[1],
+							CurveCtrlPt[0],
+							CurveCtrlPt[1]
+						).arr);
+					}
+				}
+				if (i < pointcounter - 3) {
+					for (float f = 0.0f; f < 1.05f; f += 0.05)
+					{
+						glVertex3fv(CCardinalSpline::CalcCardinal(
+							f, 0.1f,
+							CurveCtrlPt[i],
+							CurveCtrlPt[i + 1],
+							CurveCtrlPt[i + 2],
+							CurveCtrlPt[i + 3]
+						).arr);
+					}
+				}
 				glVertex3fv(CurveCtrlPt[i].arr);
 			}
 		}
@@ -439,7 +440,7 @@ GLvoid MouseEvent(int button, int state, int x, int y)
 	switch (button)
 	{
 	case GLUT_LEFT_BUTTON:
-		if (state == GLUT_DOWN && !IsPerspective)
+		if (state == GLUT_DOWN && !IsPerspective && !IsRailCompleted)
 		{
 			CurveCtrlPt[pointcounter][0] = 2 * (400 - x);
 			CurveCtrlPt[pointcounter][1] = RailHeight;
@@ -450,6 +451,7 @@ GLvoid MouseEvent(int button, int state, int x, int y)
 				CurveCtrlPt[pointcounter + 1] = CurveCtrlPt[1];
 				//CurveCtrlPt[pointcounter + 2] = CurveCtrlPt[2];
 				pointcounter += 2;
+				IsRailCompleted = true;
 				break;
 			}
 
@@ -545,7 +547,7 @@ void camerawalk()
 			CurveCtrlPt[outercounter + 1],
 			CurveCtrlPt[outercounter + 2]
 		));
-	
+
 	if (outercounter == 0)
 	{
 		CurrentPosition = Vec3f(
@@ -578,98 +580,20 @@ void camerawalk()
 
 	if (IsFPSView) {
 		Camera.SetCameraPosition(
-			Vec3f(
-				NextPosition.x,
-				NextPosition.y + 20,
-				NextPosition.z)
-		);
-
-		Camera.SetLookVector(
-			Vec3f(
-				CCardinalSpline::CalcCardinal(
-					innercounter + 0.11f, 0.1f,
-					CurveCtrlPt[outercounter - 1],
-					CurveCtrlPt[outercounter + 0],
-					CurveCtrlPt[outercounter + 1],
-					CurveCtrlPt[outercounter + 2]
-				).x,
-				CCardinalSpline::CalcCardinal(
-					innercounter + 0.11f, 0.1f,
-					CurveCtrlPt[outercounter - 1],
-					CurveCtrlPt[outercounter + 0],
-					CurveCtrlPt[outercounter + 1],
-					CurveCtrlPt[outercounter + 2]
-				).y + 20,
-				CCardinalSpline::CalcCardinal(
-					innercounter + 0.11f, 0.1f,
-					CurveCtrlPt[outercounter - 1],
-					CurveCtrlPt[outercounter + 0],
-					CurveCtrlPt[outercounter + 1],
-					CurveCtrlPt[outercounter + 2]
-				).z)
+			NextPosition.x,
+			NextPosition.y + 10,
+			NextPosition.z
 		);
 	}
-
-	else if(!IsFPSView) {
+	else {
 		Camera.SetCameraPosition(
-			Vec3f(
-				CurrentPosition.x,
-				CurrentPosition.y + 100,
-				CurrentPosition.z)
+			NextPosition.x,
+			NextPosition.y + 50,
+			NextPosition.z
 		);
 
-		if (outercounter == 0)
-		{
-			Camera.SetLookVector(
-				Vec3f(
-					CCardinalSpline::CalcCardinal(
-						innercounter + 0.01f, 0.1f,
-						CurveCtrlPt[outercounter - 1],
-						CurveCtrlPt[outercounter + 0],
-						CurveCtrlPt[outercounter + 1],
-						CurveCtrlPt[outercounter + 2]
-					).x,
-					CCardinalSpline::CalcCardinal(
-						innercounter + 0.01f, 0.1f,
-						CurveCtrlPt[outercounter - 1],
-						CurveCtrlPt[outercounter + 0],
-						CurveCtrlPt[outercounter + 1],
-						CurveCtrlPt[outercounter + 2]
-					).y + 100,
-					CCardinalSpline::CalcCardinal(
-						innercounter + 0.01f, 0.1f,
-						CurveCtrlPt[outercounter - 1],
-						CurveCtrlPt[outercounter + 0],
-						CurveCtrlPt[outercounter + 1],
-						CurveCtrlPt[outercounter + 2]
-					).z));
-		}
-
-		Camera.SetLookVector(
-			Vec3f(
-				CCardinalSpline::CalcCardinal(
-					innercounter + 0.01f, 0.1f,
-					CurveCtrlPt[outercounter - 1],
-					CurveCtrlPt[outercounter + 0],
-					CurveCtrlPt[outercounter + 1],
-					CurveCtrlPt[outercounter + 2]
-				).x,
-				CCardinalSpline::CalcCardinal(
-					innercounter + 0.01f, 0.1f,
-					CurveCtrlPt[outercounter - 1],
-					CurveCtrlPt[outercounter + 0],
-					CurveCtrlPt[outercounter + 1],
-					CurveCtrlPt[outercounter + 2]
-				).y + 100,
-				CCardinalSpline::CalcCardinal(
-					innercounter + 0.01f, 0.1f,
-					CurveCtrlPt[outercounter - 1],
-					CurveCtrlPt[outercounter + 0],
-					CurveCtrlPt[outercounter + 1],
-					CurveCtrlPt[outercounter + 2]
-				).z)
-		);
 	}
+	Camera.SetLookVector(NextPosition - CurrentPosition);
 
 	innercounter += 0.01f;
 	if (innercounter >= 0.98f) {

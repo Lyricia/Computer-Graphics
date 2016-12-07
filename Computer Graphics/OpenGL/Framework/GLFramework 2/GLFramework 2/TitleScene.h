@@ -21,6 +21,7 @@ public:
 private:
 
 	Point2f			m_ptPos			{100,100}	;
-
+	CTextureLibraray m_texLogo;
+	float m_fFadein = 0.0f;
 };
 

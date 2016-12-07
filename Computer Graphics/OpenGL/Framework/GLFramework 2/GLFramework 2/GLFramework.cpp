@@ -23,7 +23,7 @@ GLvoid CGLFramework::Reshape(int w, int h)
 	m_ptWindowSize = Point2i { w,h };
 
 	glViewport(0, 0, w, h);
-
+	m_pCurrentScene->Reshape();
 	
 }
 
