@@ -19,6 +19,7 @@ int main(int argc, char* argv[])
 	framework.SetDrawFunc		([] () {framework.drawScene(); });
 	framework.SetTimerFunc		([] (int val) {framework.Timer(val); });
 	framework.SetMouseFunc		([] (int button, int state, int x, int y) {framework.Mouse(button, state, x, y); });
+	framework.SetKeyInputFunc	([](unsigned char key, int x, int y) {framework.KeyInput(key, x, y); });
 
 	// framework run
 	framework.Run();

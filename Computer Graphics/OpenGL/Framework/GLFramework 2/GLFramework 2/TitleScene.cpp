@@ -76,6 +76,16 @@ void CTitleScene::Mouse(int button, int state, int x, int y)
 	}
 }
 
+void CTitleScene::KeyInput(unsigned char key, int x, int y)
+{
+	switch (key)
+	{
+	case 'q':
+		exit(0);
+		break;
+	}
+}
+
 void CTitleScene::BuildScene(CGLFramework * pframework, int tag)
 {
 	CScene::BuildScene(pframework, tag);

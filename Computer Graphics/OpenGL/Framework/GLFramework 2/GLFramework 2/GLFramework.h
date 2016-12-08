@@ -12,10 +12,11 @@ private:
 	Point2i m_ptWindowSize	{ CLIENTWIDTH		, CLIENTHEIGHT };
 	int		m_iFPS			= GAMEFPS;
 
-	void	(*m_pfReshape)(int w, int h)		{ nullptr } ;
-	void	(*m_pfDrawScene)()					{ nullptr } ;
-	void	(*m_pfTimer)(int val)				{ nullptr } ;
-	void	(*m_pfMouse)(int, int, int, int)	{ nullptr }	;
+	void	(*m_pfReshape)(int w, int h)						{ nullptr } ;
+	void	(*m_pfDrawScene)()									{ nullptr } ;
+	void	(*m_pfTimer)(int val)								{ nullptr } ;
+	void	(*m_pfMouse)(int, int, int, int)					{ nullptr }	;
+	void	(*m_pfKeyInput)(unsigned char key, int x, int y)	{ nullptr}	;
 
 	CScene	*m_arrScene[10] = {nullptr, };
 	int		m_nSceneIdx = 0;
@@ -34,15 +35,17 @@ public:
 	GLvoid drawScene(GLvoid);
 	GLvoid Timer(int val);
 	GLvoid Mouse(int button, int state, int x, int y);
+	GLvoid KeyInput(unsigned char key, int x, int y);
 	
 	GLvoid Run();
 
 	Point2i GetWindowSize() const { return m_ptWindowSize; }
 
-	void SetReshapeFunc	(void(*func)(int, int))				{ m_pfReshape = func; }
-	void SetDrawFunc	(void(*func)())						{ m_pfDrawScene = func; }
-	void SetTimerFunc	(void(*func)(int))					{ m_pfTimer = func; }
-	void SetMouseFunc	(void(*func)(int, int, int, int))	{ m_pfMouse = func; }
+	void SetReshapeFunc	(void(*func)(int, int))					{ m_pfReshape = func; }
+	void SetDrawFunc	(void(*func)())							{ m_pfDrawScene = func; }
+	void SetTimerFunc	(void(*func)(int))						{ m_pfTimer = func; }
+	void SetMouseFunc	(void(*func)(int, int, int, int))		{ m_pfMouse = func; }
+	void SetKeyInputFunc(void(*func)(unsigned char, int, int))	{ m_pfKeyInput = func; }
 
 	template<typename CreateScene>
 	void BuildScene(bool SelectNewScene = true)

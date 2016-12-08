@@ -49,8 +49,8 @@ int fognum;
 
 GLfloat fog_color[4] = { 0.3, 0.3, 0.3, 1.0 };
 GLfloat density = 0.7;
-GLfloat start = 10.0;
-GLfloat end = 10.0;
+GLfloat start = 50.0;
+GLfloat end = 50.0;
 
 void main(int, char *)
 {
@@ -135,17 +135,16 @@ GLvoid drawScene(GLvoid)
 
 	glMatrixMode(GL_MODELVIEW);
 
-	EnLighten();
+	//EnLighten();
 
 	glEnable(GL_FOG);
-
 	if (fognum == 1)
 		glFogf(GL_FOG_MODE, GL_LINEAR);
 	else if (fognum == 2)
 		glFogf(GL_FOG_MODE, GL_EXP);
 	else if (fognum == 3)
 		glFogf(GL_FOG_MODE, GL_EXP2);
-
+	
 	glFogfv(GL_FOG_COLOR, fog_color); // fog_color는 안개의 색을 의미한다. glFogf(GL_FOG_START, start); // start는 world coordinate상에서 안개 시작 위치를 의미한다.
 	glFogf(GL_FOG_END, end); // end는 world coordinate상에서 안개 끝 위치를 의미한다.
 	glFogf(GL_FOG_DENSITY, density);
@@ -163,7 +162,7 @@ GLvoid drawScene(GLvoid)
 	}
 	glPopMatrix();
 
-	glDisable(GL_FOG);
+	//glDisable(GL_FOG);
 	glutSwapBuffers();
 }
 
@@ -272,7 +271,7 @@ GLvoid Keydown(unsigned char key, int x, int y)
 		start += 1;
 		break;
 	case 'X':
-		start -= 1;
+		start -= 1; 
 		break;
 	case 'c':
 		end += 1;

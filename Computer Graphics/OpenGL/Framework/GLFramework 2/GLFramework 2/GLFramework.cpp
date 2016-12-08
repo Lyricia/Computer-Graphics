@@ -49,13 +49,25 @@ GLvoid CGLFramework::Mouse(int button, int state, int x, int y)
 	m_pCurrentScene->Mouse(button, state, x, y);
 }
 
+GLvoid CGLFramework::KeyInput(unsigned char key, int x, int y)
+{
+	m_pCurrentScene->KeyInput(key, x, y);
+	switch (key)
+	{
+	case 'q':
+		//exit(0);
+		break;
+	}
+}
+
 GLvoid CGLFramework::Run()
 {
-	assert((m_pfDrawScene && m_pfReshape && m_pfTimer && m_pfMouse)
+	assert((m_pfDrawScene && m_pfReshape && m_pfTimer && m_pfMouse && m_pfKeyInput)
 		&& "No callback function has been set!");
 	glClearColor(0.5, 0.5, 0.8, 1);
 	
 	glutMouseFunc(m_pfMouse);
+	glutKeyboardFunc(m_pfKeyInput);
 	glutDisplayFunc(m_pfDrawScene);
 	glutReshapeFunc(m_pfReshape);
 	glutTimerFunc(m_iFPS, m_pfTimer, 1);
