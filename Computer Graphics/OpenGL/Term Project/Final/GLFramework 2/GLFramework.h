@@ -1,6 +1,5 @@
 #pragma once
 
-
 class CScene;
 
 class CGLFramework
@@ -22,13 +21,15 @@ private:
 	int		m_nSceneIdx = 0;
 	CScene*	m_pCurrentScene;
 
+	CCamera m_Camera;
+
 public:
 
 	CGLFramework() = default;
 	~CGLFramework();
 	
 public:
-
+	// Initiation, Callback function
 	GLvoid Initialize(GLvoid);
 
 	GLvoid Reshape(int w, int h);
@@ -40,7 +41,7 @@ public:
 	GLvoid Run();
 
 	Point2i GetWindowSize() const { return m_ptWindowSize; }
-
+	
 	void SetReshapeFunc	(void(*func)(int, int))					{ m_pfReshape = func; }
 	void SetDrawFunc	(void(*func)())							{ m_pfDrawScene = func; }
 	void SetTimerFunc	(void(*func)(int))						{ m_pfTimer = func; }
@@ -60,5 +61,9 @@ public:
 
 		++m_nSceneIdx;
 	}
+
+	//User Function
+	CCamera * GetCamera() { return &m_Camera; }
+
 };
 

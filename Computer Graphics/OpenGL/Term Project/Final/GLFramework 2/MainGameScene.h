@@ -23,6 +23,6 @@ public:
 
 private:
 	CIntroTexture IntroTexture;
-	CCamera m_Camera;
+	CCamera* m_Camera;
 };
 

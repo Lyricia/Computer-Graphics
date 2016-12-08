@@ -25,7 +25,7 @@ constexpr inline GLKeyStateCombine GetMouseState(int button, int state) noexcept
 #define STARTPOSITION_Y		100
 
 #define CLIENTWIDTH			800
-#define CLIENTHEIGHT		600
+#define CLIENTHEIGHT		800
 
 #define GAMEFPS				1000 / 60
 

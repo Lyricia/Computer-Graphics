@@ -15,13 +15,13 @@ CMainGameScene::~CMainGameScene()
 
 void CMainGameScene::Update()
 {
-	
+	m_Camera->SetCamera();
 }
 
 void CMainGameScene::Render()
 {
 	glColor4f(1.f, 1.f, 1.f, 1.f);
-	//glutSolidCube(1.0f);
+	glutSolidCube(1.0f);
 
 	glPushMatrix();
 	{
@@ -37,20 +37,23 @@ void CMainGameScene::Render()
 
 void CMainGameScene::Reshape()
 {
-	auto sz = m_pMasterFramework->GetWindowSize();
-	m_Camera.SetAspect(static_cast<float>(sz.x) / static_cast<float>(sz.y));
-	m_Camera.LookAt();
+	//auto sz = m_pMasterFramework->GetWindowSize();
+
+	m_Camera->SetCamera();
+	//m_Camera.SetAspect(static_cast<float>(sz.x) / static_cast<float>(sz.y));
+	//m_Camera.LookAt();
 }
 
 void CMainGameScene::Mouse(int button, int state, int x, int y)
 {
+	m_Camera->getMouse(x, y);
+ 	m_Camera->SetLookVector();
+
 	switch (GetMouseState(button, state))
 	{
 	case GLKeyStateCombine::LBUTTONDOWN:
-		m_Camera.Move({0, 0, -1});
 		break;
 	case GLKeyStateCombine::RBUTTONDOWN:
-		m_Camera.Move({ 0, 0, 1 });
 		break;
 	case GLKeyStateCombine::LBUTTONUP:
 		break;
@@ -67,13 +70,31 @@ void CMainGameScene::KeyInput(unsigned char key, int x, int y)
 	case 'q':
 		exit(0);
 		break;
+
+	case 'w':
+		m_Camera->Move(DIRECTION::FRONT, 0.1f);
+		break;
+	case 's':
+		m_Camera->Move(DIRECTION::BACK, 0.1f);
+		break;
+	case 'a':
+		m_Camera->Move(DIRECTION::LEFT, 0.1f);
+		break;
+	case 'd':
+		m_Camera->Move(DIRECTION::RIGHT, 0.1f);
+		break;
 	}
 }
 
 void CMainGameScene::BuildScene(CGLFramework * pframework, int tag)
 {
 	CScene::BuildScene(pframework, tag);
-	glClearColor(0.5, 0.5, 0.8, 1);
+	glClearColor(0.0f, 0.0f, 0.0f, 1);
 
 	IntroTexture.initTextures();
+
+	m_Camera = m_pMasterFramework->GetCamera();
+
+	m_Camera->SetCameraPosition(0, 0, -1.f);
+	m_Camera->SetViewpoint(-0.5f);
 }
