@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Framework">
+      <UniqueIdentifier>{cb3dbfb5-4a77-41e4-acb5-f106d5c893bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{c2907406-1770-47c5-a446-d184e302153b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\Title">
+      <UniqueIdentifier>{01b0e442-1cd6-49e5-99ac-76543524f763}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\MainGame">
+      <UniqueIdentifier>{dd7d7987-10cb-4612-b1c5-c4120558fbe1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Util">
+      <UniqueIdentifier>{d0f61225-6855-48a8-a8ea-42b841704445}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Util\Base">
+      <UniqueIdentifier>{faf8f5a9-5c5b-4503-8567-1b9a77aaa25b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Util\Texture">
+      <UniqueIdentifier>{c437918d-b8b4-4476-9764-06718f603cc7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Util\Camera">
+      <UniqueIdentifier>{3f5fab36-5a8b-42b5-88da-ca496db8b97d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Objects">
+      <UniqueIdentifier>{1b1755ab-ab4b-40d4-8285-611d50a8acf6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Objects\Basement">
+      <UniqueIdentifier>{0a4a262a-6edc-43b5-b6be-1da6bce7e6b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Objects\Helicopter">
+      <UniqueIdentifier>{952852cb-7603-4a80-a782-ba0fd9477230}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Util\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="GLFramework.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="TitleScene.cpp">
+      <Filter>Scene\Title</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGameScene.cpp">
+      <Filter>Scene\MainGame</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureLib.cpp">
+      <Filter>Util\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="Helicopter.cpp">
+      <Filter>Objects\Helicopter</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjProp.cpp">
+      <Filter>Objects\Basement</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Camera.h">
+      <Filter>Util\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="GLFramework.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="TitleScene.h">
+      <Filter>Scene\Title</Filter>
+    </ClInclude>
+    <ClInclude Include="HeliIntroTexture.h">
+      <Filter>Scene\MainGame</Filter>
+    </ClInclude>
+    <ClInclude Include="MainGameScene.h">
+      <Filter>Scene\MainGame</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Util\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector3D.h">
+      <Filter>Util\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Spline.h">
+      <Filter>Util\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureLib.h">
+      <Filter>Util\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="Helicopter.h">
+      <Filter>Objects\Helicopter</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjProp.h">
+      <Filter>Objects\Basement</Filter>
+    </ClInclude>
+    <ClInclude Include="Tools.h">
+      <Filter>Util\Base</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
+</Project>
