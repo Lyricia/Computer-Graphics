@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "GLFramework.h"
-#include "MainGameScene.h"
+#include "IntroScene.h"
 #include "TitleScene.h"
 
 CTitleScene::CTitleScene()
@@ -15,7 +15,7 @@ void CTitleScene::Update()
 {
 	m_fFadein += 0.016;
 	if (m_fFadein > 1.5f) {
-		m_pMasterFramework->BuildScene<CMainGameScene>();
+		m_pMasterFramework->BuildScene<CIntroScene>();
 	}
 }
 
@@ -49,7 +49,7 @@ void CTitleScene::Render()
 	glDisable(GL_BLEND);
 }
 
-void CTitleScene::Reshape()
+void CTitleScene::Reshape(int w, int h)
 {
 	auto sz = m_pMasterFramework->GetWindowSize();
 	glMatrixMode(GL_PROJECTION);
@@ -64,7 +64,7 @@ void CTitleScene::MouseEvent(int button, int state, int x, int y)
 	switch (GetMouseState(button, state))
 	{
 	case GLKeyStateCombine::LBUTTONDOWN:
-		m_pMasterFramework->BuildScene<CMainGameScene>();
+		m_pMasterFramework->BuildScene<CIntroScene>();
 		break;
 	case GLKeyStateCombine::RBUTTONDOWN:
 		break;

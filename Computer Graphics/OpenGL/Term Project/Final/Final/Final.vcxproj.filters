@@ -22,9 +22,6 @@
     <Filter Include="Scene\Title">
       <UniqueIdentifier>{01b0e442-1cd6-49e5-99ac-76543524f763}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scene\MainGame">
-      <UniqueIdentifier>{dd7d7987-10cb-4612-b1c5-c4120558fbe1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Util">
       <UniqueIdentifier>{d0f61225-6855-48a8-a8ea-42b841704445}</UniqueIdentifier>
     </Filter>
@@ -46,6 +43,18 @@
     <Filter Include="Objects\Helicopter">
       <UniqueIdentifier>{952852cb-7603-4a80-a782-ba0fd9477230}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Objects\Wave">
+      <UniqueIdentifier>{a4404397-01ff-41bc-8baa-ae899230ac14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Util\SoundManager">
+      <UniqueIdentifier>{ac9ef701-3657-4b13-80e7-dfb47de72d08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\Intro">
+      <UniqueIdentifier>{dd7d7987-10cb-4612-b1c5-c4120558fbe1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\MainGameScene">
+      <UniqueIdentifier>{cfb9bf08-8fc0-4b49-a0a3-beb58c4dccac}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -63,9 +72,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="MainGameScene.cpp">
-      <Filter>Scene\MainGame</Filter>
-    </ClCompile>
     <ClCompile Include="TextureLib.cpp">
       <Filter>Util\Texture</Filter>
     </ClCompile>
@@ -74,6 +80,18 @@
     </ClCompile>
     <ClCompile Include="ObjProp.cpp">
       <Filter>Objects\Basement</Filter>
+    </ClCompile>
+    <ClCompile Include="Wave.cpp">
+      <Filter>Objects\Wave</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundManager.cpp">
+      <Filter>Util\SoundManager</Filter>
+    </ClCompile>
+    <ClCompile Include="IntroScene.cpp">
+      <Filter>Scene\Intro</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGameScene.cpp">
+      <Filter>Scene\MainGameScene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -90,10 +108,7 @@
       <Filter>Scene\Title</Filter>
     </ClInclude>
     <ClInclude Include="HeliIntroTexture.h">
-      <Filter>Scene\MainGame</Filter>
-    </ClInclude>
-    <ClInclude Include="MainGameScene.h">
-      <Filter>Scene\MainGame</Filter>
+      <Filter>Scene\Intro</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>Util\Base</Filter>
@@ -115,6 +130,21 @@
     </ClInclude>
     <ClInclude Include="Tools.h">
       <Filter>Util\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Wave.h">
+      <Filter>Objects\Wave</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundManager.h">
+      <Filter>Util\SoundManager</Filter>
+    </ClInclude>
+    <ClInclude Include="IntroScene.h">
+      <Filter>Scene\Intro</Filter>
+    </ClInclude>
+    <ClInclude Include="MainGameScene.h">
+      <Filter>Scene\MainGameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="MainGameSceneTexture.h">
+      <Filter>Scene\MainGameScene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

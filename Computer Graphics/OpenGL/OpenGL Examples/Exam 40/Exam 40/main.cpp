@@ -241,18 +241,17 @@ void DrawBase()
 		glPopMatrix();
 	}
 	glPopMatrix();
-
+	glEnable(GL_BLEND);
 	glPushMatrix();
 	{
 		glTranslatef(80, 25, -30);
 		glRotatef(angle2, 0, 1, 0);
 		glPushMatrix();
 		{
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_ONE, GL_ZERO);
-			glRotatef(90, 1, 1, 0);
-			glColor4f(1.f, 0.f, 0.f, 0.0f);
-			glutSolidCube(20);
+			//glBlendFunc(GL_ONE, GL_ZERO);
+			//glRotatef(90, 1, 1, 0);
+			//glColor4f(1.f, 0.f, 0.f, 0.0f);
+			//glutSolidCube(20);
 		}
 		glPopMatrix();
 	}
@@ -267,12 +266,12 @@ void DrawBase()
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_COLOR);
 			glRotatef(90, 1, 1, 0);
 			glColor4f(1.0f, 1.0f, 0.0f, 0.8);
-			glutSolidCube(40);
-			glDisable(GL_BLEND);
+			glutSolidCube(40);		
 		}
 		glPopMatrix();
 	}
 	glPopMatrix();
+	glDisable(GL_BLEND);
 }
 
 void DrawMASSIVE()

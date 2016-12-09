@@ -26,8 +26,8 @@ constexpr inline GLKeyStateCombine GetMouseState(int button, int state) noexcept
 #define STARTPOSITION_X		100
 #define STARTPOSITION_Y		100
 
-#define CLIENTWIDTH			800
-#define CLIENTHEIGHT		800
+#define CLIENTWIDTH			1280
+#define CLIENTHEIGHT		720
 
 #define GAMEFPS				1000 / 60
 
@@ -89,4 +89,3 @@ inline void DrawQuad(const Vec3f& ptPosition, float fScale, bool isXY = false) {
 	}
 	glPopMatrix();
 }
-

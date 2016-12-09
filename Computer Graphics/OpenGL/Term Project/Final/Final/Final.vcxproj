@@ -146,26 +146,33 @@
     <ClCompile Include="GLFramework.cpp" />
     <ClCompile Include="Helicopter.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="IntroScene.cpp" />
     <ClCompile Include="MainGameScene.cpp" />
     <ClCompile Include="ObjProp.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="TextureLib.cpp" />
     <ClCompile Include="TitleScene.cpp" />
+    <ClCompile Include="Wave.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="GLFramework.h" />
     <ClInclude Include="Helicopter.h" />
     <ClInclude Include="HeliIntroTexture.h" />
+    <ClInclude Include="IntroScene.h" />
     <ClInclude Include="MainGameScene.h" />
+    <ClInclude Include="MainGameSceneTexture.h" />
     <ClInclude Include="ObjProp.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="SoundManager.h" />
     <ClInclude Include="Spline.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TextureLib.h" />
     <ClInclude Include="TitleScene.h" />
     <ClInclude Include="Tools.h" />
     <ClInclude Include="Vector3D.h" />
+    <ClInclude Include="Wave.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

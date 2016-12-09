@@ -1,3 +1,4 @@
+#pragma once
 #include "Helicopter.h"
 #include "stdafx.h"
 #include "Tools.h"
@@ -306,20 +307,20 @@ void CHelicopter::Render()
 						glVertex3f(-x_size, y_size, -z_size);
 						glVertex3f(x_size, y_size, -z_size);
 						glVertex3f(x_size, y_size, z_size);
-
-
+						
+						
 						//¾Æ·¡
 						glVertex3f(-x_size, -y_size, z_size);
 						glVertex3f(-x_size, -y_size, -z_size);
 						glVertex3f(x_size, -y_size, -z_size);
 						glVertex3f(x_size, -y_size, z_size);
-
+						
 						// ¿Þ
 						glVertex3f(-x_size, y_size, -z_size);
 						glVertex3f(-x_size, -y_size, -z_size);
 						glVertex3f(-x_size, -y_size, z_size);
 						glVertex3f(-x_size, y_size, z_size);
-
+						
 						// ¿À¸¥
 						glVertex3f(x_size, y_size, -z_size);
 						glVertex3f(x_size, -y_size, -z_size);

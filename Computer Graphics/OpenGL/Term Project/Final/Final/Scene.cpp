@@ -21,7 +21,7 @@ void CScene::Render()
 {
 }
 
-void CScene::Reshape()
+void CScene::Reshape(int w, int h)
 {
 }
 

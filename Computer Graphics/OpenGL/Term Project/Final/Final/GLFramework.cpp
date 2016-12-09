@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "GLFramework.h"
 #include "TitleScene.h"
-#include "MainGameScene.h"
+#include "IntroScene.h"
 
 
 CGLFramework::~CGLFramework()
@@ -23,7 +23,7 @@ GLvoid CGLFramework::Reshape(int w, int h)
 	m_ptWindowSize = Point2i { w,h };
 
 	glViewport(0, 0, w, h);
-	m_pCurrentScene->Reshape();
+	m_pCurrentScene->Reshape(w, h);
 	
 }
 

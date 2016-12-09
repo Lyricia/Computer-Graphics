@@ -1,7 +1,7 @@
 #include "stdafx.h"
-#include "MainGameScene.h"
+#include "Tools.h"
 #include "GLFramework.h"
-#include "Spline.h"
+#include "MainGameScene.h"
 
 
 CMainGameScene::CMainGameScene()
@@ -20,103 +20,31 @@ void CMainGameScene::Update()
 	if (CameraMove[DIRECTION::LEFT])	m_Camera->Move(DIRECTION::LEFT, 0.5f);
 	if (CameraMove[DIRECTION::RIGHT])	m_Camera->Move(DIRECTION::RIGHT, 0.5f);
 
-	Helicopter.RotateWing(10);
-
-	glutWarpPointer(400, 400);
+	glutWarpPointer((CLIENTWIDTH * 0.5), (CLIENTHEIGHT * 0.5));
 	m_Camera->SetCamera();
 }
 
+
 void CMainGameScene::Render()
 {
-	glColor4f(1.f, 1.f, 1.f, 1.f);
-	//glutSolidCube(1.0f);
+	glutSolidCube(10);
+
 	glPushMatrix();
 	{
 		glRotatef(180, 0, 1, 0);
-		Helicopter.Render();
-	}
-	glPopMatrix();
-
-	glPushMatrix();
-	{
-		CTextureLibraray::UsingTexture2D();
-		{
-			glColor4f(1.f, 1.f, 1.f, 1.f);
-			IntroTexture.m_tex_sea.LoadTexture(0);
-			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glBegin(GL_QUADS); {
-				glVertex3f(+100.0f, 0, +100.0f);		glTexCoord2f(1.0f, 1.0f);
-				glVertex3f(-100.0f, 0, +100.0f);		glTexCoord2f(0.0f, 1.0f);
-				glVertex3f(-100.0f, 0, -100.0f);		glTexCoord2f(0.0f, 0.0f);
-				glVertex3f(+100.0f, 0, -100.0f);		glTexCoord2f(1.0f, 0.0f);
-				glEnd();
-			}
-		}
-		CTextureLibraray::StopUsingTexture2D();
-	}
-
-	glPushMatrix();
-	{
-		CTextureLibraray::UsingTexture2D();
-		{
-			glTranslatef(0, 20, 100);
-			glColor4f(1.f, 1.f, 1.f, 1.f);
-			IntroTexture.m_tex_moon.LoadTexture(0);
-			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glBegin(GL_QUADS); {
-				glVertex3f(+5.0f, +5.0f, 0);		glTexCoord2f(1.0f, 1.0f);
-				glVertex3f(-5.0f, +5.0f, 0);		glTexCoord2f(0.0f, 1.0f);
-				glVertex3f(-5.0f, -5.0f, 0);		glTexCoord2f(0.0f, 0.0f);
-				glVertex3f(+5.0f, -5.0f, 0);		glTexCoord2f(1.0f, 0.0f); 
-				glEnd();
-			}
-		}
-		CTextureLibraray::StopUsingTexture2D();
-	}
-	glPopMatrix();
-
-	glPushMatrix();
-	{
-		CTextureLibraray::UsingTexture2D();
-		{
-			glTranslatef(0, 20, 110);
-			glColor4f(1.f, 1.f, 1.f, 1.f);
-			IntroTexture.m_tex_sky.LoadTexture(0);
-			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glBegin(GL_QUADS); {
-				glVertex3f(+100.0f, +100.0f, 0);		glTexCoord2f(1.0f, 1.0f);
-				glVertex3f(-100.0f, +100.0f, 0);		glTexCoord2f(0.0f, 1.0f);
-				glVertex3f(-100.0f, -100.0f, 0);		glTexCoord2f(0.0f, 0.0f);
-				glVertex3f(+100.0f, -100.0f, 0);		glTexCoord2f(1.0f, 0.0f);
-				glEnd();
-			}
-		}
-		CTextureLibraray::StopUsingTexture2D();
+		DrawTree(10.0, 10.0);
+		glTranslatef(10, 0, 1);
+		DrawTree(10.0, 10.0);
 	}
 	glPopMatrix();
 }
 
-void CMainGameScene::Reshape()
+void CMainGameScene::Reshape(int w, int h)
 {
-	
 }
 
 void CMainGameScene::MouseEvent(int button, int state, int x, int y)
 {
-
-
 	switch (GetMouseState(button, state))
 	{
 	case GLKeyStateCombine::LBUTTONDOWN:
@@ -145,7 +73,7 @@ void CMainGameScene::KeyInput(unsigned char key, int x, int y)
 		exit(0);
 		break;
 	case 'w':
- 		CameraMove[DIRECTION::FRONT] = true;
+		CameraMove[DIRECTION::FRONT] = true;
 		break;
 	case 's':
 		CameraMove[DIRECTION::BACK] = true;
@@ -178,16 +106,49 @@ void CMainGameScene::KeyUp(unsigned char key, int x, int y)
 	}
 }
 
+
 void CMainGameScene::BuildScene(CGLFramework * pframework, int tag)
 {
 	CScene::BuildScene(pframework, tag);
-	glClearColor(0.0f, 0.0f, 0.0f, 1);
-
-	IntroTexture.initTextures();
+	Texture.initTextures();
 
 	m_Camera = m_pMasterFramework->GetCamera();
+}
 
-	m_Camera->SetCameraPosition(0.f, 15.0f, -15.f);
+void CMainGameScene::DrawTree(float w, float h)
+{
+	glEnable(GL_DEPTH_TEST);
+	CTextureLibraray::UsingTexture2D();
+	{
+		glColor4f(1.f, 1.f, 1.f, 1.0f);
 
-	Helicopter.MovePosition(0, 1000, 0);
+		Texture.m_tex_Tree.LoadTexture(0); 
+		glEnable(GL_BLEND); 
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+		glPushMatrix();
+
+		glBegin(GL_QUADS); {
+
+			glTexCoord2f(1.0f, 0.0f);
+			glVertex3f(1 * w, 0, 0);
+			glTexCoord2f(0, 0.0f);
+			glVertex3f(-w, 0, 0);
+			glTexCoord2f(0, 1.0f);
+			glVertex3f(-w, 2 * h, 0);
+			glTexCoord2f(1.0f, 1.0f);
+			glVertex3f(w, 2 * h, 0);
+			glEnd();
+		}
+
+		glDisable(GL_BLEND);
+		glPopMatrix();
+	}
+	CTextureLibraray::StopUsingTexture2D();
 }

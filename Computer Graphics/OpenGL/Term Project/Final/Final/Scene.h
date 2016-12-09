@@ -13,7 +13,7 @@ public:
 public:
 	virtual void Update();
 	virtual void Render();
-	virtual void Reshape();
+	virtual void Reshape(int w, int h);
 	virtual void MouseEvent(int button, int state, int x, int y);
 	virtual void MouseMove(int x, int y);
 	virtual void KeyInput(unsigned char key, int x, int y);

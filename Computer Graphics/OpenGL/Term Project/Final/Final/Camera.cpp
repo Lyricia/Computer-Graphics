@@ -1,5 +1,4 @@
-#include <cmath>
-#include <iostream>
+#include "stdafx.h"
 #include "Camera.h"
 #include "gl/glut.h"
 
@@ -21,7 +20,7 @@ void CCamera::SetCamera()
 {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(m_POV, 1.0, 0.01, 10000);
+	gluPerspective(m_POV, ((double)CLIENTWIDTH/(double)CLIENTHEIGHT), 0.01, 10000);
 	glTranslatef(0.0, 0.0, m_dist);
 	gluLookAt(
 		Position.x , Position.y, Position.z,
@@ -67,8 +66,8 @@ void CCamera::SetLookVector()
 	const float YAW_ROTATE_SPEED = 1.5;
 	const float PITCH_ROTATE_SPEED = 1.5;
 
-	delta_x = 400 - newMousePostion_x;
-	delta_y = 400 - newMousePostion_y;
+	delta_x = (CLIENTWIDTH * 0.5) - newMousePostion_x;
+	delta_y = (CLIENTHEIGHT * 0.5) - newMousePostion_y;
 	//std::cout << delta_x << ' ' << delta_y << std::endl;
 
 	if (delta_x > 0.0f)
@@ -104,6 +103,7 @@ void CCamera::getMouse(int x, int y)
 {
 	newMousePostion_x = x;
 	newMousePostion_y = y;
+	
 	//std::cout << x << ' ' << y << std::endl; 
 }
 
