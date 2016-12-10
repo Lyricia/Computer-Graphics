@@ -23,12 +23,13 @@ public:
 	);
 
 	void DrawTree(float w, float h);
+	void DrawHud(float w, float h);
+	void DrawDummy(float w, float h);
 
 private:
 	CMainGameSceneTexture Texture;
 	bool CameraMove[4]{ false, };
+	bool IsZoom;
 	CCamera* m_Camera;
-
-
 };
 

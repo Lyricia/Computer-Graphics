@@ -31,12 +31,13 @@ void CIntroScene::Update()
 
 	m_Fade -= 0.005;
 }
-
+ 
 void CIntroScene::Render()
 {
 	glEnable(GL_DEPTH_TEST);
 
 	{
+		//Render Helicopter
 		glPushMatrix();
 		{
 			glRotatef(180, 0, 1, 0);
@@ -44,6 +45,7 @@ void CIntroScene::Render()
 		}
 		glPopMatrix();
 
+		//Render Sea
 		glPushMatrix();
 		{
 			CTextureLibraray::UsingTexture2D();
@@ -67,6 +69,7 @@ void CIntroScene::Render()
 		}
 		glPopMatrix();
 
+		//Render Moon
 		glPushMatrix();
 		{
 			CTextureLibraray::UsingTexture2D();
@@ -91,6 +94,7 @@ void CIntroScene::Render()
 		}
 		glPopMatrix();
 
+		//Render Sky
 		glPushMatrix();
 		{
 			CTextureLibraray::UsingTexture2D();
@@ -115,22 +119,36 @@ void CIntroScene::Render()
 		}
 		glPopMatrix();
 	}
+
+	//Render FadeScreen
 	glPushMatrix();
 	{
-		glTranslatef(m_Camera->Position.x/100, m_Camera->Position.y/100, m_Camera->Position.z/100);
+		glTranslatef(0, 10, m_Camera->Position.z+0.5f);
+		//glRotatef(90, 1, 0, 0);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glBegin(GL_QUADS); {
 			glColor4f(0, 0, 0, max(m_Fade, 0.0f));
-			glVertex3f(1 * 100, 0, 0);
+			glVertex3f(+100, 0, 0);
 			glVertex3f(-100, 0, 0);
-			glVertex3f(-100, 2 * 100, 0);
-			glVertex3f(100, 2 * 100, 0);
+			glVertex3f(-100, 0, +100);
+			glVertex3f(+100, 0, +100);
+			glEnd();
+		}
+
+		glTranslatef(0, 0, 100);
+		glBegin(GL_QUADS); {
+			glColor4f(0, 0, 0, max(m_Fade, 0.0f));
+			glVertex3f(+100, 0, 0);
+			glVertex3f(-100, 0, 0);
+			glVertex3f(-100, +100,00 );
+			glVertex3f(+100, +100,00 );
 			glEnd();
 		}
 		glDisable(GL_BLEND);
-		glPopMatrix();
+		
 	}
+	glPopMatrix();
 }
 
 void CIntroScene::Reshape(int w, int h)

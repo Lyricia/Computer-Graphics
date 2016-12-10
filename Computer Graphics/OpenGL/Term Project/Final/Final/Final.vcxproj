@@ -164,6 +164,7 @@
     <ClInclude Include="MainGameScene.h" />
     <ClInclude Include="MainGameSceneTexture.h" />
     <ClInclude Include="ObjProp.h" />
+    <ClInclude Include="Robot.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="Spline.h" />

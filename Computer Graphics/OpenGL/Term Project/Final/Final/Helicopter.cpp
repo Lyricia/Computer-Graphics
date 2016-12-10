@@ -103,24 +103,6 @@ void CHelicopter::Render()
 					}
 					glPopMatrix();
 					//날개 동그라미!!
-					/*
-					glPushMatrix(); {
-					glTranslatef(0, y_size + y_size / 2 - 5, 0);
-
-					SetColor(255, 0, 255);
-
-					glBegin(GL_LINE_LOOP); {
-					for (int j = 0; j < 20; j++) {
-					for (float i = 0; i < 6.28; i += 0.01) {
-					glVertex3d(2 * x_size * cos(i), j - 10, 2 * x_size * sin(i));
-					glVertex3d(2 * x_size * cos(i + 1), j - 10, 2 * x_size * sin(i + 1));
-					}
-					}
-					glEnd();
-					}
-					glPopMatrix();
-					}
-					*/
 				}
 				glPopMatrix();
 			}
@@ -326,6 +308,12 @@ void CHelicopter::Render()
 						glVertex3f(x_size, -y_size, -z_size);
 						glVertex3f(x_size, -y_size, z_size);
 						glVertex3f(x_size, y_size, z_size);
+
+						//back
+						glVertex3f(x_size, y_size, -z_size);
+						glVertex3f(-x_size, y_size, -z_size);
+						glVertex3f(-x_size, 0, z_size);
+						glVertex3f(x_size, 0, z_size);
 					}
 					glEnd();
 				}

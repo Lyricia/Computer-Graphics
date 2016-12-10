@@ -14,8 +14,11 @@ CTitleScene::~CTitleScene()
 void CTitleScene::Update()
 {
 	m_fFadein += 0.016;
-	if (m_fFadein > 1.5f) {
-		m_pMasterFramework->BuildScene<CIntroScene>();
+	if (m_fFadein > 2.0f) {
+		TextureChange = true;
+	}
+	if(m_fFadein > 4.0f){
+ 		m_pMasterFramework->BuildScene<CIntroScene>();
 	}
 }
 
@@ -23,29 +26,56 @@ void CTitleScene::Render()
 {
 	auto sz = m_pMasterFramework->GetWindowSize();
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glColor4f(1.f, 1.f, 1.f, min(m_fFadein, 1.f));
+	
 	//glutSolidCube(1.0f);
 
-	glPushMatrix();
-	{
-		m_texLogo.LoadTexture(0);
-		CTextureLibraray::UsingTexture2D();
+	if (TextureChange == false) {
+		glPushMatrix();
 		{
-
-			glBegin(GL_QUADS);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glColor4f(1.f, 1.f, 1.f, min(m_fFadein, 1.f));
+			m_texLogo.LoadTexture(0);
+			CTextureLibraray::UsingTexture2D();
 			{
-				glTexCoord2f(+0.0f, +1.0f);					glVertex2f(0.0f, 0.0f);
-				glTexCoord2f(+0.0f, +0.0f);					glVertex2f(0.0f, sz.y);
-				glTexCoord2f(+1.0f, +0.0f);					glVertex2f(sz.x, sz.y);
-				glTexCoord2f(+1.0f, +1.0f);					glVertex2f(sz.x, 0.0f);
-			}
-			glEnd();
 
+				glBegin(GL_QUADS);
+				{
+					glTexCoord2f(+0.0f, +1.0f);					glVertex2f(0.0f, 0.0f);
+					glTexCoord2f(+0.0f, +0.0f);					glVertex2f(0.0f, sz.y);
+					glTexCoord2f(+1.0f, +0.0f);					glVertex2f(sz.x, sz.y);
+					glTexCoord2f(+1.0f, +1.0f);					glVertex2f(sz.x, 0.0f);
+				}
+				glEnd();
+
+			}
+			CTextureLibraray::StopUsingTexture2D();
 		}
-		CTextureLibraray::StopUsingTexture2D();
+		glPopMatrix();
 	}
-	glPopMatrix();
+	else if (TextureChange == true)
+	{
+		glPushMatrix();
+		{
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glColor4f(1.f, 1.f, 1.f, min(m_fFadein-2.0f, 1.f));
+			m_texLogo2.LoadTexture(0);
+			CTextureLibraray::UsingTexture2D();
+			{
+
+				glBegin(GL_QUADS);
+				{
+					glTexCoord2f(+0.0f, +1.0f);					glVertex2f(0.0f, 0.0f);
+					glTexCoord2f(+0.0f, +0.0f);					glVertex2f(0.0f, sz.y);
+					glTexCoord2f(+1.0f, +0.0f);					glVertex2f(sz.x, sz.y);
+					glTexCoord2f(+1.0f, +1.0f);					glVertex2f(sz.x, 0.0f);
+				}
+				glEnd();
+
+			}
+			CTextureLibraray::StopUsingTexture2D();
+		}
+		glPopMatrix();
+	}
 	glDisable(GL_BLEND);
 }
 
@@ -100,4 +130,5 @@ void CTitleScene::BuildScene(CGLFramework * pframework, int tag)
 	glClearColor(0.f, 0.f, 0.f, 1.f);
 
 	m_texLogo.SetTexture(L"Image/warp.png");
+	m_texLogo2.SetTexture(L"Image/GFP.png");
 }

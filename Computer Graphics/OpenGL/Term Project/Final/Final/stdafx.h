@@ -89,3 +89,11 @@ inline void DrawQuad(const Vec3f& ptPosition, float fScale, bool isXY = false) {
 	}
 	glPopMatrix();
 }
+
+
+inline bool boolswitch(bool chker)
+{
+	if (chker == true)			return false;
+	else if (chker == false)	return true;
+	return false;
+}

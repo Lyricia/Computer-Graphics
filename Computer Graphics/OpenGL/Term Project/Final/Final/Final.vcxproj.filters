@@ -55,6 +55,9 @@
     <Filter Include="Scene\MainGameScene">
       <UniqueIdentifier>{cfb9bf08-8fc0-4b49-a0a3-beb58c4dccac}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Objects\Robot">
+      <UniqueIdentifier>{ba6d0d30-e0d0-4703-98bd-77e65cdb1a54}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -145,6 +148,9 @@
     </ClInclude>
     <ClInclude Include="MainGameSceneTexture.h">
       <Filter>Scene\MainGameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Robot.h">
+      <Filter>Objects\Robot</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
