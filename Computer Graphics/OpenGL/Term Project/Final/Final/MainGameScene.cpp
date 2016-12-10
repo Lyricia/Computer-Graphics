@@ -64,15 +64,31 @@ void CMainGameScene::Render()
 		glRotatef(-m_Camera->Angle.pitch, 1, 0, 0);
 		glPushMatrix();
 		{
-			if (!IsZoom) {
-				glRotatef(180, 0, 1, 0);
-				glTranslatef(2, -10, -10);
-				DrawHud(5.5, 5.5);
+			if (!IsKnife) {
+				if (!IsSpecial) {
+					glRotatef(180, 0, 1, 0);
+					glTranslatef(2.5, -10, -10);
+					DrawHud(7, 5.5);
+				}
+				else if (IsSpecial) {
+					glRotatef(180, 0, 1, 0);
+					glTranslatef(-0.4, -6.2, -10);
+					DrawHud(4, 4);
+				}
 			}
-			else if (IsZoom) {
-				glRotatef(180, 0, 1, 0);
-				glTranslatef(-0.4, -6.2, -10);
-				DrawHud(4, 4);
+			else if (IsKnife)
+			{
+				if (!IsAttack) {
+					glRotatef(180, 0, 1, 0);
+					glTranslatef(7,-6,-10);
+					DrawKnife(3.5,3.5);
+				}
+				else if (IsAttack) {
+					//glRotatef(-10, 0, 0, 1);
+					glRotatef(180, 0, 1, 0);
+					glTranslatef(3, -8, -10);
+					DrawKnife(8, 4);
+				}
 			}
 		}
 		glPopMatrix();
@@ -97,16 +113,18 @@ void CMainGameScene::MouseEvent(int button, int state, int x, int y)
 	switch (GetMouseState(button, state))
 	{
 	case GLKeyStateCombine::LBUTTONDOWN:
+		IsAttack = true;
 		break;
 	case GLKeyStateCombine::RBUTTONDOWN:
-		IsZoom = boolswitch(IsZoom);
+		IsSpecial = boolswitch(IsSpecial);
 		break;
 	case GLKeyStateCombine::LBUTTONUP:
+		IsAttack = false;
 		break;
 	case GLKeyStateCombine::RBUTTONUP:
 		break;
-
 	}
+	
 }
 
 void CMainGameScene::MouseMove(int x, int y)
@@ -134,6 +152,19 @@ void CMainGameScene::KeyInput(unsigned char key, int x, int y)
 	case 'd':
 		CameraMove[DIRECTION::RIGHT] = true;
 		break;
+
+	case '1':
+		IsKnife = false;
+		break;
+
+	case '2':
+		IsKnife = true;
+		break;
+
+	case 'f':
+		IsAttack = true;
+		break;
+
 	default:
 		BOT.control_robot(key);
 		break;
@@ -157,7 +188,9 @@ void CMainGameScene::KeyUp(unsigned char key, int x, int y)
 		CameraMove[DIRECTION::RIGHT] = false;
 		break;
 
-
+	case 'f':
+		IsAttack = false;
+		break;
 	}
 }
 
@@ -168,7 +201,8 @@ void CMainGameScene::BuildScene(CGLFramework * pframework, int tag)
 	Texture.initTextures();
 
 	m_Camera = m_pMasterFramework->GetCamera();
-	IsZoom = false;
+	IsSpecial = false;
+	IsKnife = false;
 }
 
 void CMainGameScene::DrawTree(float w, float h)
@@ -212,9 +246,9 @@ void CMainGameScene::DrawHud(float w, float h)
 	CTextureLibraray::UsingTexture2D();
 	{
 		glColor4f(1.f, 1.f, 1.f, 1.0f);
-		if(!IsZoom)
+		if(!IsSpecial)
 			Texture.m_tex_UserHUD_notZoom.LoadTexture(0);
-		else if(IsZoom)
+		else if(IsSpecial)
 			Texture.m_tex_UserHUD_Zoom.LoadTexture(0);
 		glEnable(GL_BLEND); 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -223,6 +257,44 @@ void CMainGameScene::DrawHud(float w, float h)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		
+		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+		glPushMatrix();
+
+		glBegin(GL_QUADS); {
+
+			glTexCoord2f(1.0f, 1.0f);
+			glVertex3f(w, 2 * h, 0);
+			glTexCoord2f(0, 1.0f);
+			glVertex3f(-w, 2 * h, 0);
+			glTexCoord2f(0, 0.0f);
+			glVertex3f(-w, 0, 0);
+			glTexCoord2f(1.0f, 0.0f);
+			glVertex3f(1 * w, 0, 0);
+			glEnd();
+		}
+		glDisable(GL_BLEND);
+		glPopMatrix();
+	}
+	CTextureLibraray::StopUsingTexture2D();
+}
+
+void CMainGameScene::DrawKnife(float w, float h)
+{
+	CTextureLibraray::UsingTexture2D();
+	{
+		glColor4f(1.f, 1.f, 1.f, 1.0f);
+		if (!IsAttack)
+			Texture.m_tex_UserHUD_Knife_Ready.LoadTexture(0);
+		else if (IsAttack)
+			Texture.m_tex_UserHUD_Knife_Attack.LoadTexture(0);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
 		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
 		glPushMatrix();

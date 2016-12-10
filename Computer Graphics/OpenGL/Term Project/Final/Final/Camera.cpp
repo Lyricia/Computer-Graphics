@@ -63,8 +63,8 @@ void CCamera::SetLookVector()
 {
 	float delta_x;
 	float delta_y;
-	const float YAW_ROTATE_SPEED = 1.5;
-	const float PITCH_ROTATE_SPEED = 1.5;
+	const float YAW_ROTATE_SPEED = 1;
+	const float PITCH_ROTATE_SPEED = 1;
 
 	delta_x = (CLIENTWIDTH * 0.5) - newMousePostion_x;
 	delta_y = (CLIENTHEIGHT * 0.5) - newMousePostion_y;

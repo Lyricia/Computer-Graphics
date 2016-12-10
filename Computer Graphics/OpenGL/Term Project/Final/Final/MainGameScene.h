@@ -25,11 +25,14 @@ public:
 	void DrawTree(float w, float h);
 	void DrawHud(float w, float h);
 	void DrawDummy(float w, float h);
+	void DrawKnife(float w, float h);
 
 private:
 	CMainGameSceneTexture Texture;
 	bool CameraMove[4]{ false, };
-	bool IsZoom;
+	bool IsSpecial;
+	bool IsAttack;
+	bool IsKnife;
 	CCamera* m_Camera;
 };
 
