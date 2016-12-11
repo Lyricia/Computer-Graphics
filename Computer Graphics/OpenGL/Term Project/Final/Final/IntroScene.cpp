@@ -30,12 +30,16 @@ void CIntroScene::Update()
 		HeliDist += 5;
 
 	m_Fade -= 0.005;
+
+	m_Flow.get_helixyz(Helicopter.Position.x, Helicopter.Position.y, Helicopter.Position.z);
+	m_Flow.update_flow();
 }
  
 void CIntroScene::Render()
 {
 	glEnable(GL_DEPTH_TEST);
-
+	glColor3f(1, 1, 0);
+	glutSolidCube(10);
 	{
 		//Render Helicopter
 		glPushMatrix();
@@ -66,6 +70,19 @@ void CIntroScene::Render()
 				}
 			}
 			CTextureLibraray::StopUsingTexture2D();
+		}
+		glPopMatrix();
+
+		//Draw Flow
+		glPushMatrix();
+		{
+			m_Flow.draw_flow();
+		}
+		glPopMatrix();
+
+		glPushMatrix();
+		{
+			m_Light.Make_Light(Helicopter.Position.x, Helicopter.Position.y, Helicopter.Position.z );
 		}
 		glPopMatrix();
 
@@ -118,6 +135,7 @@ void CIntroScene::Render()
 			CTextureLibraray::StopUsingTexture2D();
 		}
 		glPopMatrix();
+
 	}
 
 	//Render FadeScreen
@@ -200,6 +218,7 @@ void CIntroScene::KeyInput(unsigned char key, int x, int y)
 		CameraMove[DIRECTION::RIGHT] = true;
 		break;
 	}
+	std::cout << m_Camera->Position.x << " " << m_Camera->Position.z << std::endl;
 }
 
 void CIntroScene::KeyUp(unsigned char key, int x, int y)
@@ -231,6 +250,8 @@ void CIntroScene::BuildScene(CGLFramework * pframework, int tag)
 	m_Camera->SetCameraPosition(0.f, 11.0f, -10.f);
 
 	Helicopter.MovePosition(0, 1000, 1200);
+
+	m_Flow.init_flow();
 
 	Sound.InsertSound("Sound/heli_sound.wav", 0);
 	//glEnable(GL_DEPTH_TEST);

@@ -3,6 +3,8 @@
 #include "HeliIntroTexture.h"
 #include "Helicopter.h"
 #include "SoundManager.h"
+#include "Flow.h"
+#include "Light.h"
 
 class CIntroScene :
 	public CScene
@@ -31,6 +33,8 @@ private:
 	CSoundManager Sound;
 	bool CameraMove[4]{ false, };
 
+	CFlow m_Flow;
+	CLight m_Light;
 	float m_Fade = 1.0f;
 };
 

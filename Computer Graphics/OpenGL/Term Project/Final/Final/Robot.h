@@ -186,19 +186,19 @@ public:
 		}
 	}
 	void control_robot(unsigned char key) {
-		if (key == 's' || key == 'S')
+		if (key == 'i' || key == 'S')
 		{
 			robot_head_status = Function_ONOFF(robot_head_status);
 		}
-		if (key == 'a' || key == 'A')
+		if (key == 'o' || key == 'A')
 		{
 			robot_arm_status = Function_ONOFF(robot_arm_status);
 		}
-		if (key == 'd' || key == 'D')
+		if (key == 'p' || key == 'D')
 		{
 			robot_leg_status = Function_ONOFF(robot_leg_status);
 		}
-		if (key == 'f' || key == 'F')
+		if (key == 'u' || key == 'F')
 			RunOrWalk = Function_ONOFF(RunOrWalk);
 		else if (key == 'g' || key == 'G') {
 			robot_shot_status = Function_ONOFF_SIMPLE(robot_shot_status);
@@ -1375,30 +1375,30 @@ public:
 								glDisable(GL_TEXTURE_GEN_S);
 								glDisable(GL_TEXTURE_GEN_T);
 								//신발을 그려줍니다.
-								//glPushMatrix(); {
-								//	glTranslatef(0, 40, 270);		// z값 , y값임
-								//	glScalef((float)1 / 2, 1, (float)1 / 2);
+								glPushMatrix(); {
+									glTranslatef(0, 40, 270);		// z값 , y값임
+									glScalef((float)1 / 2, 1, (float)1 / 2);
 
-								//	robot_bit.load_bitmap("robot_foot.bmp", 6, 60, 59);
-								//	robot_bit.draw_bitmap("robot_foot.bmp", 6, 60, 59);
+									robot_bit.load_bitmap("robot_foot.bmp", 6, 60, 59);
+									robot_bit.draw_bitmap("robot_foot.bmp", 6, 60, 59);
 
-								//	glEnable(GL_TEXTURE_GEN_S);
-								//	glEnable(GL_TEXTURE_GEN_T);
+									glEnable(GL_TEXTURE_GEN_S);
+									glEnable(GL_TEXTURE_GEN_T);
 
-								//	glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
-								//	glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
-								//	SetColor(150, 150, 150);
-								//	//glutSolidSphere(15, 10, 10);
-								//	glutSolidCube(100);
+									glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+									glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+									SetColor(150, 150, 150);
+									//glutSolidSphere(15, 10, 10);
+									glutSolidCube(100);
 
-								//	glDisable(GL_TEXTURE_GEN_S);
-								//	glDisable(GL_TEXTURE_GEN_T);
+									glDisable(GL_TEXTURE_GEN_S);
+									glDisable(GL_TEXTURE_GEN_T);
 
-								//	//SetColor(150, 150, 150);
-								//	//SetColor(0, 0, 0);
-								//	//glutWireCube(101);
-								//	glPopMatrix();
-								//}
+									//SetColor(150, 150, 150);
+									//SetColor(0, 0, 0);
+									//glutWireCube(101);
+									glPopMatrix();
+								}
 								glPopMatrix();
 							}
 							glPopMatrix();
@@ -1760,4 +1760,4 @@ public:
 		glDisable(GL_TEXTURE_2D);
 	}
 }ROBOT;
-ROBOT BOT;
+ROBOT BOT[10];

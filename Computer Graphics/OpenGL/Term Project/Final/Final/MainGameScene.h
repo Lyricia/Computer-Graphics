@@ -23,16 +23,35 @@ public:
 	);
 
 	void DrawTree(float w, float h);
+	void DrawBush();
 	void DrawHud(float w, float h);
 	void DrawDummy(float w, float h);
 	void DrawKnife(float w, float h);
+	void DrawField();
+	
+	void RobotMove(int Index);
+	bool RobotKill(int Index);
+	bool IsCanMove();
 
 private:
 	CMainGameSceneTexture Texture;
 	bool CameraMove[4]{ false, };
-	bool IsSpecial;
-	bool IsAttack;
-	bool IsKnife;
-	CCamera* m_Camera;
-};
+	bool m_IsSpecial;
+	bool m_IsAttack;
+	bool m_IsKnife;
 
+	bool m_IsCrouching;
+	bool m_IsDashing;
+	float m_PlayerSpeed;
+	int m_camera_ypos_delta;
+	CCamera* m_Camera;
+
+	Vec3f m_RobotPosition[10];
+	float m_RobotDir[10];
+	Vec3f m_TreePosition[1000];
+	int m_TreeTexIdx[1000];
+	
+	enum state {stop, move, recog, dead};
+
+	char RobotState[10];
+};

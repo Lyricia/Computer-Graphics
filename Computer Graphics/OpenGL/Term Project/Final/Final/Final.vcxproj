@@ -143,8 +143,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Flow.cpp" />
     <ClCompile Include="GLFramework.cpp" />
     <ClCompile Include="Helicopter.cpp" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="IntroScene.cpp" />
     <ClCompile Include="MainGameScene.cpp" />
@@ -157,10 +159,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Flow.h" />
     <ClInclude Include="GLFramework.h" />
     <ClInclude Include="Helicopter.h" />
     <ClInclude Include="HeliIntroTexture.h" />
     <ClInclude Include="IntroScene.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="MainGameScene.h" />
     <ClInclude Include="MainGameSceneTexture.h" />
     <ClInclude Include="ObjProp.h" />

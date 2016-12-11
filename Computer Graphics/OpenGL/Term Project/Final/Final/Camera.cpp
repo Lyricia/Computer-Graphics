@@ -20,7 +20,7 @@ void CCamera::SetCamera()
 {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(m_POV, ((double)CLIENTWIDTH/(double)CLIENTHEIGHT), 0.01, 10000);
+	gluPerspective(m_POV, ((double)CLIENTWIDTH/(double)CLIENTHEIGHT), 0.01, 10000000);
 	glTranslatef(0.0, 0.0, m_dist);
 	gluLookAt(
 		Position.x , Position.y, Position.z,
@@ -63,7 +63,7 @@ void CCamera::SetLookVector()
 {
 	float delta_x;
 	float delta_y;
-	const float YAW_ROTATE_SPEED = 1;
+	const float YAW_ROTATE_SPEED = 2;
 	const float PITCH_ROTATE_SPEED = 1;
 
 	delta_x = (CLIENTWIDTH * 0.5) - newMousePostion_x;
@@ -81,7 +81,7 @@ void CCamera::SetLookVector()
 		Angle.pitch -= PITCH_ROTATE_SPEED;
 
 	if (Angle.pitch > 80.0f)	Angle.pitch = 80.0f; 
-	if (Angle.pitch <  -80.0f)	Angle.pitch = -80.0f;
+	if (Angle.pitch < -80.0f)	Angle.pitch = -80.0f;
 
 	m_LookVector = { cosf(RAD(Angle.yaw)), tanf(RAD(Angle.pitch)), sinf(RAD(Angle.yaw)) };
 
@@ -117,13 +117,14 @@ Left, right movements goes along perpendicular vector of lookvector.
 void CCamera::Move(DIRECTION dir, float speed)
 {
 	Vec3f MoveLR = Normalize(Vec3f({ m_LookVector.z, 0, m_LookVector.x }));
+	Vec3f tmp = Normalize(Vec3f({ m_LookVector.x, 0, m_LookVector.z }));
 	switch (dir)
 	{
 	case DIRECTION::FRONT:
-		Position = Position + (m_LookVector * speed);
+		Position = Position + (tmp * speed);
 		break;
 	case DIRECTION::BACK:
-		Position = Position - (m_LookVector * speed);
+		Position = Position - (tmp * speed);
 		break;
 	case DIRECTION::LEFT:
 		Position.x = Position.x + (MoveLR.x * speed);
