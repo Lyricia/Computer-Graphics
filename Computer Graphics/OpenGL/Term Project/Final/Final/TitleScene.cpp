@@ -13,12 +13,12 @@ CTitleScene::~CTitleScene()
 
 void CTitleScene::Update()
 {
-	m_fFadein += 0.016;
+	m_fFadein += 0.008;
 	if (m_fFadein > 2.0f) {
-		TextureChange = true;
+		TextureChange = 1;
 	}
 	if(m_fFadein > 4.0f){
- 		m_pMasterFramework->BuildScene<CIntroScene>();
+		TextureChange = 2;
 	}
 }
 
@@ -29,7 +29,7 @@ void CTitleScene::Render()
 	
 	//glutSolidCube(1.0f);
 
-	if (TextureChange == false) {
+	if (TextureChange == 0) {
 		glPushMatrix();
 		{
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -52,7 +52,7 @@ void CTitleScene::Render()
 		}
 		glPopMatrix();
 	}
-	else if (TextureChange == true)
+	else if (TextureChange == 1)
 	{
 		glPushMatrix();
 		{
@@ -62,6 +62,28 @@ void CTitleScene::Render()
 			CTextureLibraray::UsingTexture2D();
 			{
 
+				glBegin(GL_QUADS);
+				{
+					glTexCoord2f(+0.0f, +1.0f);					glVertex2f(0.0f, 0.0f);
+					glTexCoord2f(+0.0f, +0.0f);					glVertex2f(0.0f, sz.y);
+					glTexCoord2f(+1.0f, +0.0f);					glVertex2f(sz.x, sz.y);
+					glTexCoord2f(+1.0f, +1.0f);					glVertex2f(sz.x, 0.0f);
+				}
+				glEnd();
+
+			}
+			CTextureLibraray::StopUsingTexture2D();
+		}
+		glPopMatrix();
+	}
+
+	else if (TextureChange == 2)
+	{
+		glPushMatrix();
+		{
+			m_texLogo3.LoadTexture(0);
+			CTextureLibraray::UsingTexture2D();
+			{
 				glBegin(GL_QUADS);
 				{
 					glTexCoord2f(+0.0f, +1.0f);					glVertex2f(0.0f, 0.0f);
@@ -129,6 +151,9 @@ void CTitleScene::BuildScene(CGLFramework * pframework, int tag)
 	CScene::BuildScene(pframework, tag);
 	glClearColor(0.f, 0.f, 0.f, 1.f);
 
+	TextureChange = 0;
+
 	m_texLogo.SetTexture(L"Image/warp.png");
 	m_texLogo2.SetTexture(L"Image/GFP.png");
+	m_texLogo3.SetTexture(L"Image/Silent Moon.png");
 }

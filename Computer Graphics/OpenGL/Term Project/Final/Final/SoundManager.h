@@ -22,7 +22,8 @@ private:
 public:
 	CSoundManager();
 	~CSoundManager();
-	void InsertSound(const char* str, int soundidx);
+	void InsertSound(const char* str, int soundidx, bool IsLoop = true);
 	void SoundPlay(int soundidx, int channelidx);
+	void StopPlay(int channelidx);
 };
 

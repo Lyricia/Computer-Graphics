@@ -200,7 +200,7 @@ public:
 		}
 		if (key == 'u' || key == 'F')
 			RunOrWalk = Function_ONOFF(RunOrWalk);
-		else if (key == 'g' || key == 'G') {
+		else if (key == 'p' || key == 'G') {
 			robot_shot_status = Function_ONOFF_SIMPLE(robot_shot_status);
 		}
 	}

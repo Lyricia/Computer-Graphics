@@ -25,7 +25,8 @@ private:
 	Point2f			m_ptPos			{100,100}	;
 	CTextureLibraray m_texLogo;
 	CTextureLibraray m_texLogo2;
-	bool TextureChange{ false };
+	CTextureLibraray m_texLogo3;
+	int TextureChange;
 	float m_fFadein = 0.0f;
 };
 

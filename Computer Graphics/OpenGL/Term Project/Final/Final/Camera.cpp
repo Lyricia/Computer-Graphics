@@ -107,6 +107,11 @@ void CCamera::getMouse(int x, int y)
 	//std::cout << x << ' ' << y << std::endl; 
 }
 
+Vec3f CCamera::getLookvector()
+{
+	return m_LookVector;
+}
+
 /*////////////////////////////////////////////////////////////
 
 Movements goes forward, backward along camera lookvector. 

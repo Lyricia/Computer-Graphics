@@ -20,6 +20,7 @@ public:
 	CTextureLibraray m_tex_bush[6];
 
 	CTextureLibraray m_tex_dummy;
+	CTextureLibraray m_tex_castle;
 
 	void initTextures()
 	{
@@ -54,5 +55,7 @@ public:
 		m_tex_Field_Ground.SetTexture(L"Image/Field/grass_2.bmp");
 	
 		m_tex_dummy.SetTexture(L"Image/dummy.png");
+
+		m_tex_castle.SetTexture(L"Image/Field/brick_wall.bmp");
 	}
 };

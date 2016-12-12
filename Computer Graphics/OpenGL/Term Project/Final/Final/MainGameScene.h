@@ -30,6 +30,7 @@ public:
 	void DrawField();
 	
 	void RobotMove(int Index);
+	void RobotRecog(int Index);
 	bool RobotKill(int Index);
 	bool IsCanMove();
 
@@ -54,4 +55,6 @@ private:
 	enum state {stop, move, recog, dead};
 
 	char RobotState[10];
+
+	CSoundManager Sound;
 };

@@ -24,6 +24,7 @@ public:
 	void SetLookVector(Vec3f _look_vector);
 	void SetViewpoint(int _dist);		// 0 to FPS, -200 to TPS
 	void getMouse(int x, int y);
+	Vec3f getLookvector();
 	void Move(DIRECTION dir, float speed);
 };
 

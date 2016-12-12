@@ -25,18 +25,18 @@ void CMainGameScene::Update()
  		m_camera_ypos_delta -= 1;
 	}
 
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 3; i++) {
 		auto k = m_Camera->Position - (m_RobotPosition[i]);
 		if (Length(k) < 20 && RobotState[i] != state::dead) {
 			BOT[i].robot_shot_status = 1;
 		}
 		else BOT[i].robot_shot_status = 0;
 
-		if (RobotState[i] == state::recog){
-			m_RobotDir[i] = atan2f(k.x, k.y);
-		}
+		
 		BOT[i].Robot_timer();
 	}
+	for(int i=0; i<10; i++)
+		RobotMove(i);
 
 	if (CameraMove[DIRECTION::FRONT])	m_Camera->Move(DIRECTION::FRONT, m_PlayerSpeed);
 	if (CameraMove[DIRECTION::BACK])	m_Camera->Move(DIRECTION::BACK, m_PlayerSpeed);
@@ -62,22 +62,42 @@ void CMainGameScene::Render()
 	glPopMatrix();
 
 	//Draw Robot
-	glPushMatrix();
-	{
-		glTranslatef(m_RobotPosition[0].x, m_RobotPosition[0].y, m_RobotPosition[0].z);
+	for (int i = 0; i < 3; i++) {
 		glPushMatrix();
 		{
-			if (RobotState[0] == state::dead)
+			glTranslatef(m_RobotPosition[i].x, m_RobotPosition[i].y, m_RobotPosition[i].z);
+			glPushMatrix();
+			{
+				if (RobotState[i] == state::dead)
+					glRotatef(90, 1, 0, 0);
+				glTranslatef(0, 1.5, 0);
+				glRotatef(-m_RobotDir[i], 0, 1, 0);
+				glScalef(0.005, 0.005, 0.005);
+				BOT[0].Make_Robot(0, 0, 0, 0);
+			}
+			glPopMatrix();
+		}
+		glPopMatrix();
+
+	}
+
+
+	glPushMatrix();
+	{
+		glTranslatef(m_RobotPosition[3].x, m_RobotPosition[3].y, m_RobotPosition[3].z);
+		glPushMatrix();
+		{
+			if (RobotState[3] == state::dead)
 				glRotatef(90, 1, 0, 0);
 			glTranslatef(0, 1.5, 0);
-			glRotatef(-m_RobotDir[0], 0, 1, 0);
-			glScalef(0.005, 0.005, 0.005);
+			glRotatef(-90, 0, 1, 0);
+			glScalef(0.05, 0.05, 0.05);
 			BOT[0].Make_Robot(0, 0, 0, 0);
 		}
 		glPopMatrix();
 	}
 	glPopMatrix();
-	
+
 	//Draw Tree
 	glPushMatrix();
 	{
@@ -110,15 +130,29 @@ void CMainGameScene::Render()
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
-		Texture.m_tex_bush[2].LoadTexture(0);
-		glTranslatef(10, 0, 23);
 		glPushMatrix();
 		{
-			glScalef(0.01, 0.01, 0.01);
-			DrawBush();
+			Texture.m_tex_bush[2].LoadTexture(0);
+			glTranslatef(10, 0, 23);
+			glPushMatrix();
+			{
+				glScalef(0.01, 0.01, 0.01);
+				DrawBush();
+			}
+			glPopMatrix();
 		}
-		glPopMatrix();
-	
+		glPopMatrix(); 
+
+		for (int i = 0; i < 6; i++) {
+			glPushMatrix();
+			{
+				glTranslatef(-70 + 10 * i, 0, 28);
+				Texture.m_tex_bush[i].LoadTexture(0);
+				glScalef(0.01, 0.01, 0.01);
+				DrawBush();
+			}
+			glPopMatrix();
+		}
 		glDisable(GL_BLEND);
 	}
 	glPopMatrix();
@@ -185,6 +219,7 @@ void CMainGameScene::MouseEvent(int button, int state, int x, int y)
 	{
 	case GLKeyStateCombine::LBUTTONDOWN:
 		m_IsAttack = true;
+		Sound.SoundPlay(2, 2);
 		for (int i = 0; i < 10; i++) {
 			if (RobotKill(i)){
 				RobotState[i] = state::dead;
@@ -253,7 +288,10 @@ void CMainGameScene::KeyInput(unsigned char key, int x, int y)
 		break;
 		
 	case 'z':
-		RobotMove(0);
+		for (int i = 0; i < 10; i++) {
+			RobotRecog(i);
+		}
+		Sound.SoundPlay(1, 1);
 		break;
 
 	case '1':
@@ -262,6 +300,12 @@ void CMainGameScene::KeyInput(unsigned char key, int x, int y)
 
 	case '2':
 		m_IsKnife = true;
+		break;
+
+	case '6':
+		for (int i = 0; i < 3; i++) {
+			BOT[i].robot_shot_status = 1;
+		}
 		break;
 
 	case 'f':
@@ -276,8 +320,8 @@ void CMainGameScene::KeyInput(unsigned char key, int x, int y)
 	case 'c':
 		if(m_camera_ypos_delta == 0 || m_camera_ypos_delta == 7)
 			m_IsCrouching = boolswitch(m_IsCrouching);
-		if (m_IsCrouching)			m_PlayerSpeed = 0.1f;
-		else if (!m_IsCrouching)	m_PlayerSpeed = 0.5f;
+		if (m_IsCrouching)			m_PlayerSpeed = 0.03f;
+		else if (!m_IsCrouching)	m_PlayerSpeed = 0.2f;
 		break;
 
 	default:
@@ -330,7 +374,7 @@ void CMainGameScene::BuildScene(CGLFramework * pframework, int tag)
 	
 	Texture.initTextures();
 
-	m_PlayerSpeed = 0.5;
+	m_PlayerSpeed = 0.2f;
 
 	m_IsSpecial = false;
 	m_IsKnife = false;
@@ -339,7 +383,6 @@ void CMainGameScene::BuildScene(CGLFramework * pframework, int tag)
 	m_IsDashing = false;
 	m_camera_ypos_delta = 0.f;
 	m_Camera->Position = { -72.5, 4, 27 };
-
 
 	for (int i = 0; i < 10; i++) {
 		m_RobotPosition[i] = { 0, 0, 0 };
@@ -350,6 +393,14 @@ void CMainGameScene::BuildScene(CGLFramework * pframework, int tag)
 		m_TreePosition[i].z = -90 + rand() % 100;
 		m_TreeTexIdx[i] = 2 + rand() % 8;
 	}
+
+	m_RobotPosition[1] = { -30, 0, -116 };
+	m_RobotPosition[2] = { -15, 0, -116 };
+	m_RobotPosition[3] = {5, 0, -225};
+	Sound.InsertSound("Sound/Main_BGM.ogg", 0);
+	Sound.InsertSound("Sound/whiparam.mp3", 1, false);
+	Sound.InsertSound("Sound/main_gun_sound.wav", 2, false);
+	Sound.SoundPlay(0, 0);
 }
 
 void CMainGameScene::DrawTree(float w, float h)
@@ -766,6 +817,263 @@ void CMainGameScene::DrawField()
 			glPopMatrix();
 			glDisable(GL_BLEND);
 		}
+
+		//castle_wall
+		{
+			Texture.m_tex_castle.LoadTexture(0);
+
+			glEnable(GL_TEXTURE_2D);
+			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+			//glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+			glBegin(GL_QUADS);
+
+			// 왼쪽아래먼저 해보자!!!
+			glTexCoord2f(0.0, 1.0f);
+			glVertex3f(-6000, 2000, -20000);
+
+			glTexCoord2f(0.0, 0.0f);
+			glVertex3f(-6000, 0, -20000);
+
+			glTexCoord2f(2.0f, 0.0f);
+			glVertex3f(-3000, 0, -20000);
+
+			glTexCoord2f(2.0f, 1.0f);
+			glVertex3f(-3000, 2000, -20000);
+
+			{
+				{
+					glTexCoord2f(0.0, 1.0f);
+					glVertex3f(-3000, 2000, -20000);
+
+					glTexCoord2f(0.0, 0.0f);
+					glVertex3f(-3000, 0, -20000);
+
+					glTexCoord2f(0.1f, 0.0f);
+					glVertex3f(-3000, 0, -20100);
+
+					glTexCoord2f(0.1f, 1.0f);
+					glVertex3f(-3000, 2000, -20100);
+				}
+
+				glTexCoord2f(0.0, 1.0f);
+				glVertex3f(-5950, 2000, -20100);
+
+				glTexCoord2f(0.0, 0.0f);
+				glVertex3f(-5950, 0, -20100);
+
+				glTexCoord2f(2.0f, 0.0f);
+				glVertex3f(-3000, 0, -20100);
+
+				glTexCoord2f(2.0f, 1.0f);
+				glVertex3f(-3000, 2000, -20100);
+			}
+
+			// 왼아 대각
+			glTexCoord2f(1.0f, 1.0f);
+			glVertex3f(-7000, 2000, -21000);
+
+			glTexCoord2f(1.0f, 0.0f);
+			glVertex3f(-7000, 0, -21000);
+
+			glTexCoord2f(0.0, 0.0f);
+			glVertex3f(-6000, 0, -20000);
+
+			glTexCoord2f(0.0, 1.0f);
+			glVertex3f(-6000, 2000, -20000);
+
+			{
+				glTexCoord2f(1.0f, 1.0f);
+				glVertex3f(-6900, 2000, -21100);
+
+				glTexCoord2f(1.0f, 0.0f);
+				glVertex3f(-6900, 0, -21100);
+
+				glTexCoord2f(0.0, 0.0f);
+				glVertex3f(-5950, 0, -20100);
+
+				glTexCoord2f(0.0, 1.0f);
+				glVertex3f(-5950, 2000, -20100);
+			}
+
+			//왼
+
+			glTexCoord2f(4.0f, 1.0f);
+			glVertex3f(-7000, 2000, -21000);
+
+			glTexCoord2f(4.0f, 0.0f);
+			glVertex3f(-7000, 0, -21000);
+
+			glTexCoord2f(0.0, 0.0f);
+			glVertex3f(-7000, 0, -29000);
+
+			glTexCoord2f(0.0, 1.0f);
+			glVertex3f(-7000, 2000, -29000);
+
+			{
+				glTexCoord2f(4.0f, 1.0f);
+				glVertex3f(-6900, 2000, -21100);
+
+				glTexCoord2f(4.0f, 0.0f);
+				glVertex3f(-6900, 0, -21100);
+
+				glTexCoord2f(0.0, 0.0f);
+				glVertex3f(-6900, 0, -28900);
+
+				glTexCoord2f(0.0, 1.0f);
+				glVertex3f(-6900, 2000, -28900);
+			}
+
+			// 왼뒤대각
+
+			glTexCoord2f(0.0, 1.0f);
+			glVertex3f(-7000, 2000, -29000);
+
+			glTexCoord2f(0.0, 0.0f);
+			glVertex3f(-7000, 0, -29000);
+
+			glTexCoord2f(1.0f, 0.0f);
+			glVertex3f(-6000, 0, -30000);
+
+			glTexCoord2f(1.0f, 1.0f);
+			glVertex3f(-6000, 2000, -30000);
+
+			{
+				glTexCoord2f(0.0, 1.0f);
+				glVertex3f(-6900, 2000, -29000);
+
+				glTexCoord2f(0.0, 0.0f);
+				glVertex3f(-6900, 0, -29000);
+
+				glTexCoord2f(4.0f, 0.0f);
+				glVertex3f(-6000, 0, -30000);
+
+				glTexCoord2f(4.0f, 1.0f);
+				glVertex3f(-6000, 2000, -30000);
+			}
+
+			// 뒤
+
+			glTexCoord2f(0.0, 1.0f);
+			glVertex3f(-6000, 2000, -30000);
+
+			glTexCoord2f(0.0, 0.0f);
+			glVertex3f(-6000, 0, -30000);
+
+			glTexCoord2f(4.0f, 0.0f);
+			glVertex3f(6000, 0, -30000);
+
+			glTexCoord2f(4.0f, 1.0f);
+			glVertex3f(6000, 2000, -30000);
+
+			// 뒤 오른쪽 대각
+
+			glTexCoord2f(0.0, 1.0f);
+			glVertex3f(6000, 2000, -30000);
+
+			glTexCoord2f(0.0, 0.0f);
+			glVertex3f(6000, 0, -30000);
+
+			glTexCoord2f(1.0f, 0.0f);
+			glVertex3f(7000, 0, -29000);
+
+			glTexCoord2f(1.0f, 1.0f);
+			glVertex3f(7000, 2000, -29000);
+
+
+			//오른쪽
+
+			glTexCoord2f(4.0f, 1.0f);
+			glVertex3f(7000, 2000, -29000);
+
+			glTexCoord2f(4.0f, 0.0f);
+			glVertex3f(7000, 0, -29000);
+
+			glTexCoord2f(0.0, 0.0f);
+			glVertex3f(7000, 0, -21000);
+
+			glTexCoord2f(0.0, 1.0f);
+			glVertex3f(7000, 2000, -21000);
+
+			//오앞대각
+
+			glTexCoord2f(1.0f, 1.0f);
+			glVertex3f(7000, 2000, -21000);
+
+			glTexCoord2f(1.0f, 0.0f);
+			glVertex3f(7000, 0, -21000);
+
+			glTexCoord2f(0.0, 0.0f);
+			glVertex3f(6000, 0, -20000);
+
+			glTexCoord2f(0.0, 1.0f);
+			glVertex3f(6000, 2000, -20000);
+
+			{
+				glTexCoord2f(1.0f, 1.0f);
+				glVertex3f(7000, 2000, -21000);
+
+				glTexCoord2f(1.0f, 0.0f);
+				glVertex3f(7000, 0, -21000);
+
+				glTexCoord2f(0.0, 0.0f);
+				glVertex3f(5900, 0, -20100);
+
+				glTexCoord2f(0.0, 1.0f);
+				glVertex3f(5900, 2000, -20100);
+			}
+
+			// 오른쪽이야
+			glTexCoord2f(0.0, 1.0f);
+			glVertex3f(-2000, 2000, -20000);
+
+			glTexCoord2f(0.0, 0.0f);
+			glVertex3f(-2000, 0, -20000);
+
+			glTexCoord2f(2.0f, 0.0f);
+			glVertex3f(6000, 0, -20000);
+
+			glTexCoord2f(2.0f, 1.0f);
+			glVertex3f(6000, 2000, -20000);
+
+			{
+				{
+					glTexCoord2f(0.0, 1.0f);
+					glVertex3f(-2000, 2000, -20000);
+
+					glTexCoord2f(0.0, 0.0f);
+					glVertex3f(-2000, 0, -20000);
+
+					glTexCoord2f(0.1f, 0.0f);
+					glVertex3f(-2000, 0, -20100);
+
+					glTexCoord2f(0.1f, 1.0f);
+					glVertex3f(-2000, 2000, -20100);
+				}
+				glTexCoord2f(0.0, 1.0f);
+				glVertex3f(-2000, 2000, -20100);
+
+				glTexCoord2f(0.0, 0.0f);
+				glVertex3f(-2000, 0, -20100);
+
+				glTexCoord2f(2.0f, 0.0f);
+				glVertex3f(6000, 0, -20100);
+
+				glTexCoord2f(2.0f, 1.0f);
+				glVertex3f(6000, 2000, -20100);
+			}
+
+			glEnd();
+			glDisable(GL_TEXTURE_2D);
+
+			//glPopMatrix();
+		}
 	}
 	CTextureLibraray::StopUsingTexture2D();
 }
@@ -808,16 +1116,25 @@ void CMainGameScene::DrawDummy(float w, float h)
 
 void CMainGameScene::RobotMove(int Index)
 {
-	if (RobotState[Index] != state::dead) {
+	if (RobotState[Index] == state::recog) {
 		Vec3f Robot_to_player = m_Camera->Position - m_RobotPosition[Index];
 		Robot_to_player = Normalize(Robot_to_player);
+		m_RobotDir[Index] = atan2f(Robot_to_player.x, Robot_to_player.y);
 		m_RobotPosition[Index] += Robot_to_player;
 		m_RobotPosition[Index].y = 0;
-		if (RobotState[Index] != state::recog) {
-			BOT[Index].robot_head_status = 1;
-			BOT[Index].robot_leg_status = 1;
-			BOT[Index].RunOrWalk = 1;
-			RobotState[Index] = state::recog;
+	}
+}
+
+void CMainGameScene::RobotRecog(int Index)
+{
+	if (Length(m_Camera->Position - m_RobotPosition[Index]) < 50) {
+		if (RobotState[Index] != state::dead) {
+			if (RobotState[Index] != state::recog) {
+				BOT[Index].robot_head_status = 1;
+				BOT[Index].robot_leg_status = 1;
+				BOT[Index].RunOrWalk = 1;
+				RobotState[Index] = state::recog;
+			}
 		}
 	}
 }
@@ -833,8 +1150,7 @@ bool CMainGameScene::RobotKill(int Index)
 	}
 	else {
 		for (int i = 0; i < 100; i++) {
-			auto t = Length(m_Camera->Position + (Normalize(k)*i));
-			if (Length(m_Camera->Position + (Normalize(k)*i)) < 5)
+			if (Length((m_Camera->Position + m_Camera->getLookvector() * i) - m_RobotPosition[Index]) < 2)
 				return true;
 		}
 		return false;
